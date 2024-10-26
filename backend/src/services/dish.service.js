@@ -1,8 +1,31 @@
 "use strict";
 import Dish from "../entity/dish.entity.js";
 import { AppDataSource } from "../config/configDb.js";
+import { getProductsService } from "./product.service.js";//service de Guajardo
 
-export async function createDishService(body) {
+// Nueva función para verificar la disponibilidad de ingredientes
+async function checkIngredientAvailability(ingredientIds) {// hacer llamadas en controllers
+    const [products, error] = await getProductsService();
+    if (error) {
+        console.error("Error al obtener los productos:", error);
+        return false;
+    }
+
+    // Convertir la lista de productos a un conjunto de IDs para facilitar la búsqueda
+    const availableProductIds = new Set(products.map(product => product.id));
+    
+    // Verificar si todos los ingredientes están disponibles
+    for (const id of ingredientIds) {
+        if (!availableProductIds.has(id)) {
+            return false; // Ingrediente no disponible
+        }
+    }
+
+    return true; // estan todos disponibles
+}
+
+// codigo CRUD de platillos:
+export async function createDishService(body) {//! cambiar con el codigo de Guajardo
     try {
     
         const dishRepository = AppDataSource.getRepository(Dish);
@@ -19,7 +42,7 @@ export async function createDishService(body) {
         }
     
 }
-export async function getDishService(query) {
+export async function getDishService(query) {//!acutalizar con el requisito de Guajardo
     try {
         const { Nombre, id,} = query;
 

@@ -16,7 +16,7 @@ import {
     handleSuccess,
 } from "../handlers/responseHandlers.js";
 
-export  async function createDish(req, res) {
+export  async function createDish(req, res) { //!modificar con el check
     try{
         const {body}=req;
 
@@ -71,7 +71,7 @@ export async function getDishes(req, res) {
     }
 }
 
-export async function updateDish(req, res) {
+export async function updateDish(req, res) {//!modificar con el chequeo
     try {
         const { Nombre, id,} = req.query;
         const { body } = req;
