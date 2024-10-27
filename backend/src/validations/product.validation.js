@@ -25,6 +25,8 @@ export const productValidation = Joi.object({
             "number.base": "El id debe ser un número.",
             "number.integer": "El id debe ser un número entero.",
             "number.positive": "El id debe ser un número positivo.",
+            "any.required": "El id es requerido.",
+
         }),
     name: Joi.string()
         .max(255)
@@ -33,14 +35,16 @@ export const productValidation = Joi.object({
             "string.empty": "El nombre no puede estar vacío.",
             "string.base": "El nombre debe ser de tipo string.",
             "string.max": "El nombre debe tener como máximo 255 caracteres.",
+            "any.required": "El nombre es requerido.",
         }),
     type: Joi.string()
-        .max(255)
+        .valid("lacteo", "pasta", "especia", "fruta", "vegetal", "carne", "pescado", "marisco", "otros")
         .required()
         .messages({
             "string.empty": "El tipo no puede estar vacío.",
             "string.base": "El tipo debe ser de tipo string.",
-            "string.max": "El tipo debe tener como máximo 255 caracteres.",
+            "any.only": "El tipo debe ser válido.",
+            "any.required": "El tipo es requerido.",
         }),
     quantity: Joi.number()
         .integer()
@@ -51,6 +55,7 @@ export const productValidation = Joi.object({
             "number.integer": "La cantidad debe ser un número entero.",
             "number.positive": "La cantidad debe ser un número positivo.",
             "number.required": "La cantidad es requerida.",
+            "any.required": "La cantidad es requerida.",
         }),
     entryDate: Joi.string()
         .required()
@@ -59,7 +64,6 @@ export const productValidation = Joi.object({
             const today = new Date();
             const entry = new Date(value);
 
-            // Compara las fechas sin la parte de la hora
             if (entry < new Date(today.toISOString().split("T")[0])) {
                 return helpers.message("La fecha de entrada no puede ser anterior a la fecha actual.");
             }

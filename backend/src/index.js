@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import indexRoutes from "./routes/index.routes.js";
 import session from "express-session";
 import passport from "passport";
+import multer from "multer";
 import express, { json, urlencoded } from "express";
 import { cookieKey, HOST, PORT } from "./config/configEnv.js";
 import { connectDB } from "./config/configDb.js";
@@ -68,6 +69,15 @@ async function setupServer() {
     console.log("Error en index.js -> setupServer(), el error es: ", error);
   }
 }
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "./uploads");
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.fieldname + "-" + Date.now());
+  }
+});
 
 async function setupAPI() {
   try {

@@ -24,8 +24,8 @@ const ProductSchema = new EntitySchema({
         nullable: false,
         },
         type: {
-        type: "varchar",
-        length: 255,
+        type: "enum",
+        enum: ["lacteo", "pasta", "especia", "fruta", "vegetal","carne", "pescado", "marisco", "otros"],
         nullable: false,
         },
         quantity: {
@@ -40,6 +40,11 @@ const ProductSchema = new EntitySchema({
         expirationDate: {
         type: "timestamp with time zone",
         nullable: false,
+        },
+        image: {
+        type: "varchar",
+        length: 500,
+        nullable: true,
         },
         createdAt: {
         type: "timestamp with time zone",
