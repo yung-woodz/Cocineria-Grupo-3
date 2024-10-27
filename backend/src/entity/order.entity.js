@@ -49,4 +49,7 @@ const OrderSchema = new EntitySchema({
     ],
 });
 
+//cronometraje de la orden para cocineros
+//llamar a una api
+
 export default OrderSchema;
