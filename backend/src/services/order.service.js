@@ -1,40 +1,6 @@
-"use strict";
+"user strict";
 import Order from "../entity/order.entity.js";
 import { AppDataSource } from "../config/configDb.js";
-
-/* export async function createOrderService(order) {
-    try {
-      const orderRepository = AppDataSource.getRepository(Order);
-      const { nombreOrden, descripcion } = order;
-  
-      const createErrorMessage = (dataInfo, message) => ({
-        dataInfo,
-        message
-      });
-  
-      const orderFound = await orderRepository.findOne({
-        where: { nombreOrden }
-      });
-  
-      if (!orderFound) {
-        return [null, createErrorMessage("email", "El correo electrónico es incorrecto")];
-      }
-  
-      const payload = {
-        nombreOrden: orderFound.nombreOrden,
-        descripcion: orderFound.descripcion,
-      };
-  
-      const accessToken = jwt.sign(payload, ACCESS_TOKEN_SECRET, {
-        expiresIn: "1d",
-      });
-  
-      return [accessToken, null];
-    } catch (error) {
-      console.error("Error al crear orden:", error);
-      return [null, "Error interno del servidor"];
-    }
-} */
 
 export async function getOrderService(query) {
     try {
@@ -43,34 +9,90 @@ export async function getOrderService(query) {
         const orderRepository = AppDataSource.getRepository(Order);
     
         const orderFound = await orderRepository.findOne({
-          where: [{ id: id }],
+        where: { id: id },
         });
     
         if (!orderFound) return [null, "Orden no encontrada"];
     
-        const { nombreOrden, ...orderData } = orderFound;
-    
-        return [orderData, null];
+        return [orderFound, null];
     } catch (error) {
-        console.error("Error obtener orden:", error);
+        console.error("Error al obtener la orden:", error);
         return [null, "Error interno del servidor"];
     }
-
-}
+    }
 
 export async function getOrdersService() {
     try {
-      const orderRepository = AppDataSource.getRepository(Order);
-  
-      const orders = await orderRepository.find();
-  
-      if (!orders || orders.length === 0) return [null, "No hay ordenes"];
-  
-      const ordersData = orders.map(({ nombreOrden, ...order }) => order);
-  
-      return [ordersData, null];
+        const orderRepository = AppDataSource.getRepository(Order);
+    
+        const orders = await orderRepository.find();
+    
+        if (!orders || orders.length === 0) return [null, "No hay ordenes"];
+    
+        return [orders, null];
     } catch (error) {
-      console.error("Error al obtener a las ordenes:", error);
-      return [null, "Error interno del servidor"];
+        console.error("Error al obtener las ordenes:", error);
+        return [null, "Error interno del servidor"];
     }
-  }
+}
+
+export async function createOrderService(body) {
+    try {
+        const orderRepository = AppDataSource.getRepository(Order);
+    
+        const newOrder = orderRepository.create(body);
+    
+        await orderRepository.save(newOrder);
+    
+        return [newOrder, null];
+    } catch (error) {
+        console.error("Error al crear la orden:", error);
+        return [null, "Error interno del servidor"];
+    }
+}
+
+export async function updateOrderService(query, body) {
+    try {
+        const { id } = query;
+    
+        const orderRepository = AppDataSource.getRepository(Order);
+    
+        const orderFound = await orderRepository.findOne({
+        where: { id: id },
+        });
+    
+        if (!orderFound) return [null, "Orden no encontrada"];
+    
+        await orderRepository.update(id, body);
+    
+        const orderUpdated = await orderRepository.findOne({
+        where: { id: id },
+        });
+    
+        return [orderUpdated, null];
+    } catch (error) {
+        console.error("Error al actualizar la orden:", error);
+        return [null, "Error interno del servidor"];
+    }
+}
+
+export async function deleteOrderService(query) {
+    try {
+        const { id } = query;
+    
+        const orderRepository = AppDataSource.getRepository(Order);
+    
+        const orderFound = await orderRepository.findOne({
+        where: { id: id },
+        });
+    
+        if (!orderFound) return [null, "Orden no encontrada"];
+    
+        await orderRepository.delete(id);
+    
+        return [null, null];
+    } catch (error) {
+        console.error("Error al eliminar la orden:", error);
+        return [null, "Error interno del servidor"];
+    }
+}
