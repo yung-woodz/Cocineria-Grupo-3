@@ -1,9 +1,9 @@
 "use strict";
 import Dish from "../entity/dish.entity.js";
 import { AppDataSource } from "../config/configDb.js";
-import { getProductsService } from "./product.service.js";//service de Guajardo
+//import { getProductsService } from "./product.service.js";//service de Guajardo
 
-// Nueva función para verificar la disponibilidad de ingredientes
+/* Nueva función para verificar la disponibilidad de ingredientes
 async function checkIngredientAvailability(ingredientIds) {// hacer llamadas en controllers
     const [products, error] = await getProductsService();
     if (error) {
@@ -23,7 +23,7 @@ async function checkIngredientAvailability(ingredientIds) {// hacer llamadas en 
 
     return true; // estan todos disponibles
 }
-
+*/
 // codigo CRUD de platillos:
 export async function createDishService(body) {//! cambiar con el codigo de Guajardo
     try {
@@ -76,7 +76,7 @@ export async function getDishesService() {
     }
 }
 
-export async function updateDishesService(query, body) {
+export async function updateDishesService(query, body) {//! necesito la parte de requisito 1
     try {
         const { Nombre, id,} = query;
 

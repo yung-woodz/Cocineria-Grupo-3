@@ -1,10 +1,10 @@
 "use strict"
 import { EntitySchema } from "typeorm";
 
-const DishSchema = new EntitySchema({//! juntar con el crud de requisito 4
+const DishSchema = new EntitySchema({
     name: "Dish",
     tableName: "dishes",
-    columns: {
+    columns: {//tiempo de espera// 
         id: {
             type: "int",
             primary: true,
@@ -24,6 +24,14 @@ const DishSchema = new EntitySchema({//! juntar con el crud de requisito 4
             type: "varchar",
             length: 20, 
             default: "disponible" 
+        },
+        descripcion: { 
+            type: "text", 
+            nullable: true 
+        },
+        tiempoDeEspera: { 
+            type: "int", 
+            nullable: true 
         },
         createdAt: {
             type: "timestamp with time zone",
