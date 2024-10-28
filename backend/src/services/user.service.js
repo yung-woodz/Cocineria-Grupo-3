@@ -41,6 +41,35 @@ export async function getUsersService() {
   }
 }
 
+export async function createUserService(body) {
+  try {
+    const userRepository = AppDataSource.getRepository(User);
+
+    const existingUser = await userRepository.findOne({
+      where: [{ rut: body.rut }, { email: body.email }],
+    });
+
+    if (existingUser) return [null, "Ya existe un usuario con el mismo rut o email"];
+
+    const newUser = userRepository.create({
+      nombreCompleto: body.nombreCompleto,
+      rut: body.rut,
+      email: body.email,
+      password: await encryptPassword(body.password),
+      rol: body.rol,
+    });
+
+    await userRepository.save(newUser);
+
+    const { password, ...dataUser } = newUser;
+
+    return [dataUser, null];
+  } catch (error) {
+    console.error("Error al crear un usuario:", error);
+    return [null, "Error interno del servidor"];
+  }
+}
+
 export async function updateUserService(query, body) {
   try {
     const { id, rut, email } = query;

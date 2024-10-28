@@ -1,6 +1,6 @@
 "use strict";
 import { Router } from "express";
-import { isAdmin } from "../middlewares/authorization.middleware.js";
+import { rolAuth } from "../middlewares/authorization.middleware.js";
 import { authenticateJwt } from "../middlewares/authentication.middleware.js";
 
 import {
@@ -15,13 +15,12 @@ const router = Router();
 
 router
     .use(authenticateJwt)
-    .use(isAdmin);
 
 router
-    .post('/dish', createDish)
-    .get("/", getDishes)
-    .get("/detail/", getDish)
-    .patch("/detail/", updateDish)
-    .delete("/detail/", deleteDish);
+    .post('/dish', rolAuth(['administrador', 'jefeCocina']), createDish)
+    .get("/", rolAuth(['administrador', 'jefeCocina']), getDishes)
+    .get("/detail/", rolAuth(['administrador', 'jefeCocina']), getDish)
+    .patch("/detail/", rolAuth(['administrador', 'jefeCocina']), updateDish)
+    .delete("/detail/", rolAuth(['administrador', 'jefeCocina']), deleteDish);
 
 export default router;
