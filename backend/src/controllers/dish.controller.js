@@ -16,14 +16,14 @@ import {
     handleSuccess,
 } from "../handlers/responseHandlers.js";
 
-export  async function createDish(req, res) { //!modificar con el check
+export  async function createDish(req, res) { 
     try{
         const {body}=req;
 
         const {error} = dishQueryValidation.validate(body);
 
         if (error) return handleErrorClient(res, 400, error.message);
-
+        
         const [newDish, errorDish] = await createDishService(body);
 
         if (errorDish) return handleErrorClient(res, 404, errorDish);
@@ -71,7 +71,7 @@ export async function getDishes(req, res) {
     }
 }
 
-export async function updateDish(req, res) {//!modificar con el chequeo
+export async function updateDish(req, res) {
     try {
         const { Nombre, id,} = req.query;
         const { body } = req;
@@ -88,9 +88,8 @@ export async function updateDish(req, res) {//!modificar con el chequeo
             "Error de validación en la consulta",
             queryError.message,
         );
-        }//aca
-
-        const { error: bodyError } = dishBodyValidation.validate(body);//aca
+        }
+        const { error: bodyError } = dishBodyValidation.validate(body);
 
         if (bodyError)
             return handleErrorClient(

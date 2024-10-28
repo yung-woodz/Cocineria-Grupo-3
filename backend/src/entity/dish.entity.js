@@ -1,10 +1,11 @@
 "use strict"
 import { EntitySchema } from "typeorm";
 
+
 const DishSchema = new EntitySchema({
     name: "Dish",
     tableName: "dishes",
-    columns: {//tiempo de espera// 
+    columns: {
         id: {
             type: "int",
             primary: true,
@@ -18,7 +19,7 @@ const DishSchema = new EntitySchema({
         Ingredientes: {
             type: "varchar",
             length: 100,
-            nullable: false,
+            nullable: true,
         },
         disponibilidad: { 
             type: "varchar",
