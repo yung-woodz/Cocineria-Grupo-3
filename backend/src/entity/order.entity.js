@@ -19,6 +19,10 @@ const OrderSchema = new EntitySchema({
             type: "int",
             nullable: false,
         },
+        description:{
+            type: "varchar",
+            length: 255,
+        },
         total: {
             type: "int",
             nullable: false,
@@ -37,6 +41,17 @@ const OrderSchema = new EntitySchema({
             type: "timestamp with time zone",
             default: () => "CURRENT_TIMESTAMP",
             onUpdate: "CURRENT_TIMESTAMP",
+            nullable: false,
+        },
+    },
+    relations: {
+        user: {
+            type: "many-to-one",
+            target: "User",
+            joinColumn: {
+                name: "userId",
+                referencedColumnName: "id",
+            },
             nullable: false,
         },
     },

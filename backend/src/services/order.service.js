@@ -1,5 +1,6 @@
 "user strict";
 import Order from "../entity/order.entity.js";
+import User from "../entity/user.entity.js";
 import { AppDataSource } from "../config/configDb.js";
 
 export async function getOrderService(query) {
@@ -10,6 +11,7 @@ export async function getOrderService(query) {
     
         const orderFound = await orderRepository.findOne({
         where: { id: id },
+        relations: ["user"],
         });
     
         if (!orderFound) return [null, "Orden no encontrada"];
@@ -25,7 +27,7 @@ export async function getOrdersService() {
     try {
         const orderRepository = AppDataSource.getRepository(Order);
     
-        const orders = await orderRepository.find();
+        const orders = await orderRepository.find({ relations: ["user"] });
     
         if (!orders || orders.length === 0) return [null, "No hay ordenes"];
     
@@ -38,9 +40,24 @@ export async function getOrdersService() {
 
 export async function createOrderService(body) {
     try {
+
+        const userRepository =  AppDataSource.getRepository(User);
+        const user = await userRepository.findOne({ where: { nombreCompleto: body.username } });
+
+        if (!user) {
+            return res.status(404).json({ message: "Usuario no encontrado" });
+        }
+
         const orderRepository = AppDataSource.getRepository(Order);
     
-        const newOrder = orderRepository.create(body);
+        const newOrder = orderRepository.create({
+            customer: body.customer,
+            tableNumber: body.tableNumber,
+            description: body.description,
+            total: body.total,
+            status: body.status,
+            user: user
+        });
     
         await orderRepository.save(newOrder);
     
