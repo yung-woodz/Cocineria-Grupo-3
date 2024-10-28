@@ -74,4 +74,3 @@ export const orderStatusValidation = Joi.object({
     .messages({
         "object.unknown": "No se permiten propiedades adicionales.",
     });
-

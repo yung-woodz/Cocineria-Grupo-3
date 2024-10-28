@@ -22,4 +22,3 @@ router
     .delete("/:id", deleteOrder); //Eliminar una orden
 
 export default router;
-
