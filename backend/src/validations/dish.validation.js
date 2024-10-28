@@ -48,6 +48,29 @@ export const dishBodyValidation = Joi.object({
             "string.min": "El nombre del platillo debe tener como mínimo 10 caracteres.",
             "string.max": "El nombre del platillo debe tener como máximo 50 caracteres.",
             "string.pattern.base":"El nombre del platillo solo puede contener letras y espacios.",
+        }),
+        descripcion: Joi.string()
+        .min(10)
+        .max(500)
+        .pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)
+        .messages({
+            "string.pattern.base":"La descripcion solo puede contener letras y espacios.",
+            "string.empty": "La descripción no puede estar vacía.",
+            "string.base": "La descripción debe ser de tipo texto.",
+            "string.min": "La descripción debe tener como mínimo 10 caracteres.",
+            "string.max": "La descripción debe tener como máximo 500 caracteres.",
+        }),
+    tiempoDeEspera: Joi.number()
+        .integer()
+        .positive()
+        .min(1)
+        .max(180)
+        .messages({
+            "number.base": "El tiempo de espera debe ser un número.",
+            "number.integer": "El tiempo de espera debe ser un número entero.",
+            "number.positive": "El tiempo de espera debe ser un número positivo.",
+            "number.min": "El tiempo de espera debe ser al menos 1 minuto.",
+            "number.max": "El tiempo de espera no puede exceder los 180 minutos.",
         })
 })
     .or("Nombre","Ingredientes")
