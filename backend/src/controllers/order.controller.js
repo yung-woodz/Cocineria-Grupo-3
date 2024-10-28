@@ -73,37 +73,27 @@ export async function createOrder(req, res) {
 
 export async function updateOrder(req, res) {
     try {
-        const { id } = req.query;
+        const { id } = req.params;
         const { body } = req;
 
-        const { error: queryError } = orderQueryValidation.validate({
-            id,
-        });
-
-        if (queryError) {
-            return handleErrorClient(res, 400, queryError.message);
+        if (!body || Object.keys(body).length === 0) {
+            return handleErrorClient(res, 400, "No se proporcionaron valores para actualizar");
         }
 
-        const { error: bodyError } = orderBodyValidation.validate(body);
-
-        if (bodyError) {
-            return handleErrorClient(res, 400, bodyError.message);
-        }
-
-        const [order, errorOrder] = await updateOrderService({ id, body });
+        const [order, errorOrder] = await updateOrderService({ id }, body);
 
         if (errorOrder) return handleErrorClient(res, 404, errorOrder);
 
         handleSuccess(res, 200, "Orden actualizada", order);
-        
     } catch (error) {
         handleErrorServer(res, 500, error.message);
     }
 }
 
+
 export async function deleteOrder(req, res) {
     try {
-        const { id } = req.query;
+        const { id } = req.params;
 
         const { error } = orderQueryValidation.validate({ id });
 
