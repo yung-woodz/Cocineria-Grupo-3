@@ -1,6 +1,6 @@
 "use strict";
 import { Router } from "express";
-import { isAdmin } from "../middlewares/authorization.middleware.js";
+import { rolAuth } from "../middlewares/authorization.middleware.js";
 import { authenticateJwt } from "../middlewares/authentication.middleware.js";
 import { handleFileSizeLimit , upload } from "../middlewares/uploadArchive.middleware.js";
 import { lowStock } from "../middlewares/lowStock.middleware.js";
@@ -19,15 +19,16 @@ const router = Router();
 
 router
     .use(authenticateJwt)
-    .use(isAdmin);
 
 router
-  .post("/", upload.single("image"), handleFileSizeLimit, createProduct)
-  .get("/", getProducts)
-  .get("/:id", getProduct)
-  .delete("/:id", deleteProduct)
-  .put("/:id", updateProduct)
-  .put("/quantity/:id", lowStock, updateProductquantity);
+  .post("/", rolAuth(['administrador', 'jefeCocina']), upload.single("image"), handleFileSizeLimit, createProduct)
+  .delete("/:id", rolAuth(['administrador', 'jefeCocina']), deleteProduct)
+  .put("/:id", rolAuth(['administrador', 'jefeCocina']), updateProduct)
+
+router
+  .get("/", rolAuth(['administrador', 'jefeCocina','cocinero']), getProducts)
+  .get("/:id", rolAuth(['administrador', 'jefeCocina','cocinero']),getProduct)
+  .put("/quantity/:id", rolAuth(['administrador', 'jefeCocina', 'cocinero']), lowStock, updateProductquantity);
 
 
 export default router;

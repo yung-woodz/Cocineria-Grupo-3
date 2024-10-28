@@ -2,6 +2,7 @@
 import {
   deleteUserService,
   getUserService,
+  createUserService,
   getUsersService,
   updateUserService,
 } from "../services/user.service.js";
@@ -86,6 +87,24 @@ export async function updateUser(req, res) {
     if (userError) return handleErrorClient(res, 400, "Error modificando al usuario", userError);
 
     handleSuccess(res, 200, "Usuario modificado correctamente", user);
+  } catch (error) {
+    handleErrorServer(res, 500, error.message);
+  }
+}
+
+export async function createUser(req, res) {
+  try {
+    const { body } = req;
+
+    const { error } = userBodyValidation.validate(body);
+
+    if (error) return handleErrorClient(res, 400, error.message);
+
+    const [user, errorUser] = await createUserService(body);
+
+    if (errorUser) return handleErrorClient(res, 400, errorUser);
+
+    handleSuccess(res, 201, "Usuario creado correctamente", user);
   } catch (error) {
     handleErrorServer(res, 500, error.message);
   }
