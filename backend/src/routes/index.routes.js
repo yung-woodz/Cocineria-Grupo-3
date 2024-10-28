@@ -5,6 +5,8 @@ import authRoutes from "./auth.routes.js";
 import productRoutes from "./product.routes.js";
 import dishRoutes from "./dish.routes.js" 
 import orderRoutes from "./order.routes.js";
+import productRoutes from "./product.routes.js";
+
 const router = Router();
 
 router
