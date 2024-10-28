@@ -1,6 +1,7 @@
 "use strict";
 import { Router } from "express";
-import { isWaiter } from "../middlewares/authorization.middleware.js";
+import { isAdmin, isWaiter } from "../middlewares/authorization.middleware.js";
+import { authenticateJwt } from "../middlewares/authentication.middleware.js";
 import {
     createOrder,
     deleteOrder,
@@ -11,12 +12,13 @@ import {
 const router = Router();
 
 router
-    .use(isWaiter);
+    .use(authenticateJwt)
+    .use(isAdmin)
 
 router
     .get("/", getOrders) //Obtener todas las ordenes
     .post("/", createOrder) //Crear una orden
     .patch("/:id", updateOrder) //Actualizar una orden
-    .delete("/id", deleteOrder); //Eliminar una orden
+    .delete("/:id", deleteOrder); //Eliminar una orden
 
 export default router;

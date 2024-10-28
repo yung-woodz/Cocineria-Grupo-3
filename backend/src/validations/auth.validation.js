@@ -4,7 +4,7 @@ import Joi from "joi";
 const domainEmailValidator = (value, helper) => {
   if (!value.endsWith("@gmail.cl")) {
     return helper.message(
-      "El correo electrónico debe finalizar en @gmail.cl."
+      "El correo electrónico debe finalizar en @gmail.com."
     );
   }
   return value;
@@ -20,7 +20,7 @@ export const authValidation = Joi.object({
       "string.empty": "El correo electrónico no puede estar vacío.",
       "any.required": "El correo electrónico es obligatorio.",
       "string.base": "El correo electrónico debe ser de tipo texto.",
-      "string.email": "El correo electrónico debe finalizar en @gmail.cl.",
+      "string.email": "El correo electrónico debe finalizar en @gmail.com.",
       "string.min": "El correo electrónico debe tener al menos 15 caracteres.",
       "string.max": "El correo electrónico debe tener como máximo 35 caracteres.",
     })
@@ -77,7 +77,7 @@ export const registerValidation = Joi.object({
       "string.empty": "El correo electrónico no puede estar vacío.",
       "any.required": "El correo electrónico es obligatorio.",
       "string.base": "El correo electrónico debe ser de tipo texto.",
-      "string.email": "El correo electrónico debe finalizar en @gmail.cl.",
+      "string.email": "El correo electrónico debe finalizar en @gmail.com.",
       "string.min": "El correo electrónico debe tener al menos 15 caracteres.",
       "string.max": "El correo electrónico debe tener como máximo 35 caracteres.",
     })
