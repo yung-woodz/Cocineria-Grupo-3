@@ -6,6 +6,7 @@ import {
   deleteUser,
   getUser,
   getUsers,
+  createUser,
   updateUser,
 } from "../controllers/user.controller.js";
 
@@ -18,6 +19,7 @@ router
 router
   .get("/", getUsers)
   .get("/detail/", getUser)
+  .post("/", createUser)
   .patch("/detail/", updateUser)
   .delete("/detail/", deleteUser);
 
