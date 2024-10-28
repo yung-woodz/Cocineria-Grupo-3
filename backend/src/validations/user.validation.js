@@ -26,7 +26,7 @@ export const userQueryValidation = Joi.object({
     .messages({
       "string.empty": "El correo electrónico no puede estar vacío.",
       "string.base": "El correo electrónico debe ser de tipo string.",
-      "string.email": "El correo electrónico debe finalizar en @gmail.cl.",
+      "string.email": "El correo electrónico debe finalizar en @gmail.com.",
       "string.min":
         "El correo electrónico debe tener como mínimo 15 caracteres.",
       "string.max":
@@ -73,7 +73,7 @@ export const userBodyValidation = Joi.object({
     .messages({
       "string.empty": "El correo electrónico no puede estar vacío.",
       "string.base": "El correo electrónico debe ser de tipo string.",
-      "string.email": "El correo electrónico debe finalizar en @gmail.cl.",
+      "string.email": "El correo electrónico debe finalizar en @gmail.com.",
       "string.min":
         "El correo electrónico debe tener como mínimo 15 caracteres.",
       "string.max":
