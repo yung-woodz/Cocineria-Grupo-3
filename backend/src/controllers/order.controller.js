@@ -75,7 +75,7 @@ export async function updateOrder(req, res) {
     try {
         const { id } = req.params;
         const { body } = req;
-
+        //verifica si el id es un número 
         if (!body || Object.keys(body).length === 0) {
             return handleErrorClient(res, 400, "No se proporcionaron valores para actualizar");
         }
@@ -109,24 +109,18 @@ export async function deleteOrder(req, res) {
     }
 }
 
-export async function acceptOrder(req, res) {
+//entrega la orden
+export async function OrderDelivered(req, res) {
     try {
-        const { id } = req.query;
+        const { id } = req.params;
+        const { body } = req;
 
-        const { error } = orderQueryValidation.validate({ id });
-
-        if (error) return handleErrorClient(res, 400, error.message);
-
-        const [order, errorOrder] = await updateOrderService({
-            id,
-            body: { status: "accepted" },
-        });
+        const [order, errorOrder] = await updateOrderService({ id }, body);
 
         if (errorOrder) return handleErrorClient(res, 404, errorOrder);
 
-        handleSuccess(res, 200, "Orden aceptada", order);
-        body.endTime = new Date();
-        body.totalTime = Math.round((body.endTime - order.startTime) / 1000); // Duración en segundos
+        handleSuccess(res, 200, "Orden entregada", order);
+        body.endTime= new Date(); 
     } catch (error) {
         handleErrorServer(res, 500, error.message);
     }
