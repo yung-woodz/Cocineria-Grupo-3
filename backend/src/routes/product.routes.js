@@ -10,7 +10,6 @@ import {
   getProduct,
   getProducts,
   updateProduct,
-  updateProductquantity,
   deleteProduct
 
 } from "../controllers/product.controller.js";
@@ -23,12 +22,10 @@ router
 router
   .post("/", rolAuth(['administrador', 'jefeCocina']), upload.single("image"), handleFileSizeLimit, createProduct)
   .delete("/:id", rolAuth(['administrador', 'jefeCocina']), deleteProduct)
-  .put("/:id", rolAuth(['administrador', 'jefeCocina']), updateProduct)
+  .patch("/:id", rolAuth(['administrador', 'jefeCocina']), updateProduct)
 
 router
   .get("/", rolAuth(['administrador', 'jefeCocina','cocinero']), getProducts)
   .get("/:id", rolAuth(['administrador', 'jefeCocina','cocinero']),getProduct)
-  .put("/quantity/:id", rolAuth(['administrador', 'jefeCocina', 'cocinero']), lowStock, updateProductquantity);
-
 
 export default router;

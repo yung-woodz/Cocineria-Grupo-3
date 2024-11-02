@@ -25,40 +25,30 @@ export const productValidation = Joi.object({
             "number.base": "El id debe ser un número.",
             "number.integer": "El id debe ser un número entero.",
             "number.positive": "El id debe ser un número positivo.",
-            "any.required": "El id es requerido.",
-
         }),
     name: Joi.string()
         .max(255)
-        .required()
         .messages({
             "string.empty": "El nombre no puede estar vacío.",
             "string.base": "El nombre debe ser de tipo string.",
             "string.max": "El nombre debe tener como máximo 255 caracteres.",
-            "any.required": "El nombre es requerido.",
         }),
     type: Joi.string()
         .valid("lacteo", "pasta", "especia", "fruta", "vegetal", "carne", "pescado", "marisco", "otros")
-        .required()
         .messages({
             "string.empty": "El tipo no puede estar vacío.",
             "string.base": "El tipo debe ser de tipo string.",
             "any.only": "El tipo debe ser válido.",
-            "any.required": "El tipo es requerido.",
         }),
     quantity: Joi.number()
         .integer()
         .positive()
-        .required()
         .messages({
             "number.base": "La cantidad debe ser un número.",
             "number.integer": "La cantidad debe ser un número entero.",
             "number.positive": "La cantidad debe ser un número positivo.",
-            "number.required": "La cantidad es requerida.",
-            "any.required": "La cantidad es requerida.",
         }),
     entryDate: Joi.string()
-        .required()
         .pattern(datePattern)
         .custom((value, helpers) => {
             const today = new Date();
@@ -71,30 +61,23 @@ export const productValidation = Joi.object({
         })
         .messages({
             "date.base": "La fecha de entrada debe ser una fecha.",
-            "date.required": "La fecha de entrada es requerida.",
-            "any.required": "La fecha de entrada es requerida.",
             "date.pattern.base": "Formato de fecha inválido, debe ser yyyy-mm-dd.",
         }),
     expirationDate: Joi.string()
         .pattern(datePattern)
-        .required()
         .custom(validateExpirationDate)
         .messages({
             "date.base": "La fecha de caducidad debe ser una fecha.",
-            "date.required": "La fecha de caducidad es requerida.",
             "date.min": "La fecha de caducidad debe ser mayor a la fecha de entrada.",
-            "any.required": "La fecha de caducidad es requerida.",
             "date.pattern.base": "Formato de fecha inválido, debe ser yyyy-mm-dd.",
         }),
     createdAt: Joi.date()
         .messages({
             "date.base": "La fecha de creación debe ser una fecha.",
-            "date.required": "La fecha de creación es requerida.",
         }),
     updatedAt: Joi.date()
         .messages({
             "date.base": "La fecha de actualización debe ser una fecha.",
-            "date.required": "La fecha de actualización es requerida.",
         }),
 })
     .or("id", "name", "type", "quantity", "entryDate", "expirationDate", "createdAt", "updatedAt")
