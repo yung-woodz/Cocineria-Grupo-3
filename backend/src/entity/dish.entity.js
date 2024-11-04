@@ -1,6 +1,5 @@
-"use strict"
+"use strict";
 import { EntitySchema } from "typeorm";
-
 
 const DishSchema = new EntitySchema({
     name: "Dish",
@@ -16,11 +15,6 @@ const DishSchema = new EntitySchema({
             length: 100,
             nullable: false,
         },
-        Ingredientes: {
-            type: "varchar",
-            length: 100,
-            nullable: true,
-        },
         disponibilidad: { 
             type: "varchar",
             length: 20, 
@@ -33,6 +27,15 @@ const DishSchema = new EntitySchema({
         tiempoDeEspera: { 
             type: "int", 
             nullable: true 
+        },
+        requiredProducts: {
+            type: "json", 
+            nullable: true,
+        },
+        isAvailable: {
+            type: "boolean",
+            default: true,
+            nullable: false,
         },
         createdAt: {
             type: "timestamp with time zone",
@@ -53,11 +56,11 @@ const DishSchema = new EntitySchema({
             unique: true,
         },
         {
-            name:"IDX_NAME",
+            name: "IDX_NAME",
             columns: ["Nombre"],
             unique: true,
         },
     ]
-})
+});
 
 export default DishSchema;
