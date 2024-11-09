@@ -58,6 +58,14 @@ const ProductSchema = new EntitySchema({
         nullable: false,
         },
     },
+    relations: {
+        dishes: {
+            type: "one-to-many",
+            target: "DishProduct",
+            inverseSide: "product",
+            cascade: true
+        }
+    },
     indices: [
         {
         name: "IDX_PRODUCT",

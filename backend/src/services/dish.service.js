@@ -2,6 +2,7 @@
 import Dish from "../entity/dish.entity.js";
 import Product from "../entity/product.entity.js"; 
 import { AppDataSource } from "../config/configDb.js";
+import { updateProductService } from "./product.service.js";
 
 export async function createDishService(body) {
     try {
@@ -11,6 +12,32 @@ export async function createDishService(body) {
             ...body,
             requiredProducts: body.requiredProducts,
         });
+
+        const productRepository = getRepository(Product);
+        for (const item of requiredProducts.product) {
+            const { name, quantity } = item;
+
+            // Se busca el producto por su nombre
+            const product = await productRepository.findOne({ where: { name } });
+            if (!product) {
+                return [null, `Producto "${name}" no encontrado en el inventario`];
+            }
+
+            // Verificar que haya suficiente cantidad disponible
+            if (product.quantity < quantity) {
+                return [null, `Cantidad insuficiente de "${name}" en el inventario`];
+            }
+
+            // Descuenta la cantidad
+            const [updatedProduct, error] = await updateProductService(
+                { id: product.id },
+                { quantity: `-${quantity}` } // operacion de resta
+            );
+
+            if (error) {
+                return [null, `Error al actualizar el producto "${name}": ${error}`];
+            }
+        }
         
         await dishRepository.save(newDish);
     

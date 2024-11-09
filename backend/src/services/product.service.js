@@ -86,6 +86,25 @@ export async function updateProductService(query, body) {
 
     if (body.name) dataProductUpdate.name = body.name;
     if (body.type) dataProductUpdate.type = body.type;
+
+    // Detectar si quantity es una resta
+    if (body.quantity) { 
+
+      if (typeof body.quantity === "string" && body.quantity.startsWith("-")) {
+
+        const decrement = parseInt(body.quantity.slice(1), 10);
+        dataProductUpdate.quantity = productFound.quantity - decrement;
+
+        if (dataProductUpdate.quantity < 0) {
+          return [null, "Cantidad insuficiente en inventario"];
+        }
+
+      } else {
+        dataProductUpdate.quantity = body.quantity;
+      }
+      
+    }
+
     if (body.quantity) dataProductUpdate.quantity = body.quantity;
     if (body.entryDate) dataProductUpdate.entryDate = body.entryDate;
     if (body.expirationDate) dataProductUpdate.expirationDate = body.expirationDate;
