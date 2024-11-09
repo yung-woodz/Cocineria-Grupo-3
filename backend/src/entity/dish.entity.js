@@ -37,6 +37,15 @@ const DishSchema = new EntitySchema({
             default: true,
             nullable: false,
         },
+        precio: {
+            type: "int",
+            nullable: false,
+        },
+        imagen: {
+            type: "varchar",
+            length: 255,
+            nullable: true,
+        },
         createdAt: {
             type: "timestamp with time zone",
             default: () => "CURRENT_TIMESTAMP",

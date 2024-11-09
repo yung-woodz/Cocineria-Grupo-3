@@ -71,6 +71,18 @@ export const dishBodyValidation = Joi.object({
             "number.positive": "El tiempo de espera debe ser un número positivo.",
             "number.min": "El tiempo de espera debe ser al menos 1 minuto.",
             "number.max": "El tiempo de espera no puede exceder los 180 minutos.",
+        }),
+        precio: Joi.number()
+        .positive()
+        .messages({
+            "number.base": "El precio debe ser un número.",
+            "number.positive": "El precio debe ser un número positivo.",
+        }),
+    imagen: Joi.string()
+        .uri()
+        .messages({
+            "string.base": "La imagen debe ser de tipo string.",
+            "string.uri": "La imagen debe ser una URL válida.",
         })
 })
     .or("Nombre","Ingredientes")
