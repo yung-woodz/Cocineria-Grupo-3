@@ -12,6 +12,17 @@ export function formatUserData(user) {
     };
 }
 
+export function formatProductData(product) {
+    return {
+        ...product,
+        name: startCase(product.name),
+        type: startCase(product.type),
+        quantity: product.quantity,
+        entryDate: product.entryDate,
+        expirationDate: product.expirationDate
+    };
+}
+
 export function convertirMinusculas(obj) {
     for (let key in obj) {
         if (typeof obj[key] === 'string') {
