@@ -3,21 +3,27 @@ import Dish from "../entity/dish.entity.js";
 import Product from "../entity/product.entity.js"; 
 import { AppDataSource } from "../config/configDb.js";
 import { updateProductService } from "./product.service.js";
+import { getProductService } from "./product.service.js";
 
 export async function createDishService(body) {
     try {
         const dishRepository = AppDataSource.getRepository(Dish);
 
+        // Crear el nuevo platillo
         const newDish = dishRepository.create({
             ...body,
             requiredProducts: body.requiredProducts,
         });
 
-        const productRepository = getRepository(Product);
-        for (const item of requiredProducts.product) {
+        const productRepository = AppDataSource.getRepository(Product);
+
+        const usedProducts = [];
+        
+        // Iterar sobre los productos requeridos y realizar la verificación y actualización
+        for (const item of body.requiredProducts.product) {
             const { name, quantity } = item;
 
-            // Se busca el producto por su nombre
+            // Buscar el producto por su nombre
             const product = await productRepository.findOne({ where: { name } });
             if (!product) {
                 return [null, `Producto "${name}" no encontrado en el inventario`];
@@ -28,20 +34,24 @@ export async function createDishService(body) {
                 return [null, `Cantidad insuficiente de "${name}" en el inventario`];
             }
 
-            // Descuenta la cantidad
+            // Descontar la cantidad requerida usando updateProductService
             const [updatedProduct, error] = await updateProductService(
                 { id: product.id },
-                { quantity: `-${quantity}` } // operacion de resta
+                { quantity: `-${quantity}` } // Operación de resta
             );
 
             if (error) {
                 return [null, `Error al actualizar el producto "${name}": ${error}`];
             }
+
+            usedProducts.push({ name: product.name, quantity });
+
         }
         
+        // Guardar el nuevo platillo en la base de datos
         await dishRepository.save(newDish);
     
-        return [newDish, null];
+        return [{newDish, usedProducts}, null];
     } catch (error) {
         console.error("Error al crear el Platillo:", error);
         return [null, "Error interno del servidor"];
@@ -54,33 +64,47 @@ export async function getDishService(query) {
         const dishRepository = AppDataSource.getRepository(Dish);
         const { Nombre, id } = query;
 
+        // Buscar el platillo por nombre o ID
         const dishFound = await dishRepository.findOne({
             where: [{ Nombre: Nombre }, { id: id }],
         });
 
         if (!dishFound) return [null, "Platillo no encontrado"];
 
-        const productRepository = AppDataSource.getRepository(Product);
         const requiredProducts = dishFound.requiredProducts;
-
+        const usedProducts = [];
         let isAvailable = true;
 
-        for (const item of requiredProducts) {
-            const product = await productRepository.findOne({
-                where: { name: item.name },
-            });
-            if (!product || product.quantity < item.quantity) {
-                isAvailable = false;
-                break;
+        // Verificar si el platillo tiene productos requeridos y calcular disponibilidad
+        if (requiredProducts && Array.isArray(requiredProducts.product)) {
+            for (const item of requiredProducts.product) {
+                const { name, quantity } = item;
+
+                // Buscar el producto en el inventario por nombre
+                const [product, error] = await getProductService({ name });
+
+                if (!product || product.quantity < quantity) {
+                    isAvailable = false; // El platillo no está disponible si algún producto no tiene suficiente cantidad
+                }
+
+                // Agregar detalles del producto al array usedProducts
+                usedProducts.push({ name: product.name, quantity });
             }
+        } else {
+            isAvailable = false; // Si no hay productos requeridos, se considera no disponible
         }
 
+        // Actualizar el estado de disponibilidad del platillo si ha cambiado
         if (dishFound.isAvailable !== isAvailable) {
             dishFound.isAvailable = isAvailable;
             await dishRepository.save(dishFound);
         }
 
-        return [dishFound, null];
+        // Devolver el platillo con los productos utilizados y disponibilidad
+        return [{
+            dishFound,
+            usedProducts // Asegurarse de incluir usedProducts en la respuesta
+        }, null];
     } catch (error) {
         console.error("Error al obtener el Platillo:", error);
         return [null, "Error interno del servidor"];
