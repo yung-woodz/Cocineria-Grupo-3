@@ -30,3 +30,16 @@ export function formatPostUpdate(user) {
         createdAt: formatTempo(user.createdAt, "DD-MM-YYYY")
     };
 }
+
+export function formatDishData(dish) {
+    return {
+        id: dish.id,
+        nombre: startCase(dish.Nombre),
+        ingredientes: dish.Ingredientes ? dish.Ingredientes.split(',').map(ing => ing.trim()) : [],
+        disponibilidad: startCase(dish.disponibilidad),
+        descripcion: dish.descripcion || 'Sin descripción',
+        tiempoDeEspera: dish.tiempoDeEspera ? `${dish.tiempoDeEspera} minutos` : 'No especificado',
+        createdAt: formatTempo(dish.createdAt, "DD-MM-YYYY"),
+        updatedAt: formatTempo(dish.updatedAt, "DD-MM-YYYY")
+    };
+}
