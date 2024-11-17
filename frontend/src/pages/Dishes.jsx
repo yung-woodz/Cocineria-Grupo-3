@@ -22,7 +22,7 @@ const DishesPage = () => {
     const handleCreateDish = async (newDish) => {
         const result = await createDish(newDish);
         if (!result.error) {
-            console.log("Platillo creado:", result); // Log del platillo recién creado
+            console.log("Platillo creado:", result); 
             fetchDishes(); 
         } else {
             setError(result.error);

@@ -7,12 +7,21 @@ import Dishes from '@pages/Dishes';
 import Register from '@pages/Register';
 import Error404 from '@pages/Error404';
 import Root from '@pages/Root';
+import Inventory from '@pages/Inventory';
 import ProtectedRoute from '@components/ProtectedRoute';
+import '@styles/styles.css';
+import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
+
 import "@fontsource/montserrat/300.css";
 import "@fontsource/montserrat/400.css";
-import "@fontsource/montserrat/500.css";
+import "@fontsource/montserrat/500.css";  
 import "@fontsource/montserrat/700.css";
-import '@styles/styles.css';
+
+const theme = createTheme({
+  typography: {
+    fontFamily: 'Montserrat, sans-serif',
+  },
+});
 
 const router = createBrowserRouter([
   {
@@ -25,21 +34,25 @@ const router = createBrowserRouter([
         element: <Home/>
       },
       {
+        path: '/inventory',
+        element: <Inventory/>
+      },
+      {
         path: '/users',
         element: (
-        <ProtectedRoute allowedRoles={['administrador']}>
-          <Users />
-        </ProtectedRoute>
+          <ProtectedRoute allowedRoles={['administrador']}>
+            <Users />
+          </ProtectedRoute>
         ),
-    },
-    {
-      path: '/dishes', // Ruta para DishesPage
-      element: (
-        <ProtectedRoute allowedRoles={['administrador']}> 
-          <Dishes/>
-        </ProtectedRoute>
-      ),
-    }
+      },
+      {
+        path: '/dishes', // Ruta para DishesPage
+        element: (
+          <ProtectedRoute allowedRoles={['administrador']}> 
+            <Dishes/>
+          </ProtectedRoute>
+        ),
+      }
     ]
   },
   {
@@ -53,5 +66,8 @@ const router = createBrowserRouter([
 ])
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <RouterProvider router={router}/>
-)
+  <ThemeProvider theme={theme}>
+    <CssBaseline />
+    <RouterProvider router={router}/>
+  </ThemeProvider>
+);

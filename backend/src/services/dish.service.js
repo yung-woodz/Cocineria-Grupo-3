@@ -1,45 +1,65 @@
 "use strict";
 import Dish from "../entity/dish.entity.js";
+import Product from "../entity/product.entity.js"; 
 import { AppDataSource } from "../config/configDb.js";
-import { getProductsService } from "./product.service.js";
-
 
 export async function createDishService(body) {
     try {
-
-        //normal
         const dishRepository = AppDataSource.getRepository(Dish);
-    
-        const newDish = dishRepository.create(body);
+
+        const newDish = dishRepository.create({
+            ...body,
+            requiredProducts: body.requiredProducts,
+        });
         
         await dishRepository.save(newDish);
     
         return [newDish, null];
-            
-        }catch (error){
-            console.error("Error al crear el Platillo:", error);
-            return [null, "Error interno del servidor"];
-        }
-    
+    } catch (error) {
+        console.error("Error al crear el Platillo:", error);
+        return [null, "Error interno del servidor"];
+    }
 }
+
+
 export async function getDishService(query) {
     try {
-        const { Nombre, id,} = query;
-
         const dishRepository = AppDataSource.getRepository(Dish);
+        const { Nombre, id } = query;
 
         const dishFound = await dishRepository.findOne({
-            where: [{ Nombre: Nombre }, { id: id },],
+            where: [{ Nombre: Nombre }, { id: id }],
         });
 
         if (!dishFound) return [null, "Platillo no encontrado"];
 
+        const productRepository = AppDataSource.getRepository(Product);
+        const requiredProducts = dishFound.requiredProducts;
+
+        let isAvailable = true;
+
+        for (const item of requiredProducts) {
+            const product = await productRepository.findOne({
+                where: { name: item.name },
+            });
+            if (!product || product.quantity < item.quantity) {
+                isAvailable = false;
+                break;
+            }
+        }
+
+        if (dishFound.isAvailable !== isAvailable) {
+            dishFound.isAvailable = isAvailable;
+            await dishRepository.save(dishFound);
+        }
+
         return [dishFound, null];
     } catch (error) {
-        console.error("Error obtener el Platillo:", error);
+        console.error("Error al obtener el Platillo:", error);
         return [null, "Error interno del servidor"];
     }
 }
+
 
 export async function getDishesService() {
     try {

@@ -42,7 +42,7 @@ export const productValidation = Joi.object({
         }),
     quantity: Joi.number()
         .integer()
-        .positive()
+        .min(0)
         .messages({
             "number.base": "La cantidad debe ser un número.",
             "number.integer": "La cantidad debe ser un número entero.",
