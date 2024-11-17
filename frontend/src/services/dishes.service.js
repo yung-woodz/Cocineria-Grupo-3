@@ -25,7 +25,9 @@ export async function getDish(query) {
 
 export async function createDish(dishData) {
     try {
-        const { data } = await axios.post('/dish', dishData); 
+        console.log('Datos enviados a /dish:', dishData);
+        const { data } = await axios.post('http://localhost:3000/api/dish/dish', dishData); 
+        console.log('Respuesta del servidor:', data);
         return data;
     } catch (error) {
         console.error('Error al crear el platillo:', error);
