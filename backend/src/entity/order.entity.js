@@ -23,13 +23,9 @@ const OrderSchema = new EntitySchema({
             type: "varchar",
             length: 255,
         },
-        total: {
-            type: "int",
-            nullable: false,
-        },
         status: {
             type: "varchar",
-            length: 50,
+            enum: ["En progreso", "Cancelado", "Entregado"],
             nullable: false,
         },
         createdAt: {
