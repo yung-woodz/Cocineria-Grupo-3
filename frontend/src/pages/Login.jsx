@@ -41,9 +41,6 @@ const Login = () => {
                         minLength: 15,
                         maxLength: 30,
                         errorMessageData: errorEmail,
-                        validate: {
-                            emailDomain: (value) => value.endsWith('@gmail.cl') || 'El correo debe terminar en @gmail.cl'
-                        },
                         onChange: (e) => handleInputChange('email', e.target.value),
                     },
                     {

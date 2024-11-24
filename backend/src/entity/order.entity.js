@@ -27,6 +27,7 @@ const OrderSchema = new EntitySchema({
             type: "varchar",
             enum: ["En progreso", "Cancelado", "Entregado"],
             nullable: false,
+            default: "En progreso",
         },
         createdAt: {
             type: "timestamp with time zone",

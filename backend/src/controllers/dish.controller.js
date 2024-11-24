@@ -37,21 +37,20 @@ export  async function createDish(req, res) {
 
 export async function getDish(req, res) {
     try {
-        const { Nombre, id,} = req.query;
+        const { Nombre, id } = req.query;
 
-        const { error } = dishQueryValidation.validate({ Nombre, id,});
-
+        const { error } = dishQueryValidation.validate({ Nombre, id });
         if (error) return handleErrorClient(res, 400, error.message);
 
-        const [dish, errorDish] = await getDishService({ Nombre, id, });
-
+        const [dish, errorDish] = await getDishService({ Nombre, id });
         if (errorDish) return handleErrorClient(res, 404, errorDish);
 
-        handleSuccess(res, 200, "Platillos encontrado", dish);
+        handleSuccess(res, 200, "Platillo encontrado", dish);
     } catch (error) {
-    handleErrorServer(res, 500, error.message);
+        handleErrorServer(res, 500, error.message);
     }
 }
+
 
 export async function getDishes(req, res) {
     try {

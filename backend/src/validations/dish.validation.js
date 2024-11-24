@@ -71,8 +71,51 @@ export const dishBodyValidation = Joi.object({
             "number.positive": "El tiempo de espera debe ser un número positivo.",
             "number.min": "El tiempo de espera debe ser al menos 1 minuto.",
             "number.max": "El tiempo de espera no puede exceder los 180 minutos.",
-        })
+        }),
+        precio: Joi.number()
+        .positive()
+        .messages({
+            "number.base": "El precio debe ser un número.",
+            "number.positive": "El precio debe ser un número positivo.",
+        }),
+    imagen: Joi.string()
+        .uri()
+        .messages({
+            "string.base": "La imagen debe ser de tipo string.",
+            "string.uri": "La imagen debe ser una URL válida.",
+        }),
+    requiredProducts: Joi.array().items(
+        Joi.object({
+            name: Joi.string()
+                .min(2)
+                .max(50)
+                .required()
+                .messages({
+                    "string.empty": "El nombre del producto no puede estar vacío.",
+                    "string.base": "El nombre del producto debe ser de tipo texto.",
+                    "string.min": "El nombre del producto debe tener al menos 2 caracteres.",
+                    "string.max": "El nombre del producto no puede exceder los 50 caracteres.",
+                    "any.required": "El nombre del producto es obligatorio.",
+                }),
+            quantity: Joi.number()
+                .integer()
+                .positive()
+                .required()
+                .messages({
+                    "number.base": "La cantidad debe ser un número.",
+                    "number.integer": "La cantidad debe ser un número entero.",
+                    "number.positive": "La cantidad debe ser un número positivo.",
+                    "any.required": "La cantidad del producto es obligatoria.",
+                })
+            })
+        
+    ).min(1)
+    .messages({
+    "array.base": "requiredProducts debe ser una lista de productos.",
+    "array.min": "Debe haber al menos un producto en requiredProducts.",
+    })
 })
+
     .or("Nombre","Ingredientes")
     .unknown(false)
     .messages({
