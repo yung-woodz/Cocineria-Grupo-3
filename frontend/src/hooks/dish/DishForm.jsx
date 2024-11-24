@@ -149,18 +149,6 @@ const DishForm = ({ onSubmit }) => {
                         <MenuItem value="no disponible">No Disponible</MenuItem>
                     </TextField>
                 </Grid>
-                <Grid item xs={12}>
-                    <FormControlLabel
-                        control={
-                            <Checkbox
-                                name="isAvailable"
-                                checked={form.isAvailable}
-                                onChange={handleChange}
-                            />
-                        }
-                        label="Disponible"
-                    />
-                </Grid>
                 <Grid item xs={12} display="flex" justifyContent="center">
                     <Button type="submit" variant="contained" color="primary" sx={{ minWidth: 150 }}>
                         Guardar Platillo

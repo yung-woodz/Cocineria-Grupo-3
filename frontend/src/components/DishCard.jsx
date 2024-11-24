@@ -7,7 +7,7 @@ const DishCard = ({ dish, onDelete, onEdit }) => {
             <CardMedia
                 component="img"
                 height="140"
-                image={dish.imagen} // URL de la imagen desde el backend
+                image={dish.imagen} 
                 alt={dish.Nombre}
             />
             <CardContent>
@@ -18,7 +18,7 @@ const DishCard = ({ dish, onDelete, onEdit }) => {
                     {dish.descripcion}
                 </Typography>
                 <Typography variant="body2" color="text.primary" fontWeight="bold" mt={1}>
-                    Precio: {dish.precio}
+                    Precio: ${dish.precio}
                 </Typography>
                 <Typography variant="body2" color="text.primary" fontWeight="bold">
                     Tiempo de Espera: {dish.tiempoDeEspera} min

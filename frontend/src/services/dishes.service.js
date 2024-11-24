@@ -73,6 +73,6 @@ export async function deleteDish(query) {
         return data.data;
     } catch (error) {
         console.error("Error al eliminar el platillo:", error);
-        return error.response.data;
+        return { error: error.response?.data || "Error desconocido" };
     }
 }

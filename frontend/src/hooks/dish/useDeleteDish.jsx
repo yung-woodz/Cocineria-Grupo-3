@@ -8,15 +8,15 @@ const useDeleteDish = (fetchDishes, setDataDish) => {
                 const result = await deleteDataAlert();
                 if (result.isConfirmed) {
                     for (const id of dataDishIds) {
-                        const response = await deleteDish(id);
+                        const response = await deleteDish({ id });
                         if (response.status === 'Client error') {
                             showErrorAlert('Error', response.details);
                             return;
                         }
                     }
                     showSuccessAlert('¡Eliminado!','El Platillo ha sido eliminados correctamente.');
-                    await fetchProducts();
-                    setDataProduct([]);
+                    await fetchDishes();
+                    setDataDish([]);
                 } else {
                     showErrorAlert('Cancelado', 'La operación ha sido cancelada.');
                 }
