@@ -3,7 +3,7 @@ import { getDishes } from "@services/dishes.service.js";
 
 
 const useGetDishes = () => {
-    const [dishes, setDishes] = useState([]);
+    const [dishes, setDishes, ] = useState([]);
     
     const fetchDishes = async () => {
         try {

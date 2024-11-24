@@ -9,7 +9,11 @@ export async function getDishes() {
         return formattedData;
     } catch (error) {
         console.error("Error al obtener los platillos:", error);
-        return error.response.data;
+        return {
+            error: true,
+            message: "No se pudieron obtener los platillos. Intenta más tarde.",
+            details: error.response?.data || "Error desconocido",
+        };
     }
 }
 
@@ -37,11 +41,18 @@ export async function createDish(dishData) {
 
 export async function updateDish(dishData, query) {
     try {
-        const { data } = await axios.patch(`/dish/detail`, dishData, { params: query });
+        const { data } = await axios.patch(`/dish/detail`, dishData, {
+            params: { id: query.id || query.Nombre }, // Solo identificador en la query string
+            headers: { "Content-Type": "application/json" }, // Asegura formato JSON
+        });
         return data.data;
     } catch (error) {
         console.error("Error al actualizar el platillo:", error);
-        return error.response.data;
+        return {
+            error: true,
+            message: "No se pudo actualizar el platillo. Intenta más tarde.",
+            details: error.response?.data || "Error desconocido",
+        };
     }
 }
 

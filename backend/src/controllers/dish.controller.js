@@ -62,11 +62,7 @@ export async function getDishes(req, res) {
             ? handleSuccess(res, 204)
             : handleSuccess(res, 200, "Platillos encontrados", dishes);
     } catch (error) {
-        handleErrorServer(
-            res,
-            500,
-            error.message,
-        );
+        handleErrorServer(res,500, error.message,);
     }
 }
 
@@ -75,28 +71,22 @@ export async function updateDish(req, res) {
         const { Nombre, id,} = req.query;
         const { body } = req;
 
+        if (typeof body.disponibilidad === "boolean") {
+            body.disponibilidad = body.disponibilidad ? "disponible" : "no disponible";
+        }
+
         const { error: queryError } = dishQueryValidation.validate({
             Nombre,
             id,
         });
 
         if (queryError) {
-            return handleErrorClient(
-            res,
-            400,
-            "Error de validación en la consulta",
-            queryError.message,
-        );
+            return handleErrorClient(res,400,"Error de validación en la consulta",queryError.message,);
         }
         const { error: bodyError } = dishBodyValidation.validate(body);
 
         if (bodyError)
-            return handleErrorClient(
-            res,
-            400,
-            "Error de validación en los datos enviados",
-            bodyError.message,
-            );
+            return handleErrorClient(res,400,"Error de validación en los datos enviados",bodyError.message,);
 
         const [dish, dishError] = await updateDishesService({ Nombre, id }, body);
 
@@ -118,12 +108,7 @@ export async function deleteDish(req, res) {
         });
         
         if (queryError) {
-            return handleErrorClient(
-            res,
-            400,
-            "Error de validación en la consulta",
-            queryError.message,
-        );
+            return handleErrorClient(res, 400, "Error de validación en la consulta",queryError.message,);
         }
         
         const [dishDelete, errorDishDelete] = await deleteDishService({

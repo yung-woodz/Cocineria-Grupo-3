@@ -14,12 +14,24 @@ export function formatUserData(user) {
 export function formatDishData(dish) {
     return {
         id: dish.id,
-        nombre: startCase(dish.Nombre),
-        requiredProducts: dish.requiredProducts ? dish.requiredProducts.split(',').map(prod => prod.trim()) : [],
+        Nombre: startCase(dish.Nombre),
+        requiredProducts: (() => {
+            if (Array.isArray(dish.requiredProducts)) {
+                return dish.requiredProducts;
+            }
+            if (typeof dish.requiredProducts === "string") {
+                try {
+                    return JSON.parse(dish.requiredProducts); // Parsear como JSON si es posible
+                } catch {
+                    return [dish.requiredProducts]; // Si no, convertir a arreglo
+                }
+            }
+            return []; // Si no es válido, devolver un arreglo vacío
+        })(),
         disponibilidad: startCase(dish.disponibilidad),
         descripcion: dish.descripcion || 'Sin descripción',
-        tiempoDeEspera: dish.tiempoDeEspera ? `${dish.tiempoDeEspera} minutos` : 'No especificado',
-        precio: dish.precio ? `$${dish.precio}` : 'No especificado',  // Formatea el precio
+        tiempoDeEspera: dish.tiempoDeEspera || 0,
+        precio: dish.precio || 0,  
         imagen: dish.imagen || '',  // Usa la URL de la imagen o un string vacío si no está disponible
         createdAt: formatTempo(dish.createdAt, "DD-MM-YYYY"),
         updatedAt: formatTempo(dish.updatedAt, "DD-MM-YYYY")

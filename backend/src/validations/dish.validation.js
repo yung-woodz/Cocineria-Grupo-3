@@ -27,17 +27,6 @@ export const dishQueryValidation = Joi.object({
     });
 
 export const dishBodyValidation = Joi.object({
-    Ingredientes: Joi.string()
-        .min(15)
-        .max(200)
-        .pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)
-        .messages({
-            "string.empty": "Los Ingredientes no pueden estar vacíos.",
-            "string.base": "Los Ingredientes deben ser de tipo texto.",
-            "string.min": "Los Ingredientes deben tener como mínimo 15 caracteres.",
-            "string.max": "Los Ingredientes deben tener como máximo 200 caracteres.",
-            "string.pattern.base": "Los Ingredientes solo pueden contener letras y espacios.",
-        }),
     Nombre: Joi.string()
         .min(10)
         .max(50)
@@ -49,10 +38,10 @@ export const dishBodyValidation = Joi.object({
             "string.max": "El nombre del platillo debe tener como máximo 50 caracteres.",
             "string.pattern.base":"El nombre del platillo solo puede contener letras y espacios.",
         }),
-        descripcion: Joi.string()
+    descripcion: Joi.string()
         .min(10)
         .max(500)
-        .pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)
+        .pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s.,-]+$/)
         .messages({
             "string.pattern.base":"La descripcion solo puede contener letras y espacios.",
             "string.empty": "La descripción no puede estar vacía.",
@@ -72,7 +61,13 @@ export const dishBodyValidation = Joi.object({
             "number.min": "El tiempo de espera debe ser al menos 1 minuto.",
             "number.max": "El tiempo de espera no puede exceder los 180 minutos.",
         }),
-        precio: Joi.number()
+    requiredProducts: Joi.array()
+        .items(Joi.string())
+        .messages({
+            "array.base": "Los productos requeridos deben ser un arreglo.",
+            "string.base": "Cada producto debe ser de tipo string.",
+        }),
+    precio: Joi.number()
         .positive()
         .messages({
             "number.base": "El precio debe ser un número.",
@@ -83,7 +78,14 @@ export const dishBodyValidation = Joi.object({
         .messages({
             "string.base": "La imagen debe ser de tipo string.",
             "string.uri": "La imagen debe ser una URL válida.",
-        })
+        }),
+    disponibilidad: Joi.string()
+        .messages({
+        "boolean.base": "La disponibilidad debe ser verdadera (true) o falsa (false).",
+    }),
+    isAvailable: Joi.boolean().messages({
+        "boolean.base": "El estado de disponibilidad debe ser verdadero o falso.",
+    }),
 })
     .or("Nombre","Ingredientes")
     .unknown(false)
