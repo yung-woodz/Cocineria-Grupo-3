@@ -2,6 +2,7 @@ import { useState } from "react";
 import Swal from "sweetalert2";
 import { createOrder } from "../services/order.service";
 import "@styles/order.css";
+
 const Order = () => {
     const [orderData, setOrderData] = useState({
         customer: "",
@@ -50,7 +51,7 @@ const Order = () => {
                     <label>Cliente:</label>
                     <input
                         type="text"
-                        name="customer"
+                        name="Cliente"
                         value={orderData.customer}
                         onChange={handleChange}
                     />
@@ -94,7 +95,7 @@ const Order = () => {
                     />
                 </div>
                 <button type="submit" disabled={loading}>
-                    {loading ? "Creando..." : "Crear Orden"}
+                    {loading ? "Creando..." : "Crear orden"}
                 </button>
             </form>
         </div>

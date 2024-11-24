@@ -1,5 +1,7 @@
 import Table from "../components/Table";
 import useGetOrders from "../hooks/order/useGetOrders";
+import DeleteIcon from "../assets/deleteIcon.svg";
+import DeleteIconDisable from "../assets/deleteIconDisabled.svg";
 import useDeleteOrder from "../hooks/order/useDeleteOrder";
 
 const Allorders = () => {
@@ -23,6 +25,15 @@ const { handleDelete } = useDeleteOrder(fetchOrders, setOrders);
             <div className='table-container'>
                 <div className='top-table'>
                     <h1 className='title-table'>Ordenes</h1>
+                    <div className='filter-actions'>
+                        <button className='delete-user-button' disabled={orders.length === 0} onClick={() => handleDelete(orders)}>
+                            {orders.length === 0 ? (
+                                <img src={DeleteIconDisable} alt="delete-disabled" />
+                            ) : (
+                                <img src={DeleteIcon} alt="delete" />
+                            )}
+                        </button>
+                    </div>
                 </div>
                 <Table
                     columns={columns}
