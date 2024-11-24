@@ -15,7 +15,7 @@ router
     .use(authenticateJwt)
 
 router
-    .get("/", rolAuth(["mesero","cocinero", "jefeCocina", "administrador"]), getOrders) //Obtener todas las ordenes
+    .get("/all", rolAuth(["mesero","cocinero", "jefeCocina", "administrador"]), getOrders) //Obtener todas las ordenes
     .post("/", rolAuth(["mesero", "jefeCocina", "administrador"]), createOrder) //Crear una orden
     .patch("/:id", rolAuth(["mesero","cocinero", "jefeCocina", "administrador"]), updateOrder) //Actualizar una orden
     .delete("/:id", rolAuth(["mesero", "jefeCocina", "administrador"]), deleteOrder); //Eliminar una orden

@@ -48,6 +48,30 @@ const Navbar = () => {
                 <ul>
                     <li>
                         <NavLink 
+                            to="/order" 
+                            onClick={() => { 
+                                setMenuOpen(false); 
+                                addActiveClass();
+                            }} 
+                            activeClassName="active"
+                        >
+                            Crear orden
+                        </NavLink>
+                    </li>
+                    <li>
+                        <NavLink
+                            to="/order/all"
+                            onClick={() => {
+                                setMenuOpen(false);
+                                addActiveClass();
+                            }}
+                            activeClassName="active"
+                        >
+                            Historial de ordenes
+                        </NavLink>
+                    </li>
+                    <li>
+                        <NavLink 
                             to="/home" 
                             onClick={() => { 
                                 setMenuOpen(false); 
