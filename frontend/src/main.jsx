@@ -6,6 +6,7 @@ import Users from '@pages/Users';
 import Register from '@pages/Register';
 import Error404 from '@pages/Error404';
 import Root from '@pages/Root';
+import Notifications from './pages/Notifications';
 import ProtectedRoute from '@components/ProtectedRoute';
 import '@styles/styles.css';
 
@@ -22,11 +23,19 @@ const router = createBrowserRouter([
       {
         path: '/users',
         element: (
-        <ProtectedRoute allowedRoles={['administrador']}>
+        <ProtectedRoute allowedRoles={['administrador', 'jefeCocina']}>
           <Users />
         </ProtectedRoute>
         ),
-    }
+      },
+      {
+        path: '/notifications',
+        element: (
+          <ProtectedRoute allowedRoles={['administrador', 'jefeCocina']}>
+            <Notifications />
+          </ProtectedRoute>
+        ),
+      }
     ]
   },
   {
