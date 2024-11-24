@@ -26,16 +26,27 @@ export async function getDish(query) {
         return error.response.data;
     }
 }
-
+// revisar bien esto :
 export async function createDish(dishData) {
     try {
         console.log('Datos enviados a /dish:', dishData);
-        const { data } = await axios.post('http://localhost:3000/api/dish/dish', dishData); 
+        const { data } = await axios.post('http://localhost:3000/api/dish/dish', dishData);
         console.log('Respuesta del servidor:', data);
         return data;
     } catch (error) {
-        console.error('Error al crear el platillo:', error);
-        return { error: error.response.data };
+        if (error.response) {
+            // Errores enviados por el servidor (código 400 o 500)
+            console.error('Error al crear el platillo:', error.response.data);
+            return { error: error.response.data };
+        } else if (error.request) {
+            // El servidor no respondió
+            console.error('No se recibió respuesta del servidor:', error.request);
+            return { error: { message: 'No se recibió respuesta del servidor.' } };
+        } else {
+            // Errores al configurar la solicitud
+            console.error('Error al configurar la solicitud:', error.message);
+            return { error: { message: error.message } };
+        }
     }
 }
 
