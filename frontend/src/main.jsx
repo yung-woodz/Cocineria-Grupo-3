@@ -7,6 +7,7 @@ import Register from '@pages/Register';
 import Error404 from '@pages/Error404';
 import Root from '@pages/Root';
 import Inventory from '@pages/Inventory';
+import CreateProduct from '@pages/createProduct';
 import ProtectedRoute from '@components/ProtectedRoute';
 import '@styles/styles.css';
 import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
       {
         path: '/inventory',
         element: <Inventory/>
+      },
+      {
+        path: '/inventory/create-product',
+        element: <CreateProduct />
       },
       {
         path: '/users',

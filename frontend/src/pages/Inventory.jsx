@@ -17,12 +17,14 @@ import {
     Button, 
     MenuItem, 
     Select, 
-    InputAdornment 
+    InputAdornment
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import SearchIcon from '@mui/icons-material/Search';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import { useNavigate } from 'react-router-dom';
 
 const Inventory = () => {
     const { products, fetchProducts } = useGetProducts();
@@ -32,6 +34,7 @@ const Inventory = () => {
     const [filterBy, setFilterBy] = useState('name'); 
     const [sortOrder, setSortOrder] = useState('asc'); 
     const rowsPerPage = 5;
+    const navigate = useNavigate();
     
     const { handleDelete } = useDeleteProduct(fetchProducts, setSelected);
 
@@ -154,16 +157,29 @@ const Inventory = () => {
                             {sortOrder === 'asc' ? <ArrowDropUpIcon style={{ color: '#fff' }} /> : <ArrowDropDownIcon style={{ color: '#fff' }} />}
                         </IconButton>
                     </Box>
-                    <IconButton
-                        onClick={handleDeleteSelected}
-                        disabled={selected.length === 0}
-                        aria-label="Eliminar seleccionados"
-                        style={{
-                            color: selected.length === 0 ? 'lightgray' : '#FF5722',
-                        }}
-                    >
-                        <DeleteIcon />
-                    </IconButton>
+    
+                    <Box display="flex" alignItems="center" gap={1}>
+                        <IconButton
+                            onClick={handleDeleteSelected}
+                            disabled={selected.length === 0}
+                            aria-label="Eliminar seleccionados"
+                            style={{
+                                color: selected.length === 0 ? 'lightgray' : '#FF5722',
+                            }}
+                        >
+                            <DeleteIcon />
+                        </IconButton>
+    
+                        <IconButton
+                            onClick={() => navigate('/inventory/create-product')}
+                            aria-label="Añadir producto"
+                            style={{
+                                color: '#4CAF50', // Color verde (puedes ajustar según sea necesario)
+                            }}
+                        >
+                            <AddCircleIcon />
+                        </IconButton>
+                    </Box>
                 </Box>
                 <Table>
                     <TableHead>
@@ -225,6 +241,7 @@ const Inventory = () => {
             </TableContainer>
         </Box>
     );
+    
 };
 
 export default Inventory;
