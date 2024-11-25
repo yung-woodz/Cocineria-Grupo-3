@@ -78,16 +78,39 @@ export const dishBodyValidation = Joi.object({
         .messages({
             "string.base": "La imagen debe ser de tipo string.",
             "string.uri": "La imagen debe ser una URL válida.",
-
         }),
-    disponibilidad: Joi.string()
-        .messages({
-        "boolean.base": "La disponibilidad debe ser verdadera (true) o falsa (false).",
-    }),
-    isAvailable: Joi.boolean().messages({
-        "boolean.base": "El estado de disponibilidad debe ser verdadero o falso.",
-    }),
+    requiredProducts: Joi.array().items(
+        Joi.object({
+            name: Joi.string()
+                .min(2)
+                .max(50)
+                .required()
+                .messages({
+                    "string.empty": "El nombre del producto no puede estar vacío.",
+                    "string.base": "El nombre del producto debe ser de tipo texto.",
+                    "string.min": "El nombre del producto debe tener al menos 2 caracteres.",
+                    "string.max": "El nombre del producto no puede exceder los 50 caracteres.",
+                    "any.required": "El nombre del producto es obligatorio.",
+                }),
+            quantity: Joi.number()
+                .integer()
+                .positive()
+                .required()
+                .messages({
+                    "number.base": "La cantidad debe ser un número.",
+                    "number.integer": "La cantidad debe ser un número entero.",
+                    "number.positive": "La cantidad debe ser un número positivo.",
+                    "any.required": "La cantidad del producto es obligatoria.",
+                })
+            })
+        
+    ).min(1)
+    .messages({
+    "array.base": "requiredProducts debe ser una lista de productos.",
+    "array.min": "Debe haber al menos un producto en requiredProducts.",
+    })
 })
+
     .or("Nombre","Ingredientes")
     .unknown(false)
     .messages({

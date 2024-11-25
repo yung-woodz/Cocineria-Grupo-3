@@ -28,10 +28,6 @@ const DishSchema = new EntitySchema({
             type: "int", 
             nullable: true 
         },
-        requiredProducts: {
-            type: "json", 
-            nullable: true,
-        },
         isAvailable: {
             type: "boolean",
             default: true,
@@ -57,6 +53,14 @@ const DishSchema = new EntitySchema({
             onUpdate: "CURRENT_TIMESTAMP",
             nullable: false,
         },
+    },
+    relations: {
+        requiredProducts: {
+            type: "one-to-many",
+            target: "DishProduct",
+            inverseSide: "dish",
+            cascade: true
+        }
     },
     indices: [
         {

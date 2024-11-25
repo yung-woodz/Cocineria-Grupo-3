@@ -48,6 +48,30 @@ const Navbar = () => {
                 <ul>
                     <li>
                         <NavLink 
+                            to="/order" 
+                            onClick={() => { 
+                                setMenuOpen(false); 
+                                addActiveClass();
+                            }} 
+                            activeClassName="active"
+                        >
+                            Crear orden
+                        </NavLink>
+                    </li>
+                    <li>
+                        <NavLink
+                            to="/order/all"
+                            onClick={() => {
+                                setMenuOpen(false);
+                                addActiveClass();
+                            }}
+                            activeClassName="active"
+                        >
+                            Historial de ordenes
+                        </NavLink>
+                    </li>
+                    <li>
+                        <NavLink 
                             to="/home" 
                             onClick={() => { 
                                 setMenuOpen(false); 
@@ -80,7 +104,7 @@ const Navbar = () => {
                             </li>
                         </>
                     )}
-                    {userRole === 'administrador' && (
+                    {(userRole === 'administrador' || userRole === 'jefeCocina') && (
                     <li>
                         <NavLink 
                             to="/users" 
@@ -91,6 +115,20 @@ const Navbar = () => {
                             activeClassName="active"
                         >
                             Usuarios
+                        </NavLink>
+                    </li>
+                    )}
+                    {(userRole === 'cocinero' || userRole === 'jefeCocina' || userRole === 'mesero' || userRole === 'administrador') && (
+                    <li>
+                        <NavLink 
+                            to="/order/orderByChef" 
+                            onClick={() => { 
+                                setMenuOpen(false); 
+                                addActiveClass();
+                            }} 
+                            activeClassName="active"
+                        >
+                            Notificaciones
                         </NavLink>
                     </li>
                     )}

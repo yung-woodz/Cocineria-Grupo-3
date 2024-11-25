@@ -62,49 +62,67 @@ export async function deleteProductService(id) {
 
 export async function updateProductService(query, body) {
   try {
-    const { id, name } = query;
+      const { id, name } = query;
 
-    const productRepository = AppDataSource.getRepository(Product);
+      const productRepository = AppDataSource.getRepository(Product);
 
-    const productFound = await productRepository.findOne({
-      where: [{ id: id }, { name: name }],
-    });
-
-    if (!productFound) return [null, "Producto no encontrado"];
-
-    if (body.name) {
-      const existingProduct = await productRepository.findOne({
-        where: { name: body.name },
+      const productFound = await productRepository.findOne({
+          where: [{ id: id }, { name: name }],
       });
 
-      if (existingProduct && existingProduct.id !== productFound.id) {
-        return [null, "Ya existe un producto con el mismo nombre"];
+      if (!productFound) return [null, "Producto no encontrado"];
+
+      if (body.name) {
+          const existingProduct = await productRepository.findOne({
+              where: { name: body.name },
+          });
+
+          if (existingProduct && existingProduct.id !== productFound.id) {
+              return [null, "Ya existe un producto con el mismo nombre"];
+          }
       }
-    }
 
-    const dataProductUpdate = {};
+      const dataProductUpdate = {};
 
-    if (body.name) dataProductUpdate.name = body.name;
-    if (body.type) dataProductUpdate.type = body.type;
-    if (body.quantity) dataProductUpdate.quantity = body.quantity;
-    if (body.entryDate) dataProductUpdate.entryDate = body.entryDate;
-    if (body.expirationDate) dataProductUpdate.expirationDate = body.expirationDate;
-    if (body.image) dataProductUpdate.image = body.image;
-    dataProductUpdate.updatedAt = new Date(); 
+      if (body.name) dataProductUpdate.name = body.name;
+      if (body.type) dataProductUpdate.type = body.type;
 
-    await productRepository.update({ id: productFound.id }, dataProductUpdate);
+      // Detectar si quantity es una resta
+      if (body.quantity) {
+          if (typeof body.quantity === "string" && body.quantity.startsWith("-")) {
+              const decrement = parseInt(body.quantity.slice(1), 10);
 
-    const productData = await productRepository.findOne({
-      where: { id: productFound.id },
-    });
+              // Verificar que el nuevo valor no sea menor a 0
+              if (productFound.quantity - decrement < 0) {
+                  return [null, "Cantidad insuficiente en inventario"];
+              }
 
-    if (!productData) {
-      return [null, "Producto no encontrado después de actualizar"];
-    }
+              // Aplicar el decremento si es válido
+              dataProductUpdate.quantity = productFound.quantity - decrement;
 
-    return [productData, null];
+          } else {
+              dataProductUpdate.quantity = body.quantity;
+          }
+      }
+
+      if (body.entryDate) dataProductUpdate.entryDate = body.entryDate;
+      if (body.expirationDate) dataProductUpdate.expirationDate = body.expirationDate;
+      if (body.image) dataProductUpdate.image = body.image;
+      dataProductUpdate.updatedAt = new Date();
+
+      await productRepository.update({ id: productFound.id }, dataProductUpdate);
+
+      const productData = await productRepository.findOne({
+          where: { id: productFound.id },
+      });
+
+      if (!productData) {
+          return [null, "Producto no encontrado después de actualizar"];
+      }
+
+      return [productData, null];
   } catch (error) {
-    console.error("Error al modificar un producto:", error);
-    return [null, "Error interno del servidor"];
+      console.error("Error al modificar un producto:", error);
+      return [null, "Error interno del servidor"];
   }
 }
