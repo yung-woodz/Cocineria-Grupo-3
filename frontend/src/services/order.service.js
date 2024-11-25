@@ -9,6 +9,24 @@ export const createOrder = async (orderData) => {
     }
 }
 
+/* export const getOrder = async (id) => {
+    try {
+        const response = await axios.get(`/order/order${id}`);
+        return response.data.data;
+    } catch (error) {
+        throw error.response.data;
+    }
+} */
+
+export const getOrdersByChef = async (id) => {
+    try{
+        const response = await axios.get(`/order/orderByChef?id=${id}`);
+        return response.data.data;
+    } catch (error){
+        throw error.response.data;
+    }
+}
+
 export const getOrders = async () => {
     try {
         const response = await axios.get("/order/all");

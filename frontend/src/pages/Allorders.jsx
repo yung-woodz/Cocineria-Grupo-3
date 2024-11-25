@@ -14,7 +14,8 @@ const Allorders = () => {
         { title: 'Numero de mesa', field: 'tableNumber', width: 200, responsive: 2 },
         { title: 'Descripcion', field: 'description', width: 150, responsive: 2 },
         { title: 'Estado', field: 'status', width: 200, responsive: 2 },
-        { title: 'Hora', field: 'date', width: 200, responsive: 2 },
+        /* { title: 'Hora', field: 'date', width: 200, responsive: 2 }, */
+        { title: 'Usuario', field: 'user.nombreCompleto', width: 200, responsive: 2 },
     ];
 
 const { handleDelete } = useDeleteOrder(fetchOrders, setOrders);

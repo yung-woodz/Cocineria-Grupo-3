@@ -9,19 +9,20 @@ export async function login(dataUser) {
             email: dataUser.email, 
             password: dataUser.password
         });
+
         const { status, data } = response;
         if (status === 200) {
-            const { nombreCompleto, email, rut, rol } = jwtDecode(data.data.token);
-            const userData = { nombreCompleto, email, rut, rol };
-            sessionStorage.setItem('usuario', JSON.stringify(userData));
+            const { id, nombreCompleto, email, rut, rol } = jwtDecode(data.data.token);
+            const userData = { id, nombreCompleto, email, rut, rol }; // Incluye el ID
+            sessionStorage.setItem('usuario', JSON.stringify(userData)); // Guarda el usuario completo
             axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
-            cookies.set('jwt-auth', data.data.token, {path:'/'});
-            return response.data
+            cookies.set('jwt-auth', data.data.token, { path: '/' });
+            return response.data;
         }
     } catch (error) {
         return error.response.data;
     }
-}
+}   
 
 export async function register(data) {
     try {

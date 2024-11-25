@@ -82,7 +82,7 @@ const Navbar = () => {
                             Inicio
                         </NavLink>
                     </li>
-                    {userRole === 'administrador' && (
+                    {(userRole === 'administrador' || userRole === 'jefeCocina') && (
                     <li>
                         <NavLink 
                             to="/users" 
@@ -96,24 +96,10 @@ const Navbar = () => {
                         </NavLink>
                     </li>
                     )}
-                    {userRole === 'jefeCocina' && (
+                    {(userRole === 'cocinero' || userRole === 'jefeCocina' || userRole === 'mesero' || userRole === 'administrador') && (
                     <li>
                         <NavLink 
-                            to="/users" 
-                            onClick={() => { 
-                                setMenuOpen(false); 
-                                addActiveClass();
-                            }} 
-                            activeClassName="active"
-                        >
-                            Usuarios
-                        </NavLink>
-                    </li>
-                    )}
-                    {(userRole === 'jefeCocina'/*  || userRole === 'administrador' */) && (
-                    <li>
-                        <NavLink 
-                            to="/notifications" 
+                            to="/order/orderByChef" 
                             onClick={() => { 
                                 setMenuOpen(false); 
                                 addActiveClass();

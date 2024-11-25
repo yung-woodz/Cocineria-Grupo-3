@@ -3,12 +3,14 @@ import {
     createOrderService,
     deleteOrderService,
     getOrderService,
+    getOrdersByChefService,
     getOrdersService,
     updateOrderService,
 } from "../services/order.service.js";
 import {
     orderBodyValidation,
     orderQueryValidation,
+    chefOrdersValidation,
 } from "../validations/order.validation.js";
 import {
     handleErrorClient,
@@ -29,6 +31,23 @@ export async function getOrder(req, res) {
         if (errorOrder) return handleErrorClient(res, 404, errorOrder);
 
         handleSuccess(res, 200, "Orden encontrada", order);
+    } catch (error) {
+        handleErrorServer(res, 500, error.message);
+    }
+}
+
+export async function getOrdersByChef(req, res) {
+    try {
+        const { id } = req.query; 
+
+        const { error } = chefOrdersValidation.validate({ id });
+        if (error) return handleErrorClient(res, 400, error.message);
+
+        const [orders, errorOrders] = await getOrdersByChefService({ userId: id });
+
+        if (errorOrders) return handleErrorClient(res, 404, errorOrders);
+
+        handleSuccess(res, 200, "Órdenes encontradas", orders);
     } catch (error) {
         handleErrorServer(res, 500, error.message);
     }

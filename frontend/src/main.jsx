@@ -7,6 +7,7 @@ import Register from '@pages/Register';
 import Error404 from '@pages/Error404';
 import Root from '@pages/Root';
 import Order from '@pages/Order';
+import Notifications from '@pages/Notifications';
 import Allorders from '@pages/Allorders';
 import ProtectedRoute from '@components/ProtectedRoute';
 import '@styles/styles.css';
@@ -30,17 +31,25 @@ const router = createBrowserRouter([
         ),
       },
       {
-      path: '/order',
-      element: (
+        path: '/order',
+        element: (
         <ProtectedRoute allowedRoles={['administrador', 'mesero']}>
           <Order />
         </ProtectedRoute>
-      ),
+        ),
+      },
+      {
+        path: '/order/orderByChef',
+        element: (
+        <ProtectedRoute allowedRoles={['administrador', 'mesero', 'cocinero', 'jefeCocina']}>
+          <Notifications />
+        </ProtectedRoute>
+        ),
       },
       {
         path: '/order/all',
         element: (
-          <ProtectedRoute allowedRoles={['administrador', 'mesero']}>
+          <ProtectedRoute allowedRoles={['administrador', 'mesero', 'cocinero', 'jefeCocina']}>
             <Allorders />
           </ProtectedRoute>
         ),

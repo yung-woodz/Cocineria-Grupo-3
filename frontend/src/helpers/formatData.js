@@ -5,6 +5,7 @@ import { format as formatTempo } from "@formkit/tempo";
 export function formatUserData(user) {
     return {
         ...user,
+        id: startCase(user.id),
         nombreCompleto: startCase(user.nombreCompleto),
         rol: startCase(user.rol),
         rut: formatRut(user.rut),

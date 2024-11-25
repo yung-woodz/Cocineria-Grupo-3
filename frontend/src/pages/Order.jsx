@@ -51,7 +51,7 @@ const Order = () => {
                     <label>Cliente:</label>
                     <input
                         type="text"
-                        name="Cliente"
+                        name="customer"
                         value={orderData.customer}
                         onChange={handleChange}
                     />
