@@ -14,7 +14,7 @@ const Order = () => {
     const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => { 
-        const { name, value } = e.target; // destructurando el evento para obtener el nombre y el valor del input
+        const { name, value } = e.target;
         setOrderData({ ...orderData, [name]: value });
     };
 
