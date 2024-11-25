@@ -69,7 +69,6 @@ const normalizeDish = (dish) => ({
         : JSON.parse(dish.requiredProducts || "[]"),
 });
 
-
 export async function getDishesService() {
     try {
         const dishRepository = AppDataSource.getRepository(Dish);

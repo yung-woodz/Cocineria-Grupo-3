@@ -13,13 +13,16 @@ export async function getProducts() {
 
 export async function createProduct(data) {
     try {
-        const response = await axios.post('/product/', data);
-        return response.data.data;
+        const response = await axios.post("/product/", data, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
+        return response.data;
     } catch (error) {
-        return error.response.data;
+        throw error;
     }
 }
-
 export async function updateProduct(data, id) {
     try {
         const response = await axios.patch(`/product/detail/?id=${id}`, data);
