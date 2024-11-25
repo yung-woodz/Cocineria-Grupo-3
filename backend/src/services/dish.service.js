@@ -60,6 +60,14 @@ export async function getDishService(query) {
     }
 }
 
+const normalizeDish = (dish) => ({
+    ...dish,
+    requiredProducts: Array.isArray(dish.requiredProducts)
+        ? dish.requiredProducts
+        : typeof dish.requiredProducts === "string"
+        ? [dish.requiredProducts]
+        : JSON.parse(dish.requiredProducts || "[]"),
+});
 
 export async function getDishesService() {
     try {
@@ -69,8 +77,7 @@ export async function getDishesService() {
 
         if (!dishes || dishes.length === 0) return [null, "No hay platillos"];
 
-        // Cambia dishesData por dishes
-        return [dishes, null]; // Devolvemos 'dishes' en lugar de 'dishesData'
+        return [dishes, null]; 
     } catch (error) {
         console.error("Error al obtener a los platillos:", error);
         return [null, "Error interno del servidor"];
@@ -103,7 +110,11 @@ export async function updateDishesService(query, body) {
 
         const dataDishUpdate = {
             Nombre: body.Nombre,
-            Ingredientes: body.Ingredientes,
+            requiredProducts: body.requiredProducts,  
+            descripcion: body.descripcion,
+            precio: body.precio,
+            tiempoDeEspera: body.tiempoDeEspera,
+            disponibilidad: body.disponibilidad,
             updatedAt: new Date(),
         };
 

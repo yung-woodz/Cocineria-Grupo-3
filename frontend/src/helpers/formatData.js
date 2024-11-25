@@ -11,6 +11,43 @@ export function formatUserData(user) {
         createdAt: formatTempo(user.createdAt, "DD-MM-YYYY")
     };
 }
+export function formatDishData(dish) {
+    return {
+        id: dish.id,
+        Nombre: startCase(dish.Nombre),
+        requiredProducts: (() => {
+            if (Array.isArray(dish.requiredProducts)) {
+                return dish.requiredProducts;
+            }
+            if (typeof dish.requiredProducts === "string") {
+                try {
+                    return JSON.parse(dish.requiredProducts); // Parsear como JSON si es posible
+                } catch {
+                    return [dish.requiredProducts]; // Si no, convertir a arreglo
+                }
+            }
+            return []; // Si no es válido, devolver un arreglo vacío
+        })(),
+        disponibilidad: startCase(dish.disponibilidad),
+        descripcion: dish.descripcion || 'Sin descripción',
+        tiempoDeEspera: dish.tiempoDeEspera || 0,
+        precio: dish.precio || 0,  
+        imagen: dish.imagen || '',  // Usa la URL de la imagen o un string vacío si no está disponible
+        createdAt: formatTempo(dish.createdAt, "DD-MM-YYYY"),
+        updatedAt: formatTempo(dish.updatedAt, "DD-MM-YYYY")
+    };
+}
+
+export function formatProductData(product) {
+    return {
+        ...product,
+        name: startCase(product.name),
+        type: startCase(product.type),
+        quantity: product.quantity,
+        entryDate: product.entryDate,
+        expirationDate: product.expirationDate
+    };
+}
 
 export function formatProductData(product) {
     return {

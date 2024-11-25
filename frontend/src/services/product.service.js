@@ -23,8 +23,6 @@ export async function createProduct(data) {
         throw error;
     }
 }
-
-
 export async function updateProduct(data, id) {
     try {
         const response = await axios.patch(`/product/detail/?id=${id}`, data);

@@ -26,6 +26,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useNavigate } from 'react-router-dom';
 
+
 const Inventory = () => {
     const { products, fetchProducts } = useGetProducts();
     const [page, setPage] = useState(0);
@@ -156,8 +157,7 @@ const Inventory = () => {
                         <IconButton onClick={toggleSortOrder} aria-label="Cambiar orden">
                             {sortOrder === 'asc' ? <ArrowDropUpIcon style={{ color: '#fff' }} /> : <ArrowDropDownIcon style={{ color: '#fff' }} />}
                         </IconButton>
-                    </Box>
-    
+                    </Box>    
                     <Box display="flex" alignItems="center" gap={1}>
                         <IconButton
                             onClick={handleDeleteSelected}
@@ -241,7 +241,6 @@ const Inventory = () => {
             </TableContainer>
         </Box>
     );
-    
 };
 
 export default Inventory;

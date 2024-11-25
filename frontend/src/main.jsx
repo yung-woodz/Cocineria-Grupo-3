@@ -3,6 +3,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Login from '@pages/Login';
 import Home from '@pages/Home';
 import Users from '@pages/Users';
+import Dishes from '@pages/Dishes';
+import CreateDishForm from '@pages/CreateDish';
 import Register from '@pages/Register';
 import Error404 from '@pages/Error404';
 import Root from '@pages/Root';
@@ -48,7 +50,23 @@ const router = createBrowserRouter([
             <Users />
           </ProtectedRoute>
         ),
-      }
+      },
+      {
+        path: '/dishes', // Ruta para DishesPage
+        element: (
+          <ProtectedRoute allowedRoles={['administrador']}> 
+            <Dishes/>
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/create-dish', // Nueva ruta para el formulario de creación
+        element: (
+          <ProtectedRoute allowedRoles={['administrador']}>
+            <CreateDishForm /> 
+          </ProtectedRoute>
+        ),
+      },
     ]
   },
   {

@@ -59,6 +59,28 @@ const Navbar = () => {
                         </NavLink>
                     </li>
                     {userRole === 'administrador' && (
+                        <>
+                            <li>
+                                <NavLink 
+                                    to="/create-dish" 
+                                    onClick={() => setMenuOpen(false)}
+                                    className={({ isActive }) => (isActive ? 'active' : '')}
+                                >
+                                    Crear Platillo
+                                </NavLink>
+                            </li>
+                            <li>
+                                <NavLink 
+                                    to="/dishes" 
+                                    onClick={() => setMenuOpen(false)}
+                                    className={({ isActive }) => (isActive ? 'active' : '')}
+                                >
+                                    Ver Platillos
+                                </NavLink>
+                            </li>
+                        </>
+                    )}
+                    {userRole === 'administrador' && (
                     <li>
                         <NavLink 
                             to="/users" 
