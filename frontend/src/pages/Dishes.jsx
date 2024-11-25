@@ -3,7 +3,6 @@ import useGetDishes from "../hooks/dish/useGetDishes";
 import useDeleteDish from "../hooks/dish/useDeleteDish";
 import DishCard from "../components/DishCard"; 
 import DishEditDialog  from "../components/DishEditDialog";
-import { updateDish } from "../services/dishes.service";
 
 import { Box, Grid, TextField, Select, MenuItem, IconButton, InputAdornment, Typography, Button } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
@@ -50,18 +49,6 @@ const DishesPage = () => {
         setSelectedDish(dish); 
         setShowEditDialog(true); 
     };
-    //agregat las alertas de cambio
-    const handleSave = async (updatedDish) => {
-        try {
-            await updateDish(updatedDish, { id: selectedDish.id });
-            await fetchDishes();
-            showSuccessAlert("¡Éxito!", "Los cambios se han guardado correctamente.");
-            setShowEditDialog(false)
-        } catch (error) {
-            console.error("Error al actualizar el platillo:", error);
-        }
-    };
-    
 
     return (
         <Box padding={2}>
@@ -125,7 +112,7 @@ const DishesPage = () => {
                 open={showEditDialog}
                 onClose={() => setShowEditDialog(false)} 
                 dishData={selectedDish} 
-                onSave={handleSave} 
+                fetchDishes={fetchDishes}
             />
         </Box>
     );

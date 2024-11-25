@@ -1,35 +1,55 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem } from "@mui/material";
+import { updateDish } from "../services/dishes.service";
+import { showSuccessAlert } from "../helpers/sweetAlert";
 
-
-export default function DishEditDialog({ open, onClose, dishData, onSave }) {
+export default function DishEditDialog({ open, onClose, dishData, fetchDishes }) {
+    //creo que hay otra manera de hacerlo que esto
     const [formData, setFormData] = useState({
-        Nombre: dishData?.Nombre || "",
-        descripcion: dishData?.descripcion || "",
-        precio: dishData?.precio || "",
-        tiempoDeEspera: dishData?.tiempoDeEspera || "",
-        disponibilidad: dishData?.disponibilidad || false,
-        requiredProducts: dishData?.requiredProducts?.join(", ") || "",
+        Nombre: "",
+        descripcion: "",
+        precio: "",
+        tiempoDeEspera: "",
+        disponibilidad: "disponible",
+        requiredProducts: "",
     });
-    
+
+    useEffect(() => {
+        if (dishData) {
+            setFormData({
+                Nombre: dishData.Nombre || "",
+                descripcion: dishData.descripcion || "",
+                precio: dishData.precio || "",
+                tiempoDeEspera: dishData.tiempoDeEspera || "",
+                disponibilidad: dishData.disponibilidad || "disponible",
+                requiredProducts: dishData.requiredProducts?.join(", ") || "",
+            });
+        }
+    }, [dishData]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevData) => ({
             ...prevData,
-            [name]: name === "disponibilidad" ? value === "true" : value, 
+            [name]: value,
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        const updatedDish = {
-            ...formData,
-            requiredProducts: formData.requiredProducts.split(",").map((p) => p.trim()), 
-        };
-        onSave(updatedDish);
+        try {
+            const updatedDish = {
+                ...formData,
+                requiredProducts: formData.requiredProducts.split(",").map((p) => p.trim()),
+            };
+            await updateDish(updatedDish, { id: dishData.id }); 
+            await fetchDishes(); 
+            onClose(); 
+        } catch (error) {
+            console.error("Error al actualizar el platillo:", error);
+        }
     };
-
+    // ingresar alguna advertencia o  o el edit de imagen
     return (
         <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
             <DialogTitle>Editar Platillo</DialogTitle>
