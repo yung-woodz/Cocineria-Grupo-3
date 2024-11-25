@@ -2,7 +2,6 @@
 
 import Product from "../entity/product.entity.js";
 import { AppDataSource } from "../config/configDb.js";
-import e from "express";
 
 export async function createProductService(productData) {
   try {
@@ -44,33 +43,15 @@ export async function getProductsService() {
   }
 }
 
-export async function updateProductService(id, productData) {
-  try {
-    const productRepository = AppDataSource.getRepository(Product);
-
-    const product = await productRepository.findOne(id);
-
-    if (!product) return [null, "Producto no encontrado"];
-
-    productRepository.merge(product, productData);
-    await productRepository.save(product);
-
-    return [product, null];
-  } catch (error) {
-    console.error("Error al actualizar producto:", error);
-    return [null, "Error interno del servidor"];
-  }
-}
-
 export async function deleteProductService(id) {
   try {
     const productRepository = AppDataSource.getRepository(Product);
 
-    const product = await productRepository.findOne(id);
+    const product = await productRepository.findOne({ where: { id } });
 
     if (!product) return [null, "Producto no encontrado"];
 
-    await productRepository.delete(id);
+    await productRepository.remove(product);
 
     return [product, null];
   } catch (error) {
@@ -79,20 +60,69 @@ export async function deleteProductService(id) {
   }
 }
 
-export async function updateProductquantityService(id, quantity) {
+export async function updateProductService(query, body) {
   try {
-    const productRepository = AppDataSource.getRepository(Product);
+      const { id, name } = query;
 
-    const product = await productRepository.findOne({ where: { id: id } });
+      const productRepository = AppDataSource.getRepository(Product);
 
-    if (!product) return [null, "Producto no encontrado"];
+      const productFound = await productRepository.findOne({
+          where: [{ id: id }, { name: name }],
+      });
 
-    product.quantity = quantity;
-    await productRepository.save(product);
+      if (!productFound) return [null, "Producto no encontrado"];
 
-    return [product, null];
+      if (body.name) {
+          const existingProduct = await productRepository.findOne({
+              where: { name: body.name },
+          });
+
+          if (existingProduct && existingProduct.id !== productFound.id) {
+              return [null, "Ya existe un producto con el mismo nombre"];
+          }
+      }
+
+      const dataProductUpdate = {};
+
+      if (body.name) dataProductUpdate.name = body.name;
+      if (body.type) dataProductUpdate.type = body.type;
+
+      // Detectar si quantity es una resta
+      if (body.quantity) {
+          if (typeof body.quantity === "string" && body.quantity.startsWith("-")) {
+              const decrement = parseInt(body.quantity.slice(1), 10);
+
+              // Verificar que el nuevo valor no sea menor a 0
+              if (productFound.quantity - decrement < 0) {
+                  return [null, "Cantidad insuficiente en inventario"];
+              }
+
+              // Aplicar el decremento si es válido
+              dataProductUpdate.quantity = productFound.quantity - decrement;
+
+          } else {
+              dataProductUpdate.quantity = body.quantity;
+          }
+      }
+
+      if (body.entryDate) dataProductUpdate.entryDate = body.entryDate;
+      if (body.expirationDate) dataProductUpdate.expirationDate = body.expirationDate;
+      if (body.image) dataProductUpdate.image = body.image;
+      dataProductUpdate.updatedAt = new Date();
+
+      await productRepository.update({ id: productFound.id }, dataProductUpdate);
+
+      const productData = await productRepository.findOne({
+          where: { id: productFound.id },
+      });
+
+      if (!productData) {
+          return [null, "Producto no encontrado después de actualizar"];
+      }
+
+      return [productData, null];
   } catch (error) {
-    console.error("Error al actualizar cantidad de producto:", error);
-    return [null, "Error interno del servidor"];
+      console.error("Error al modificar un producto:", error);
+      return [null, "Error interno del servidor"];
   }
 }

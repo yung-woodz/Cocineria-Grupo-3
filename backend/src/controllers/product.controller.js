@@ -8,8 +8,7 @@ import {
     getProductService,
     getProductsService,
     updateProductService,
-    deleteProductService,
-    updateProductquantityService
+    deleteProductService
 } from "../services/product.service.js";
 
 import {
@@ -73,32 +72,6 @@ export async function getProducts(req, res) {
     }
 }
 
-export async function updateProduct(req, res) {
-    try {
-        const { id } = req.params;
-        const { body } = req;
-
-        const { error } = productValidation.validate(body);
-        if (error) return handleErrorClient(res, 400, error.message);
-
-        const [product, errorProduct] = await getProductService(id);
-
-        if (errorProduct) return handleErrorClient(res, 404, errorProduct);
-
-        if (req.file) {
-            body.image = req.file.path;
-        }
-
-        const [updatedProduct, errorUpdate] = await updateProductService(id, body);
-
-        if (errorUpdate) return handleErrorClient(res, 400, errorUpdate);
-
-        handleSuccess(res, 200, "Producto actualizado", updatedProduct);
-    } catch (error) {
-        handleErrorServer(res, 500, error.message);
-    }
-}
-
 export async function deleteProduct(req, res) {
     try {
         const { id } = req.params;
@@ -111,33 +84,45 @@ export async function deleteProduct(req, res) {
 
         if (errorDelete) return handleErrorClient(res, 400, errorDelete);
 
-        handleSuccess(res, 200, "Producto eliminado", deletedProduct);
+        return handleSuccess(res, 200, "Producto eliminado", deletedProduct);
     } catch (error) {
-        handleErrorServer(res, 500, error.message);
+        return handleErrorServer(res, 500, error.message);
     }
 }
 
-export async function updateProductquantity(req, res) {
+export async function updateProduct(req, res) {
     try {
-        const { id } = req.params;
-        const { quantity } = req.body;
-
-        const [product, errorProduct] = await getProductService(id);
-
-        if (errorProduct) return handleErrorClient(res, 404, errorProduct);
-
-        const [updatedProduct, errorUpdate] = await updateProductquantityService(id, quantity);
-
-        if (errorUpdate) return handleErrorClient(res, 400, errorUpdate);
-
-        const response = {
-            product: updatedProduct,
-            notification: res.locals.notification || null,
-        };
-
-        handleSuccess(res, 200, "Cantidad del producto actualizada", response);
+      const { id } = req.params;
+      const { body } = req;
+  
+      if (!id) {
+        return handleErrorClient(
+          res,
+          400,
+          "Error de validación en la consulta",
+          "El id es requerido en la ruta"
+        );
+      }
+  
+      const { error: bodyError } = productValidation.validate(body, { presence: 'optional' });
+  
+      if (bodyError) {
+        return handleErrorClient(
+          res,
+          400,
+          "Error de validación en los datos enviados",
+          bodyError.message,
+        );
+      }
+  
+      const [product, productError] = await updateProductService({ id }, body);
+  
+      if (productError) {
+        return handleErrorClient(res, 400, "Error modificando el producto", productError);
+      }
+  
+      handleSuccess(res, 200, "Producto modificado correctamente", product);
     } catch (error) {
-        handleErrorServer(res, 500, error.message);
+      handleErrorServer(res, 500, error.message);
     }
-}
-
+  }
