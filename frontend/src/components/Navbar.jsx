@@ -55,7 +55,7 @@ const Navbar = () => {
                             }} 
                             activeClassName="active"
                         >
-                            Crear orden
+                            CrearO
                         </NavLink>
                     </li>
                     <li>
@@ -67,7 +67,7 @@ const Navbar = () => {
                             }}
                             activeClassName="active"
                         >
-                            Historial de ordenes
+                            HistorialO
                         </NavLink>
                     </li>
                     <li>
