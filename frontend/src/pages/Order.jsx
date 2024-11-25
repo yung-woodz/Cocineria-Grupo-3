@@ -14,7 +14,7 @@ const Order = () => {
     const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => { 
-        const { name, value } = e.target; // destructurando el evento para obtener el nombre y el valor del input
+        const { name, value } = e.target;
         setOrderData({ ...orderData, [name]: value });
     };
 
@@ -51,7 +51,7 @@ const Order = () => {
                     <label>Cliente:</label>
                     <input
                         type="text"
-                        name="Cliente"
+                        name="customer"
                         value={orderData.customer}
                         onChange={handleChange}
                     />
