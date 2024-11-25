@@ -17,7 +17,7 @@ export default function DishEditDialog({ open, onClose, dishData, onSave }) {
         const { name, value } = e.target;
         setFormData((prevData) => ({
             ...prevData,
-            [name]: name === "disponibilidad" ? value === "true" : value, // Manejo de booleanos
+            [name]: name === "disponibilidad" ? value === "true" : value, 
         }));
     };
 
@@ -25,7 +25,7 @@ export default function DishEditDialog({ open, onClose, dishData, onSave }) {
         e.preventDefault();
         const updatedDish = {
             ...formData,
-            requiredProducts: formData.requiredProducts.split(",").map((p) => p.trim()), // Convierte el texto en un arreglo
+            requiredProducts: formData.requiredProducts.split(",").map((p) => p.trim()), 
         };
         onSave(updatedDish);
     };

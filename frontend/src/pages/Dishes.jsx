@@ -12,15 +12,15 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import{showSuccessAlert} from "../helpers/sweetAlert";
 
 const DishesPage = () => {
-    const { dishes, fetchDishes,setDishes  } = useGetDishes();
+    const { dishes, fetchDishes } = useGetDishes();
     const [filter, setFilter] = useState("");
     const [filterBy, setFilterBy] = useState("Nombre");
     const [sortOrder, setSortOrder] = useState("asc");
 
-    const [selectedDish, setSelectedDish] = useState(null); // Platillo seleccionado para editar
-    const [showEditDialog, setShowEditDialog] = useState(false); // Control del diálogo de edición
+    const [selectedDish, setSelectedDish] = useState(null); 
+    const [showEditDialog, setShowEditDialog] = useState(false); 
 
-
+   //se va a delete
     const { handleDelete } = useDeleteDish(fetchDishes, () => {});
 
     const toggleSortOrder = () => {
@@ -44,11 +44,13 @@ const DishesPage = () => {
             }
         });
         
-    const handleEdit = (dish) => {
-        setSelectedDish(dish); // Establece el platillo seleccionado
-        setShowEditDialog(true); // Muestra el diálogo
-    };
 
+    //aca se realiza el edi deberia cambiarlo  al hook
+    const handleEdit = (dish) => {
+        setSelectedDish(dish); 
+        setShowEditDialog(true); 
+    };
+    //agregat las alertas de cambio
     const handleSave = async (updatedDish) => {
         try {
             await updateDish(updatedDish, { id: selectedDish.id });
@@ -113,17 +115,17 @@ const DishesPage = () => {
                     <Grid item xs={12} sm={6} md={4} key={dish.id}>
                         <DishCard
                             dish={dish}
-                            onEdit={() => handleEdit(dish)} // Pasa el platillo seleccionado para edición
-                            onDelete={() => handleDelete([dish.id])} // Lógica de eliminación
+                            onEdit={() => handleEdit(dish)} 
+                            onDelete={() => handleDelete([dish.id])} 
                         />
                     </Grid>
                 ))}
             </Grid>
             <DishEditDialog
                 open={showEditDialog}
-                onClose={() => setShowEditDialog(false)} // Cierra el diálogo
-                dishData={selectedDish} // Pasa los datos del platillo al diálogo
-                onSave={handleSave} // Guarda los cambios
+                onClose={() => setShowEditDialog(false)} 
+                dishData={selectedDish} 
+                onSave={handleSave} 
             />
         </Box>
     );

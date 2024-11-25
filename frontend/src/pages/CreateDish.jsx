@@ -13,17 +13,10 @@ const CreateDishForm = () => {
             precio: Number(newDish.precio),
         };
 
-        console.log("Enviando platillo al backend:", formattedDish);
 
         try {
             const response = await createDish(formattedDish);
-            console.log("Respuesta del backend:", response);
-
-            if (response.error) {
-                console.error("Error al crear el platillo:", response.message);
-            } else {
-                console.log("Platillo creado con éxito");
-            }
+            console.log("Platillo creado con éxito");
         } catch (error) {
             console.error("Error inesperado:", error.response?.data || error.message);
         }

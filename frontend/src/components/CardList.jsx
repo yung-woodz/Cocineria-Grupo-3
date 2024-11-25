@@ -1,7 +1,7 @@
 import React from 'react';
 import Grid from '@mui/material/Grid';
 import DishCard from './DishCard';
-import useGetDishes from '@hooks/useGetDishes'; // Importamos el hook
+import useGetDishes from '@hooks/useGetDishes'; 
 
 const DishCardList = () => {
     const { dishes, fetchDishes } = useGetDishes(); // Usamos el hook para obtener los datos
