@@ -14,7 +14,7 @@ export async function getDishes() {
 // revisar bien esto :
 export async function createDish(dishData) {
     try {
-        const { data } = await axios.post('http://localhost:3000/api/dish/dish', dishData);
+        const { data } = await axios.post('/dish/', dishData);
         return data;
     } catch (error) {
         console.log(error);
