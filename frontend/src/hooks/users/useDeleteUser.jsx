@@ -7,10 +7,12 @@ const useDeleteUser = (fetchUsers, setDataUser) => {
             try {
                 const result = await deleteDataAlert();
             if (result.isConfirmed) {
-                const response = await deleteUser(dataUser[0].rut);
+                for (const id of dataUser) {
+                    const response = await deleteUser({ id });
                 if(response.status === 'Client error') {
                     return showErrorAlert('Error', response.details);
                 }
+            }
                 showSuccessAlert('¡Eliminado!','El usuario ha sido eliminado correctamente.');
                 await fetchUsers();
                 setDataUser([]);

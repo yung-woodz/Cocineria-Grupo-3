@@ -10,12 +10,12 @@
     "preview": "vite preview --port=443"
   },
   "dependencies": {
-    "@emotion/react": "^11.13.3",
-    "@emotion/styled": "^11.13.0",
+    "@emotion/react": "^11.13.5",
+    "@emotion/styled": "^11.13.5",
     "@fontsource/montserrat": "^5.1.0",
     "@formkit/tempo": "^0.1.2",
     "@mui/icons-material": "^6.1.6",
-    "@mui/material": "^6.1.8",
+    "@mui/material": "^6.1.9",
     "@mui/styled-engine-sc": "^6.1.6",
     "axios": "^1.7.5",
     "js-cookie": "^3.0.5",

@@ -1,7 +1,14 @@
 import { useState } from "react";
 import Swal from "sweetalert2";
 import { createOrder } from "../services/order.service";
-import "@styles/Order.css";
+import {
+    Box,
+    Grid,
+    TextField,
+    Button,
+    Typography,
+    MenuItem,
+} from "@mui/material";
 
 const Order = () => {
     const [orderData, setOrderData] = useState({
@@ -11,7 +18,6 @@ const Order = () => {
         status: "En progreso",
         username: ""
     });
-    const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => { 
         const { name, value } = e.target;
@@ -20,11 +26,9 @@ const Order = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
 
         try {
             await createOrder(orderData);
-
             Swal.fire({
                 icon: "success",
                 title: "Orden creada",
@@ -38,68 +42,96 @@ const Order = () => {
             });
         }catch (error) {
             alert("Error al crear la orden" + error.message);
-        }finally {
-            setLoading(false);
         }
     };
 
     return (
-        <div className="request-container">
-            <h1>Crear Orden</h1>
-            <form onSubmit={handleSubmit}>
-                <div style={{ marginBottom: "15px" }}>
-                    <label>Cliente:</label>
-                    <input
-                        type="text"
+        <Box
+            component="form"
+            onSubmit={handleSubmit}
+            sx={{
+                padding: 10,
+                backgroundColor: "#fff",
+                borderRadius: 4,
+                boxShadow: 3,
+                maxWidth: 600,
+                margin: "100px auto",
+            }}
+        >
+            <Typography variant="h4" align="center" gutterBottom>
+                Crear Orden
+            </Typography>
+            <Grid container spacing={3}>
+                <Grid item xs={12}>
+                    <TextField
                         name="customer"
+                        label="Cliente"
+                        variant="outlined"
+                        fullWidth
                         value={orderData.customer}
                         onChange={handleChange}
                     />
-                </div>
-                <div style={{ marginBottom: "15px" }}>
-                    <label>Número de mesa:</label>
-                    <input
-                        type="text"
+                </Grid>
+                <Grid item xs={12}>
+                    <TextField
                         name="tableNumber"
+                        label="Número de mesa"
+                        variant="outlined"
+                        fullWidth
                         value={orderData.tableNumber}
                         onChange={handleChange}
                     />
-                </div>
-                <div style={{ marginBottom: "15px" }}>
-                    <label>Descripción:</label>
-                    <textarea
+                </Grid>
+                <Grid item xs={12}>
+                    <TextField
                         name="description"
+                        label="Descripción"
+                        variant="outlined"
+                        fullWidth
                         value={orderData.description}
                         onChange={handleChange}
                     />
-                </div>
-                <div style={{ marginBottom: "15px" }}>
-                    <label>Estado:</label>
-                    <select
+                </Grid>
+                <Grid item xs={12}>
+                    <TextField
                         name="status"
+                        label="Estado"
+                        select
+                        variant="outlined"
+                        fullWidth
                         value={orderData.status}
                         onChange={handleChange}
+                        required
                     >
-                        <option value="En progreso">En progreso</option>
-                        <option value="Cancelado">Cancelado</option>
-                        <option value="Entregado">Entregado</option>
-                    </select>
-                </div>
-                <div style={{ marginBottom: "15px" }}>
-                    <label>Cocinero:</label>
-                    <input
-                        type="text"
+                        <MenuItem value="En progreso">En progreso</MenuItem>
+                        <MenuItem value="Completado">Completado</MenuItem>
+                        <MenuItem value="Cancelado">Cancelado</MenuItem>
+                    </TextField>
+                    
+                </Grid>
+                <Grid item xs={12}>
+                    <TextField
                         name="username"
+                        label="Usuario"
+                        variant="outlined"
+                        fullWidth
                         value={orderData.username}
                         onChange={handleChange}
                     />
-                </div>
-                <button type="submit" disabled={loading}>
-                    {loading ? "Creando..." : "Crear orden"}
-                </button>
-            </form>
-        </div>
+                </Grid>
+                <Grid item xs={12}>
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        fullWidth
+                    >
+                        Crear Orden
+                    </Button>
+                </Grid>
+            </Grid>
+        </Box>
     );
-}    
+}
 
 export default Order;
