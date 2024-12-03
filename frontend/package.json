@@ -15,7 +15,7 @@
     "@fontsource/montserrat": "^5.1.0",
     "@formkit/tempo": "^0.1.2",
     "@mui/icons-material": "^6.1.6",
-    "@mui/material": "^6.1.6",
+    "@mui/material": "^6.1.8",
     "@mui/styled-engine-sc": "^6.1.6",
     "axios": "^1.7.5",
     "js-cookie": "^3.0.5",
@@ -28,7 +28,8 @@
     "react-tabulator": "^0.21.0",
     "rut.js": "^2.1.0",
     "styled-components": "^6.1.13",
-    "sweetalert2": "^11.6.13"
+    "sweetalert2": "^11.6.13",
+    "react-dropzone": "^14.3.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",

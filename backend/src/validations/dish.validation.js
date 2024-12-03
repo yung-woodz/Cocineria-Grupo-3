@@ -97,6 +97,7 @@ export const dishBodyValidation = Joi.object({
         .messages({
             "string.base": "La imagen debe ser de tipo string.",
             "string.uri": "La imagen debe ser una URL válida.",
+
         }),
     disponibilidad: Joi.string()
         .messages({
