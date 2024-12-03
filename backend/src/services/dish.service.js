@@ -69,7 +69,6 @@ const normalizeDish = (dish) => ({
         : JSON.parse(dish.requiredProducts || "[]"),
 });
 
-
 export async function getDishesService() {
     try {
         const dishRepository = AppDataSource.getRepository(Dish);
@@ -88,50 +87,52 @@ export async function getDishesService() {
 
 export async function updateDishesService(query, body) {
     try {
-        const { Nombre, id } = query;
-
         const dishRepository = AppDataSource.getRepository(Dish);
+        const productRepository = AppDataSource.getRepository(Product);
 
         const dishFound = await dishRepository.findOne({
-            where: [{ Nombre: Nombre }, { id: id }],
+            where: [{ id: query.id }],
         });
 
         if (!dishFound) return [null, "Platillo no encontrado"];
 
-        // Aquí se debe definir el repositorio para buscar platillos existentes
-        const existingDishRepository = AppDataSource.getRepository(Dish);
+        const requiredProducts = [];
 
-        const existingDish = await existingDishRepository.findOne({
-            where: { Nombre: body.Nombre },
-        });
+        for (const item of body.requiredProducts) {
+            const productFound = await productRepository.findOne({ where: { name: item.name } });
 
-        if (existingDish && existingDish.id !== dishFound.id) {
-            return [null, "Ya existe el platillo con ese nombre"];
+            if (!productFound) {
+                return [null, `Producto "${item.name}" no encontrado en el inventario`];
+            }
+
+            if (productFound.quantity < item.quantity) {
+                return [null, `Cantidad insuficiente de "${item.name}" en el inventario`];
+            }
+
+            requiredProducts.push({
+                name: productFound.name,
+                quantity: item.quantity,
+            });
         }
 
         const dataDishUpdate = {
             Nombre: body.Nombre,
-            requiredProducts: body.requiredProducts,  
             descripcion: body.descripcion,
-            precio: body.precio,
             tiempoDeEspera: body.tiempoDeEspera,
+            precio: body.precio,
             disponibilidad: body.disponibilidad,
+            imagen: body.imagen,
+            requiredProducts, // Actualizar los productos requeridos
             updatedAt: new Date(),
         };
 
         await dishRepository.update({ id: dishFound.id }, dataDishUpdate);
 
-        const DishData = await dishRepository.findOne({
-            where: { id: dishFound.id },
-        });
+        const updatedDish = await dishRepository.findOne({ where: { id: dishFound.id } });
 
-        if (!DishData) {
-            return [null, "Platillo no encontrado después de actualizar"];
-        }
-
-        return [DishData, null];
+        return [updatedDish, null];
     } catch (error) {
-        console.error("Error al modificar un Platillo:", error);
+        console.error("Error al actualizar el Platillo:", error);
         return [null, "Error interno del servidor"];
     }
 }

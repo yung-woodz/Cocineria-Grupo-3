@@ -28,18 +28,13 @@ const DishSchema = new EntitySchema({
             type: "int", 
             nullable: true 
         },
-        requiredProducts: {
-            type: "json", 
-            nullable: true,
-        },
-        isAvailable: {
-            type: "boolean",
-            default: true,
-            nullable: false,
-        },
         precio: {
             type: "int",
             nullable: false,
+        },
+        requiredProducts: {
+            type: "json", 
+            nullable: true,
         },
         imagen: {
             type: "varchar",

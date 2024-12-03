@@ -25,7 +25,7 @@ export const dishQueryValidation = Joi.object({
         "object.unknown": "Campo desconocido en la solicitud.",
         "object.missing":"Debes proporcionar al menos un parámetro: id o Nombre.",
     });
-
+    
 export const dishBodyValidation = Joi.object({
     Nombre: Joi.string()
         .min(10)
@@ -62,10 +62,29 @@ export const dishBodyValidation = Joi.object({
             "number.max": "El tiempo de espera no puede exceder los 180 minutos.",
         }),
     requiredProducts: Joi.array()
-        .items(Joi.string())
+        .items(
+            Joi.object({
+                name: Joi.string()
+                    .required()
+                    .messages({
+                        "string.base": "El nombre del producto debe ser de tipo string.",
+                        "string.empty": "El nombre del producto no puede estar vacío.",
+                    }),
+                quantity: Joi.number()
+                    .integer()
+                    .positive()
+                    .required()
+                    .messages({
+                        "number.base": "La cantidad debe ser un número.",
+                        "number.integer": "La cantidad debe ser un número entero.",
+                        "number.positive": "La cantidad debe ser positiva.",
+                        "any.required": "La cantidad es requerida.",
+                    }),
+            })
+        )
         .messages({
             "array.base": "Los productos requeridos deben ser un arreglo.",
-            "string.base": "Cada producto debe ser de tipo string.",
+            "object.base": "Cada producto debe ser un objeto con propiedades name y quantity.",
         }),
     precio: Joi.number()
         .positive()

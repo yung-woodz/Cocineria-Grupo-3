@@ -33,7 +33,7 @@ const DishCard = ({ dish, onDelete, onEdit }) => {
                     {dish.requiredProducts && dish.requiredProducts.length > 0 ? (
                         dish.requiredProducts.map((product, index) => (
                             <ListItem key={index} sx={{ padding: "0", fontSize: "0.9rem" }}>
-                                - {product}
+                                - {product.name}: {product.quantity} unidades
                             </ListItem>
                         ))
                     ) : (
@@ -44,7 +44,7 @@ const DishCard = ({ dish, onDelete, onEdit }) => {
                 </List>
             </CardContent>
             <CardActions>
-                <Button size="small" color="error" onClick={() => onDelete([dish.id])}>
+                <Button size="small" color="error" onClick={() => onDelete(dish.id)}>
                     Eliminar
                 </Button>
                 <Button size="small" color="primary" onClick={() => onEdit(dish)}>

@@ -17,13 +17,20 @@ export function formatDishData(dish) {
         Nombre: startCase(dish.Nombre),
         requiredProducts: (() => {
             if (Array.isArray(dish.requiredProducts)) {
-                return dish.requiredProducts;
+                return dish.requiredProducts.map(product => ({
+                    name: product.name || 'Producto desconocido',
+                    quantity: product.quantity || 0
+                }));
             }
             if (typeof dish.requiredProducts === "string") {
                 try {
-                    return JSON.parse(dish.requiredProducts); // Parsear como JSON si es posible
+                    const parsedProducts = JSON.parse(dish.requiredProducts);
+                    return parsedProducts.map(product => ({
+                        name: product.name || 'Producto desconocido',
+                        quantity: product.quantity || 0
+                    }));
                 } catch {
-                    return [dish.requiredProducts]; // Si no, convertir a arreglo
+                    return [{ name: dish.requiredProducts, quantity: 0 }];
                 }
             }
             return []; // Si no es válido, devolver un arreglo vacío
@@ -37,6 +44,7 @@ export function formatDishData(dish) {
         updatedAt: formatTempo(dish.updatedAt, "DD-MM-YYYY")
     };
 }
+
 
 export function formatProductData(product) {
     return {

@@ -5,46 +5,62 @@ import {
     TextField,
     Button,
     Typography,
-    MenuItem,
-    Checkbox,
-    FormControlLabel,
+    IconButton,
 } from "@mui/material";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 
 const DishForm = ({ onSubmit }) => {
     const [form, setForm] = useState({
         Nombre: "",
-        requiredProducts: "",
-        disponibilidad: "disponible",
         descripcion: "",
         tiempoDeEspera: "",
         precio: "",
+        disponibilidad: "disponible",
         imagen: "",
-        isAvailable: false,
+        requiredProducts: [], 
     });
 
     const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
+        const { name, value } = e.target;
         setForm({
             ...form,
-            [name]: type === "checkbox" ? checked : value,
+            [name]: value,
         });
+    };
+
+    const handleProductChange = (index, field, value) => {
+        const updatedProducts = [...form.requiredProducts];
+        updatedProducts[index] = {
+            ...updatedProducts[index],
+            [field]: value,
+        };
+        setForm({ ...form, requiredProducts: updatedProducts });
+    };
+
+    const handleAddProduct = () => {
+        setForm({
+            ...form,
+            requiredProducts: [...form.requiredProducts, { name: "", quantity: "" }],
+        });
+    };
+
+    const handleRemoveProduct = (index) => {
+        const updatedProducts = form.requiredProducts.filter((_, i) => i !== index);
+        setForm({ ...form, requiredProducts: updatedProducts });
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSubmit({
-            ...form,
-            requiredProducts: form.requiredProducts.split(",").map((p) => p.trim()), // Convierte a un arreglo
-        });
+        onSubmit(form); 
         setForm({
             Nombre: "",
-            requiredProducts: "",
-            disponibilidad: "disponible",
             descripcion: "",
             tiempoDeEspera: "",
             precio: "",
+            disponibilidad: "disponible",
             imagen: "",
-            isAvailable: false,
+            requiredProducts: [],
         });
     };
 
@@ -89,7 +105,7 @@ const DishForm = ({ onSubmit }) => {
                         required
                     />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={6}>
                     <TextField
                         name="precio"
                         label="Precio"
@@ -101,7 +117,7 @@ const DishForm = ({ onSubmit }) => {
                         required
                     />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={6}>
                     <TextField
                         name="tiempoDeEspera"
                         label="Tiempo de Espera (minutos)"
@@ -123,34 +139,53 @@ const DishForm = ({ onSubmit }) => {
                         onChange={handleChange}
                     />
                 </Grid>
+
                 <Grid item xs={12}>
-                    <TextField
-                        name="requiredProducts"
-                        label="Productos Necesarios"
+                    <Typography variant="h6">Productos Requeridos:</Typography>
+                    {form.requiredProducts.map((product, index) => (
+                        <Grid container spacing={1} key={index} alignItems="center">
+                            <Grid item xs={6}>
+                                <TextField
+                                    label="Nombre del Producto"
+                                    value={product.name}
+                                    onChange={(e) =>
+                                        handleProductChange(index, "name", e.target.value)
+                                    }
+                                    fullWidth
+                                    required
+                                />
+                            </Grid>
+                            <Grid item xs={4}>
+                                <TextField
+                                    label="Cantidad"
+                                    type="number"
+                                    value={product.quantity}
+                                    onChange={(e) =>
+                                        handleProductChange(index, "quantity", e.target.value)
+                                    }
+                                    fullWidth
+                                    required
+                                />
+                            </Grid>
+                            <Grid item xs={2}>
+                                <IconButton onClick={() => handleRemoveProduct(index)}>
+                                    <RemoveCircleOutlineIcon color="error" />
+                                </IconButton>
+                            </Grid>
+                        </Grid>
+                    ))}
+                    <Button
                         variant="outlined"
-                        fullWidth
-                        value={form.requiredProducts}
-                        onChange={handleChange}
-                        helperText="Separar los productos con comas"
-                    />
-                </Grid>
-                <Grid item xs={12}>
-                    <TextField
-                        name="disponibilidad"
-                        label="Disponibilidad"
-                        select
-                        variant="outlined"
-                        fullWidth
-                        value={form.disponibilidad}
-                        onChange={handleChange}
-                        required
+                        startIcon={<AddCircleOutlineIcon />}
+                        onClick={handleAddProduct}
+                        sx={{ marginTop: 1 }}
                     >
-                        <MenuItem value="disponible">Disponible</MenuItem>
-                        <MenuItem value="no disponible">No Disponible</MenuItem>
-                    </TextField>
+                        Agregar Producto
+                    </Button>
                 </Grid>
+
                 <Grid item xs={12} display="flex" justifyContent="center">
-                    <Button type="submit" variant="contained" color="primary" sx={{ minWidth: 150 }}>
+                    <Button type="submit" variant="contained" color="primary">
                         Guardar Platillo
                     </Button>
                 </Grid>
