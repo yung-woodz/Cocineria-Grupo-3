@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
-import { updateOrder } from "../../services/orders.service";
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem } from "@mui/material";
+import { updateOrder } from "../../services/order.service";
 
 export default function OrderEditDialog({ open, onClose, orderData, fetchOrders }) {
     const [formData, setFormData] = useState({
@@ -14,14 +14,14 @@ export default function OrderEditDialog({ open, onClose, orderData, fetchOrders 
     useEffect(() => {
         if (orderData) {
             setFormData({
-                Customer: orderData.customer || "",
+                customer: orderData.customer || "",
                 tableNumber: orderData.tableNumber || "",
                 description: orderData.description || "",
                 status: orderData.status || "",
-                username: orderData.username || "",
+                username: orderData.user?.nombreCompleto || "",
             });
         }
-    }, [orderData]);
+    }, [orderData]);       
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -34,15 +34,17 @@ export default function OrderEditDialog({ open, onClose, orderData, fetchOrders 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const updatedOrder = {
-                ...formData,
-                orderItems: formData.orderItems.split(",").map((p) => p.trim()),
-            };
-            await updateOrder(updatedOrder, { id: orderData.id }); 
-            await fetchOrders(); 
-            onClose(); 
+        const updatedOrder = {
+            customer: formData.customer,
+            tableNumber: formData.tableNumber,
+            description: formData.description,
+            status: formData.status,
+        };
+        await updateOrder(orderData.id, updatedOrder);
+        await fetchOrders();
+        onClose();
         } catch (error) {
-            console.error("Error al actualizar la orden:", error);
+        console.error("Error al actualizar la orden:", error);
         }
     };
 
@@ -85,21 +87,17 @@ export default function OrderEditDialog({ open, onClose, orderData, fetchOrders 
                     id="status"
                     name="status"
                     label="Estado"
-                    type="text"
+                    variant="outlined"
                     fullWidth
                     value={formData.status}
                     onChange={handleChange}
-                />
-                <TextField
-                    margin="dense"
-                    id="username"
-                    name="username"
-                    label="Usuario"
-                    type="text"
-                    fullWidth
-                    value={formData.username}
-                    onChange={handleChange}
-                />
+                    select
+                    required
+                >
+                    <MenuItem value="En proceso">En proceso</MenuItem>
+                    <MenuItem value="Entregado">Entregado</MenuItem>
+                    <MenuItem value="Cancelado">Cancelado</MenuItem>
+                </TextField>
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose}>Cancelar</Button>

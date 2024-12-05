@@ -2,12 +2,12 @@ import { deleteOrder } from "../../services/order.service";
 import { deleteDataAlert, showErrorAlert, showSuccessAlert } from "../../helpers/sweetAlert";
 
 const useDeleteOrder = (fetchOrders, setOrders) => {
-    const handleDelete = async (dataOrder) => {
-        if (dataOrder.length > 0) {
+    const handleDelete = async (orderId) => {
+        if (orderId) {
             try {
                 const result = await deleteDataAlert();
                 if (result.isConfirmed) {
-                    const response = await deleteOrder(dataOrder[0].id);
+                    const response = await deleteOrder(orderId);
                     if (response.status === 'Error del cliente') {
                         return showErrorAlert('Error', response.details);
                     }
@@ -17,10 +17,11 @@ const useDeleteOrder = (fetchOrders, setOrders) => {
                 } else {
                     showErrorAlert('Cancelado', 'La operación ha sido cancelada.');
                 }
-            } catch (error) {
+            }catch (error) {
                 console.error('Error al eliminar la orden:', error);
-                showErrorAlert('Cancelado', 'Ocurrió un error al eliminar la orden.');
-            }
+                console.error('Detalles del error:', error.response);
+                showErrorAlert('Error', 'Ocurrió un error al eliminar la orden.');
+            }                
         }
     };
 

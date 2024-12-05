@@ -104,7 +104,7 @@ const Order = () => {
                         required
                     >
                         <MenuItem value="En progreso">En progreso</MenuItem>
-                        <MenuItem value="Completado">Completado</MenuItem>
+                        <MenuItem value="Entregado">Entregado</MenuItem>
                         <MenuItem value="Cancelado">Cancelado</MenuItem>
                     </TextField>
                     
