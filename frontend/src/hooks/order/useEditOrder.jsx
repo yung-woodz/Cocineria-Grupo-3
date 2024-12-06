@@ -13,6 +13,7 @@ export default function OrderEditDialog({ open, onClose, orderData, fetchOrders 
 
     useEffect(() => {
         if (orderData) {
+            console.log("orderData:", orderData);
             setFormData({
                 customer: orderData.customer || "",
                 tableNumber: orderData.tableNumber || "",

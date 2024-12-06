@@ -9,14 +9,15 @@ import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
 const AllOrders = () => {
-    const { orders, fetchOrders, setOrders } = useGetOrders();
+    const { orders, fetchOrders} = useGetOrders();
     const [filter, setFilter] = useState("");
     const [filterBy, setFilterBy] = useState("customer");
     const [sortOrder, setSortOrder] = useState("asc");
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [showEditDialog, setShowEditDialog] = useState(false);
 
-    const { handleDelete } = useDeleteOrder(fetchOrders, setOrders);
+    const { handleDelete } = useDeleteOrder(fetchOrders, null);
+
 
 
     const toggleSortOrder = () => {
