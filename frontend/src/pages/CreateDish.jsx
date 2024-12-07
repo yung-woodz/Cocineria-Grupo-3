@@ -3,19 +3,11 @@ import DishForm from "../hooks/dish/DishForm";
 import { createDish } from "../services/dishes.service";
 
 const CreateDishForm = () => {
+
     const handleCreate = async (newDish) => {
-        const formattedDish = {
-            ...newDish,
-            requiredProducts: Array.isArray(newDish.requiredProducts)
-                ? newDish.requiredProducts
-                : newDish.requiredProducts.split(",").map((p) => p.trim()),
-            tiempoDeEspera: Number(newDish.tiempoDeEspera),
-            precio: Number(newDish.precio),
-        };
-
-
         try {
-            const response = await createDish(formattedDish);
+            // Llama al servicio para crear el platillo.
+            const response = await createDish(newDish);
             console.log("Platillo creado con éxito");
         } catch (error) {
             console.error("Error inesperado:", error.response?.data || error.message);

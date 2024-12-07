@@ -6,7 +6,7 @@ import { AppDataSource } from "../config/configDb.js";
 export async function createDishService(body) {
     try {
         const dishRepository = AppDataSource.getRepository(Dish);
-
+        // requiredProducts es una array que guarda el nombre y su acantidad
         const newDish = dishRepository.create({
             ...body,
             requiredProducts: body.requiredProducts,
@@ -37,7 +37,7 @@ export async function getDishService(query) {
         const requiredProducts = dishFound.requiredProducts;
 
         let isAvailable = true;
-
+        // Verifica la disponibilidad de cada producto requerido.
         for (const item of requiredProducts) {
             const product = await productRepository.findOne({
                 where: { name: item.name },
@@ -47,7 +47,7 @@ export async function getDishService(query) {
                 break;
             }
         }
-
+        // Actualiza el estado de disponibilidad del platillo si cambió.
         if (dishFound.isAvailable !== isAvailable) {
             dishFound.isAvailable = isAvailable;
             await dishRepository.save(dishFound);
@@ -59,15 +59,6 @@ export async function getDishService(query) {
         return [null, "Error interno del servidor"];
     }
 }
-
-const normalizeDish = (dish) => ({
-    ...dish,
-    requiredProducts: Array.isArray(dish.requiredProducts)
-        ? dish.requiredProducts
-        : typeof dish.requiredProducts === "string"
-        ? [dish.requiredProducts]
-        : JSON.parse(dish.requiredProducts || "[]"),
-});
 
 export async function getDishesService() {
     try {
@@ -97,7 +88,7 @@ export async function updateDishesService(query, body) {
         if (!dishFound) return [null, "Platillo no encontrado"];
 
         const requiredProducts = [];
-
+         // Verifica cada producto requerido.
         for (const item of body.requiredProducts) {
             const productFound = await productRepository.findOne({ where: { name: item.name } });
 
@@ -108,7 +99,7 @@ export async function updateDishesService(query, body) {
             if (productFound.quantity < item.quantity) {
                 return [null, `Cantidad insuficiente de "${item.name}" en el inventario`];
             }
-
+            // Agrega el producto verificado con la cantidad necesaria.
             requiredProducts.push({
                 name: productFound.name,
                 quantity: item.quantity,

@@ -11,6 +11,7 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 
 const DishForm = ({ onSubmit }) => {
+    // Estado local del formulario del platillo
     const [form, setForm] = useState({
         Nombre: "",
         descripcion: "",
@@ -18,9 +19,13 @@ const DishForm = ({ onSubmit }) => {
         precio: "",
         disponibilidad: "disponible",
         imagen: "",
-        requiredProducts: [], 
+        requiredProducts: [], // Lista de productos requeridos, cada uno con { name, quantity }
     });
 
+    /**
+     * Actualiza el estado general del formulario para campos simples (texto, números, etc.)
+     * @param {Object} e - Evento del input.
+     */
     const handleChange = (e) => {
         const { name, value } = e.target;
         setForm({
@@ -38,12 +43,16 @@ const DishForm = ({ onSubmit }) => {
         setForm({ ...form, requiredProducts: updatedProducts });
     };
 
+    /**
+     * Agrega un nuevo producto requerido vacío al array
+     */
     const handleAddProduct = () => {
         setForm({
             ...form,
             requiredProducts: [...form.requiredProducts, { name: "", quantity: "" }],
         });
     };
+
 
     const handleRemoveProduct = (index) => {
         const updatedProducts = form.requiredProducts.filter((_, i) => i !== index);
@@ -52,7 +61,13 @@ const DishForm = ({ onSubmit }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSubmit(form); 
+        const formattedData = {
+            ...form,
+            tiempoDeEspera: Number(form.tiempoDeEspera),
+            precio: Number(form.precio),
+        };
+        onSubmit(formattedData); 
+
         setForm({
             Nombre: "",
             descripcion: "",
@@ -81,6 +96,7 @@ const DishForm = ({ onSubmit }) => {
                 Crear Nuevo Platillo
             </Typography>
             <Grid container spacing={2}>
+                
                 <Grid item xs={12}>
                     <TextField
                         name="Nombre"
@@ -92,6 +108,8 @@ const DishForm = ({ onSubmit }) => {
                         required
                     />
                 </Grid>
+
+                
                 <Grid item xs={12}>
                     <TextField
                         name="descripcion"
@@ -105,6 +123,7 @@ const DishForm = ({ onSubmit }) => {
                         required
                     />
                 </Grid>
+
                 <Grid item xs={6}>
                     <TextField
                         name="precio"
@@ -117,6 +136,8 @@ const DishForm = ({ onSubmit }) => {
                         required
                     />
                 </Grid>
+
+                {/* Campo Tiempo de Espera */}
                 <Grid item xs={6}>
                     <TextField
                         name="tiempoDeEspera"
@@ -129,6 +150,8 @@ const DishForm = ({ onSubmit }) => {
                         required
                     />
                 </Grid>
+
+                {/* Campo Imagen (URL) */}
                 <Grid item xs={12}>
                     <TextField
                         name="imagen"
@@ -140,6 +163,7 @@ const DishForm = ({ onSubmit }) => {
                     />
                 </Grid>
 
+                {/* Sección de Productos Requeridos */}
                 <Grid item xs={12}>
                     <Typography variant="h6">Productos Requeridos:</Typography>
                     {form.requiredProducts.map((product, index) => (
@@ -184,6 +208,7 @@ const DishForm = ({ onSubmit }) => {
                     </Button>
                 </Grid>
 
+                {/* Botón para Guardar Platillo */}
                 <Grid item xs={12} display="flex" justifyContent="center">
                     <Button type="submit" variant="contained" color="primary">
                         Guardar Platillo
