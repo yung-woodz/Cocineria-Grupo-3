@@ -54,13 +54,13 @@ const router = createBrowserRouter([
       {
         path: '/dishes', // Ruta para DishesPage
         element: (
-          <ProtectedRoute allowedRoles={['administrador']}> 
+          <ProtectedRoute allowedRoles={['administrador','usuario']}> 
             <Dishes/>
           </ProtectedRoute>
         ),
       },
       {
-        path: '/create-dish', // Nueva ruta para el formulario de creación
+        path: '/create-dish', 
         element: (
           <ProtectedRoute allowedRoles={['administrador']}>
             <CreateDishForm /> 

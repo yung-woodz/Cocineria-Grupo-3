@@ -58,41 +58,45 @@ const Navbar = () => {
                             Inicio
                         </NavLink>
                     </li>
-                    {userRole === 'administrador' && (
-                        <>
-                            <li>
-                                <NavLink 
-                                    to="/create-dish" 
-                                    onClick={() => setMenuOpen(false)}
-                                    className={({ isActive }) => (isActive ? 'active' : '')}
-                                >
-                                    Crear Platillo
-                                </NavLink>
-                            </li>
-                            <li>
-                                <NavLink 
-                                    to="/dishes" 
-                                    onClick={() => setMenuOpen(false)}
-                                    className={({ isActive }) => (isActive ? 'active' : '')}
-                                >
-                                    Ver Platillos
-                                </NavLink>
-                            </li>
-                        </>
-                    )}
-                    {userRole === 'administrador' && (
+
+                    {/* Todos pueden ver "Ver Platillos" */}
                     <li>
                         <NavLink 
-                            to="/users" 
-                            onClick={() => { 
-                                setMenuOpen(false); 
-                                addActiveClass();
-                            }} 
-                            activeClassName="active"
+                            to="/dishes" 
+                            onClick={() => setMenuOpen(false)}
+                            className={({ isActive }) => (isActive ? 'active' : '')}
                         >
-                            Usuarios
+                            Ver Platillos
                         </NavLink>
                     </li>
+
+                    {/* Solo el administrador puede ver "Crear Platillo" */}
+                    {userRole === 'administrador' && (
+                        <li>
+                            <NavLink 
+                                to="/create-dish" 
+                                onClick={() => setMenuOpen(false)}
+                                className={({ isActive }) => (isActive ? 'active' : '')}
+                            >
+                                Crear Platillo
+                            </NavLink>
+                        </li>
+                    )}
+
+                    {/* Solo el administrador puede ver "Usuarios" */}
+                    {userRole === 'administrador' && (
+                        <li>
+                            <NavLink 
+                                to="/users" 
+                                onClick={() => { 
+                                    setMenuOpen(false); 
+                                    addActiveClass();
+                                }} 
+                                activeClassName="active"
+                            >
+                                Usuarios
+                            </NavLink>
+                        </li>
                     )}
                     <li>
                         <NavLink 

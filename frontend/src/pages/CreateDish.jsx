@@ -7,7 +7,7 @@ const CreateDishForm = () => {
     const handleCreate = async (newDish) => {
         try {
             // Llama al servicio para crear el platillo.
-            const response = await createDish(newDish);
+            const response = await createDish(newDish);//.then buscar 
             console.log("Platillo creado con éxito");
         } catch (error) {
             console.error("Error inesperado:", error.response?.data || error.message);

@@ -19,13 +19,9 @@ const DishForm = ({ onSubmit }) => {
         precio: "",
         disponibilidad: "disponible",
         imagen: "",
-        requiredProducts: [], // Lista de productos requeridos, cada uno con { name, quantity }
+        requiredProducts: [], 
     });
 
-    /**
-     * Actualiza el estado general del formulario para campos simples (texto, números, etc.)
-     * @param {Object} e - Evento del input.
-     */
     const handleChange = (e) => {
         const { name, value } = e.target;
         setForm({
@@ -43,9 +39,7 @@ const DishForm = ({ onSubmit }) => {
         setForm({ ...form, requiredProducts: updatedProducts });
     };
 
-    /**
-     * Agrega un nuevo producto requerido vacío al array
-     */
+    // Agrega un nuevo producto requerido vacío al array
     const handleAddProduct = () => {
         setForm({
             ...form,
@@ -151,7 +145,6 @@ const DishForm = ({ onSubmit }) => {
                     />
                 </Grid>
 
-                {/* Campo Imagen (URL) */}
                 <Grid item xs={12}>
                     <TextField
                         name="imagen"
@@ -163,7 +156,6 @@ const DishForm = ({ onSubmit }) => {
                     />
                 </Grid>
 
-                {/* Sección de Productos Requeridos */}
                 <Grid item xs={12}>
                     <Typography variant="h6">Productos Requeridos:</Typography>
                     {form.requiredProducts.map((product, index) => (
@@ -208,7 +200,6 @@ const DishForm = ({ onSubmit }) => {
                     </Button>
                 </Grid>
 
-                {/* Botón para Guardar Platillo */}
                 <Grid item xs={12} display="flex" justifyContent="center">
                     <Button type="submit" variant="contained" color="primary">
                         Guardar Platillo
