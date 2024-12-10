@@ -11,12 +11,17 @@ return (
 }
 
 function PageRoot() {
-return (
-    <>
-        <Navbar />
-        <Outlet />
-    </>
-);
+    return (
+        <div className="flex h-screen w-full">
+          {/* Sidebar */}
+          <Navbar />
+    
+          {/* Contenido Principal */}
+          <div className="flex-1 p-7 overflow-y-auto">
+            <Outlet />
+          </div>
+        </div>
+      );
 }
 
 export default Root;

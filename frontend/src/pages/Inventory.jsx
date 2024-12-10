@@ -25,6 +25,12 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import SearchIcon from '@mui/icons-material/Search';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useNavigate } from 'react-router-dom';
+import CreateProduct from './createProduct';
+
+import CloseIcon from '@mui/icons-material/Close';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
 
 
 const Inventory = () => {
@@ -33,15 +39,28 @@ const Inventory = () => {
     const [selected, setSelected] = useState([]);
     const [filter, setFilter] = useState('');
     const [filterBy, setFilterBy] = useState('name'); 
-    const [sortOrder, setSortOrder] = useState('asc'); 
+    const [sortOrder, setSortOrder] = useState('asc');
     const rowsPerPage = 5;
     const navigate = useNavigate();
+
+    const [openPopup, setOpenPopup] = useState(false);
+
+    const handleSuccess = (success) => {
+        setOpenPopup(false); 
+    
+        if (success) {
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000); 
+        }
+    };
     
     const { handleDelete } = useDeleteProduct(fetchProducts, setSelected);
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
+
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
@@ -81,8 +100,12 @@ const Inventory = () => {
         setSelected(newSelected);
     };
 
-    const handleDeleteSelected = () => {
-        handleDelete(selected);
+    const handleDeleteSelected = async () => {
+        const success = await handleDelete(selected);
+    
+        if (success) {
+            window.location.reload(); 
+        }
     };
 
     const toggleSortOrder = () => {
@@ -108,7 +131,7 @@ const Inventory = () => {
     const displayedProducts = filteredProducts.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
     return (
-        <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh" bgcolor="#f5f5f5" padding={2}>
+        <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh" padding={2}>
             <TableContainer component={Paper} style={{ width: '100%', maxWidth: '900px' }}>
                 <Box display="flex" justifyContent="space-between" padding="15px" bgcolor="#212121" color="#fff">
                     <Box display="flex" alignItems="center">
@@ -127,7 +150,6 @@ const Inventory = () => {
                             }}
                         >
                             <MenuItem value="name">Nombre</MenuItem>
-                            <MenuItem value="id">ID</MenuItem>
                             <MenuItem value="type">Tipo</MenuItem>
                             <MenuItem value="entryDate">Fecha de Ingreso</MenuItem>
                             <MenuItem value="expirationDate">Fecha de Expiración</MenuItem>
@@ -171,7 +193,7 @@ const Inventory = () => {
                         </IconButton>
     
                         <IconButton
-                            onClick={() => navigate('/inventory/create-product')}
+                            onClick={() => setOpenPopup(true)}
                             aria-label="Añadir producto"
                             style={{
                                 color: '#4CAF50', // Color verde (puedes ajustar según sea necesario)
@@ -191,7 +213,6 @@ const Inventory = () => {
                                     onChange={handleSelectAllClick}
                                 />
                             </TableCell>
-                            <TableCell align="center" sx={{ fontWeight: 'bold', fontSize: '1rem' }}>ID</TableCell>
                             <TableCell align="center" sx={{ fontWeight: 'bold', fontSize: '1rem' }}>Imagen</TableCell>
                             <TableCell align="center" sx={{ fontWeight: 'bold', fontSize: '1rem' }}>Nombre</TableCell>
                             <TableCell align="center" sx={{ fontWeight: 'bold', fontSize: '1rem' }}>Cantidad</TableCell>
@@ -209,12 +230,12 @@ const Inventory = () => {
                                         onChange={() => handleSelectClick(product.id)}
                                     />
                                 </TableCell>
-                                <TableCell align="center">{product.id}</TableCell>
                                 <TableCell align="center">
                                     <img 
                                         src={`http://localhost:3000/${product.image}`} 
-                                        alt={product.name} 
-                                        style={{ width: '50px', height: '50px', objectFit: 'cover' }}
+                                        alt={product.name}
+                                        align="center"
+                                        style={{ width: '50px', height: '50px', objectFit: 'cover', margin: '0 auto' }}
                                     />
                                 </TableCell>
                                 <TableCell align="center">{product.name}</TableCell>
@@ -239,7 +260,31 @@ const Inventory = () => {
                     }}
                 />
             </TableContainer>
+
+            <Dialog open={openPopup} onClose={() => setOpenPopup(false)} maxWidth="md" fullWidth>
+            <DialogTitle className='bg-[#212121] text-white '>
+                Crear Producto
+                <IconButton
+                aria-label="cerrar"
+                onClick={() => setOpenPopup(false)}
+                sx={{
+                    position: 'absolute',
+                    right: 8,
+                    top: 8,
+                    color: 'white'
+                }}
+                >
+                <CloseIcon />
+                </IconButton>
+            </DialogTitle>
+
+            <DialogContent dividers>
+                <CreateProduct onSuccess={handleSuccess} />
+            </DialogContent>
+            </Dialog>
+
         </Box>
+        
     );
 };
 
