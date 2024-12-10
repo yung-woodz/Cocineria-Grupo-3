@@ -27,3 +27,17 @@ export const showErrorAlert = (titleMessage, message) => {
     'error'
   );
 };
+
+
+export async function createDataAlert() {
+  return Swal.fire({
+    title: "¿Quieres proceder?",
+    text: "Confirma tu acción",
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Confirmar",
+    cancelButtonText: "Cancelar"
+  });
+}

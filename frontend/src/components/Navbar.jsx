@@ -55,7 +55,7 @@ const Navbar = () => {
                             }} 
                             activeClassName="active"
                         >
-                            Crear orden
+                            CrearO
                         </NavLink>
                     </li>
                     <li>
@@ -67,7 +67,7 @@ const Navbar = () => {
                             }}
                             activeClassName="active"
                         >
-                            Historial de ordenes
+                            HistorialO
                         </NavLink>
                     </li>
                     <li>
@@ -82,6 +82,28 @@ const Navbar = () => {
                             Inicio
                         </NavLink>
                     </li>
+                    {userRole === 'administrador' && (
+                        <>
+                            <li>
+                                <NavLink 
+                                    to="/create-dish" 
+                                    onClick={() => setMenuOpen(false)}
+                                    className={({ isActive }) => (isActive ? 'active' : '')}
+                                >
+                                    Crear Platillo
+                                </NavLink>
+                            </li>
+                            <li>
+                                <NavLink 
+                                    to="/dishes" 
+                                    onClick={() => setMenuOpen(false)}
+                                    className={({ isActive }) => (isActive ? 'active' : '')}
+                                >
+                                    Ver Platillos
+                                </NavLink>
+                            </li>
+                        </>
+                    )}
                     {(userRole === 'administrador' || userRole === 'jefeCocina') && (
                     <li>
                         <NavLink 

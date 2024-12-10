@@ -42,6 +42,8 @@ async function setupServer() {
 
     app.use(morgan("dev"));
 
+    app.use('/src/upload', express.static('src/upload'));
+
     app.use(
       session({
         secret: cookieKey,

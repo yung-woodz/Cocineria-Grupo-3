@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Swal from "sweetalert2";
 import { createOrder } from "../services/order.service";
-import "@styles/order.css";
+import "@styles/Order.css";
 
 const Order = () => {
     const [orderData, setOrderData] = useState({
