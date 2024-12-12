@@ -61,38 +61,13 @@ export const dishBodyValidation = Joi.object({
             "number.min": "El tiempo de espera debe ser al menos 1 minuto.",
             "number.max": "El tiempo de espera no puede exceder los 180 minutos.",
         }),
-    requiredProducts: Joi.array()
-        .items(
-            Joi.object({
-                name: Joi.string()
-                    .required()
-                    .messages({
-                        "string.base": "El nombre del producto debe ser de tipo string.",
-                        "string.empty": "El nombre del producto no puede estar vacío.",
-                    }),
-                quantity: Joi.number()
-                    .integer()
-                    .positive()
-                    .required()
-                    .messages({
-                        "number.base": "La cantidad debe ser un número.",
-                        "number.integer": "La cantidad debe ser un número entero.",
-                        "number.positive": "La cantidad debe ser positiva.",
-                        "any.required": "La cantidad es requerida.",
-                    }),
-            })
-        )
-        .messages({
-            "array.base": "Los productos requeridos deben ser un arreglo.",
-            "object.base": "Cada producto debe ser un objeto con propiedades name y quantity.",
-        }),
     precio: Joi.number()
         .positive()
         .messages({
             "number.base": "El precio debe ser un número.",
             "number.positive": "El precio debe ser un número positivo.",
         }),
-    imagen: Joi.string()
+        image: Joi.string()
         .uri()
         .messages({
             "string.base": "La imagen debe ser de tipo string.",
@@ -105,6 +80,30 @@ export const dishBodyValidation = Joi.object({
     }),
     isAvailable: Joi.boolean().messages({
         "boolean.base": "El estado de disponibilidad debe ser verdadero o falso.",
+    }),
+
+    DishProducts: Joi.array()
+    .items(
+        Joi.object({
+            productId: Joi.number().integer().positive().required()
+                .messages({
+                    "number.base": "El ID del producto debe ser un número.",
+                    "number.integer": "El ID del producto debe ser un número entero.",
+                    "number.positive": "El ID del producto debe ser un número positivo.",
+                    "any.required": "El ID del producto es obligatorio.",
+                }),
+            quantity: Joi.number().integer().positive().required()
+                .messages({
+                    "number.base": "La cantidad debe ser un número.",
+                    "number.integer": "La cantidad debe ser un número entero.",
+                    "number.positive": "La cantidad debe ser un número positivo.",
+                    "any.required": "La cantidad es obligatoria.",
+                }),
+        })
+    )
+    .messages({
+        "array.base": "DishProducts debe ser un arreglo.",
+        "array.includes": "DishProducts debe contener objetos válidos.",
     }),
 })
     .or("Nombre","Ingredientes")

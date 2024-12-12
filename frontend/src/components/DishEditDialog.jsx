@@ -1,35 +1,55 @@
 import React, { useState, useEffect } from "react";
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Grid,IconButton, } from "@mui/material";
+import {
+    Button,
+    TextField,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Grid,
+    IconButton,
+    MenuItem,
+} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import { updateDish } from "../services/dishes.service";
+import useGetProducts from "../hooks/product/useGetProducts";
 import { showSuccessAlert } from "../helpers/sweetAlert";
+
 export default function DishEditDialog({ open, onClose, dishData, fetchDishes }) {
+    const { products } = useGetProducts();
     const [formData, setFormData] = useState({
         Nombre: "",
         descripcion: "",
         precio: "",
         tiempoDeEspera: "",
         disponibilidad: "disponible",
-        imagen: "",
-        requiredProducts: [],
+        image: "",
+        DishProducts: [],
     });
 
     useEffect(() => {
         if (dishData) {
-            setFormData({
+            const updatedFormData = {
                 Nombre: dishData.Nombre || "",
                 descripcion: dishData.descripcion || "",
                 precio: dishData.precio || "",
                 tiempoDeEspera: dishData.tiempoDeEspera || "",
                 disponibilidad: dishData.disponibilidad || "disponible",
-                imagen: dishData.imagen || "",
-                requiredProducts: dishData.requiredProducts || [],
-            });
+                image: dishData.image || "",
+                DishProducts: Array.isArray(dishData.DishProducts)
+                    ? dishData.DishProducts.map((dp) => ({
+                        productId: dp.product?.id || "",
+                        quantity: dp.quantity || "",
+                    }))
+                    : [],
+            };
+            console.log("Datos inicializados:", updatedFormData);
+            setFormData(updatedFormData);
         }
     }, [dishData]);
-
+    
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevData) => ({
@@ -39,29 +59,29 @@ export default function DishEditDialog({ open, onClose, dishData, fetchDishes })
     };
 
     const handleProductChange = (index, field, value) => {
-        const updatedProducts = [...formData.requiredProducts];
+        const updatedProducts = [...formData.DishProducts];
         updatedProducts[index] = {
             ...updatedProducts[index],
             [field]: value,
         };
         setFormData((prevData) => ({
             ...prevData,
-            requiredProducts: updatedProducts,
+            DishProducts: updatedProducts,
         }));
     };
 
     const handleAddProduct = () => {
         setFormData((prevData) => ({
             ...prevData,
-            requiredProducts: [...prevData.requiredProducts, { name: "", quantity: "" }],
+            DishProducts: [...prevData.DishProducts, { productId: "", quantity: "" }],
         }));
     };
 
     const handleRemoveProduct = (index) => {
-        const updatedProducts = formData.requiredProducts.filter((_, i) => i !== index);
+        const updatedProducts = formData.DishProducts.filter((_, i) => i !== index);
         setFormData((prevData) => ({
             ...prevData,
-            requiredProducts: updatedProducts,
+            DishProducts: updatedProducts,
         }));
     };
 
@@ -130,18 +150,25 @@ export default function DishEditDialog({ open, onClose, dishData, fetchDishes })
                 <Typography variant="h6" sx={{ mt: 2 }}>
                     Productos Requeridos:
                 </Typography>
-                {formData.requiredProducts.map((product, index) => (
+                {formData.DishProducts.map((product, index) => (
                     <Grid container spacing={1} key={index} alignItems="center">
                         <Grid item xs={6}>
                             <TextField
-                                label="Nombre del Producto"
-                                value={product.name}
+                                select
+                                label="Producto"
+                                value={product.productId}
                                 onChange={(e) =>
-                                    handleProductChange(index, "name", e.target.value)
+                                    handleProductChange(index, "productId", e.target.value)
                                 }
                                 fullWidth
                                 required
-                            />
+                            >
+                                {products.map((prod) => (
+                                    <MenuItem key={prod.id} value={prod.id}>
+                                        {prod.name}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
                         </Grid>
                         <Grid item xs={4}>
                             <TextField

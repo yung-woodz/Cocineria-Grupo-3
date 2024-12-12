@@ -112,7 +112,7 @@ export async function deleteDish(req, res) {
             id,
         });
         
-        if (errorDishDelete) return handleErrorClient(res, 404, "Error eliminado al Platillo", errorUserDelete);
+        if (errorDishDelete) return handleErrorClient(res, 404, "Error eliminado al Platillo");
 
         handleSuccess(res, 200, "Platillo eliminado correctamente", dishDelete);
     } catch (error) {

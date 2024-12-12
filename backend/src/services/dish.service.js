@@ -1,26 +1,44 @@
 "use strict";
 import Dish from "../entity/dish.entity.js";
-import Product from "../entity/product.entity.js"; 
+import DishProduct from "../entity/dishproduct.entity.js";
 import { AppDataSource } from "../config/configDb.js";
 
 export async function createDishService(body) {
     try {
         const dishRepository = AppDataSource.getRepository(Dish);
-        // requiredProducts es una array que guarda el nombre y su acantidad
+        const dishProductRepository = AppDataSource.getRepository(DishProduct); // Nombre de la entidad registrada
+
+        // se debe crear el platillo sin la relacion por si hay algun conflicto
         const newDish = dishRepository.create({
-            ...body,
-            requiredProducts: body.requiredProducts,
+            Nombre: body.Nombre,
+            descripcion: body.descripcion,
+            tiempoDeEspera: body.tiempoDeEspera,
+            precio: body.precio,
+            disponibilidad: body.disponibilidad || "disponible",
+            image: body.image,
         });
-        
+
         await dishRepository.save(newDish);
-    
+
+    // Crear registros de DishProducts con los ingredientes  ya creados
+    if (Array.isArray(body.DishProducts)) {
+        for (const item of body.DishProducts) {
+            const dishProduct = dishProductRepository.create({
+                quantity: item.quantity,
+                dish: newDish,
+                product: item.productId, // Se asume que `productId` es un ID válido
+            });
+
+        await dishProductRepository.save(dishProduct);
+    }
+}
+
         return [newDish, null];
     } catch (error) {
         console.error("Error al crear el Platillo:", error);
         return [null, "Error interno del servidor"];
     }
 }
-
 
 export async function getDishService(query) {
     try {
@@ -29,29 +47,10 @@ export async function getDishService(query) {
 
         const dishFound = await dishRepository.findOne({
             where: [{ Nombre: Nombre }, { id: id }],
+            relations: ["DishProducts","DishProducts.product"],
         });
 
         if (!dishFound) return [null, "Platillo no encontrado"];
-
-        const productRepository = AppDataSource.getRepository(Product);
-        const requiredProducts = dishFound.requiredProducts;
-
-        let isAvailable = true;
-        // Verifica la disponibilidad de cada producto requerido.
-        for (const item of requiredProducts) {
-            const product = await productRepository.findOne({
-                where: { name: item.name },
-            });
-            if (!product || product.quantity < item.quantity) {
-                isAvailable = false;
-                break;
-            }
-        }
-        // Actualiza el estado de disponibilidad del platillo si cambió.
-        if (dishFound.isAvailable !== isAvailable) {
-            dishFound.isAvailable = isAvailable;
-            await dishRepository.save(dishFound);
-        }
 
         return [dishFound, null];
     } catch (error) {
@@ -64,7 +63,9 @@ export async function getDishesService() {
     try {
         const dishRepository = AppDataSource.getRepository(Dish);
 
-        const dishes = await dishRepository.find();
+        const dishes = await dishRepository.find({
+            relations: ["DishProducts", "DishProducts.product"],
+        });
 
         if (!dishes || dishes.length === 0) return [null, "No hay platillos"];
 
@@ -75,51 +76,54 @@ export async function getDishesService() {
     }
 }
 
-
 export async function updateDishesService(query, body) {
     try {
         const dishRepository = AppDataSource.getRepository(Dish);
-        const productRepository = AppDataSource.getRepository(Product);
+        const dishProductRepository = AppDataSource.getRepository(DishProduct);
 
+        // Buscar el platillo existente
         const dishFound = await dishRepository.findOne({
-            where: [{ id: query.id }],
+            where: { id: query.id },
+            relations: ["DishProducts", "DishProducts.product"],
         });
 
         if (!dishFound) return [null, "Platillo no encontrado"];
 
-        const requiredProducts = [];
-         // Verifica cada producto requerido.
-        for (const item of body.requiredProducts) {
-            const productFound = await productRepository.findOne({ where: { name: item.name } });
-
-            if (!productFound) {
-                return [null, `Producto "${item.name}" no encontrado en el inventario`];
-            }
-
-            if (productFound.quantity < item.quantity) {
-                return [null, `Cantidad insuficiente de "${item.name}" en el inventario`];
-            }
-            // Agrega el producto verificado con la cantidad necesaria.
-            requiredProducts.push({
-                name: productFound.name,
-                quantity: item.quantity,
-            });
-        }
-
+        // Actualizar los datos del platillo
         const dataDishUpdate = {
             Nombre: body.Nombre,
             descripcion: body.descripcion,
             tiempoDeEspera: body.tiempoDeEspera,
             precio: body.precio,
-            disponibilidad: body.disponibilidad,
-            imagen: body.imagen,
-            requiredProducts, // Actualizar los productos requeridos
+            disponibilidad: body.disponibilidad || dishFound.disponibilidad,
+            image: body.image || dishFound.image,
             updatedAt: new Date(),
         };
 
         await dishRepository.update({ id: dishFound.id }, dataDishUpdate);
 
-        const updatedDish = await dishRepository.findOne({ where: { id: dishFound.id } });
+        // Manejar los DishProducts
+        if (Array.isArray(body.DishProducts)) {
+            // Eliminar los DishProducts existentes
+            await dishProductRepository.delete({ dish: { id: dishFound.id } });
+
+            // Crear nuevos DishProducts
+            for (const item of body.DishProducts) {
+                const newDishProduct = dishProductRepository.create({
+                    quantity: item.quantity,
+                    dish: dishFound, // Relación con el platillo
+                    product: { id: item.productId }, // Relación con el producto
+                });
+
+                await dishProductRepository.save(newDishProduct);
+            }
+        }
+
+        // Obtener el platillo actualizado con relaciones
+        const updatedDish = await dishRepository.findOne({
+            where: { id: dishFound.id },
+            relations: ["DishProducts", "DishProducts.product"],
+        });
 
         return [updatedDish, null];
     } catch (error) {
@@ -129,20 +133,27 @@ export async function updateDishesService(query, body) {
 }
 
 
+
 export async function deleteDishService(query) {
     try {
-        const { Nombre, id,} = query;
-        
-        const dishRepository = AppDataSource.getRepository(Dish);
+        const { Nombre, id } = query;
 
+        const dishRepository = AppDataSource.getRepository(Dish);
+        const dishProductRepository = AppDataSource.getRepository(DishProduct);
+
+        // Busca el platillo
         const dishFound = await dishRepository.findOne({
-            where: [{ Nombre: Nombre }, { id: id },],
+            where: [{ Nombre: Nombre }, { id: id }],
         });
 
         if (!dishFound) return [null, "Platillo no encontrado"];
-        
+
+        // Elimina la relacin con su registro
+        await dishProductRepository.delete({ dish: { id: dishFound.id } });
+
+        // Ahora eliminar el platillo
         const dishDeleted = await dishRepository.remove(dishFound);
-        
+
         return [dishDeleted, null];
     } catch (error) {
         console.error("Error al eliminar un Platillo:", error);

@@ -17,22 +17,7 @@ const useGetDishes = () => {
                 throw new Error(response?.error || "Error desconocido al obtener los platillos.");
             }
 
-            const formattedData = response.map((dish) => ({
-                id: dish.id,
-                Nombre: dish.Nombre,
-                disponibilidad: dish.disponibilidad,
-                descripcion: dish.descripcion,
-                tiempoDeEspera: dish.tiempoDeEspera,
-                requiredProducts: dish.requiredProducts?.map((product) => ({
-                    name: product.name,
-                    quantity: product.quantity,
-                })) || [],
-                isAvailable: dish.isAvailable,
-                precio: dish.precio,
-                imagen: dish.imagen,
-            }));
-
-            setDishes(formattedData);
+            setDishes(response); // Usa directamente los datos del backend.
         } catch (error) {
             console.error("Error al obtener los platillos:", error);
             setError(error.message || "Error desconocido");
@@ -45,7 +30,7 @@ const useGetDishes = () => {
         fetchDishes();
     }, []);
 
-    return { dishes, fetchDishes, setDishes, loading, error };
+    return { dishes, fetchDishes, loading, error };
 };
 
 export default useGetDishes;

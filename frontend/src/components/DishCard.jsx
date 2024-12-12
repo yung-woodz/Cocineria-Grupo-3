@@ -6,27 +6,12 @@ const DishCard = ({ dish, onDelete, onEdit }) => {
     const userData = JSON.parse(sessionStorage.getItem('usuario'));
     const userRole = userData ? userData.rol : null;
 
-    // Normalizar requiredProducts
-    let requiredProducts = [];
-    if (Array.isArray(dish.requiredProducts)) {
-        requiredProducts = dish.requiredProducts;
-    } else if (typeof dish.requiredProducts === "string") {
-        try {
-            requiredProducts = JSON.parse(dish.requiredProducts);
-        } catch (error) {
-            console.error("Error al parsear requiredProducts:", error);
-            requiredProducts = [];
-        }
-    } else {
-        requiredProducts = [];
-    }
-
     return (
         <Card sx={{ maxWidth: 345, margin: "auto" }}>
             <CardMedia
                 component="img"
                 height="140"
-                image={dish.imagen} 
+                image={dish.image}
                 alt={dish.Nombre}
             />
             <CardContent>
@@ -49,10 +34,10 @@ const DishCard = ({ dish, onDelete, onEdit }) => {
                     Ingredientes:
                 </Typography>
                 <List>
-                    {requiredProducts && requiredProducts.length > 0 ? (
-                        requiredProducts.map((product, index) => (
+                    {dish.DishProducts && dish.DishProducts.length > 0 ? (
+                        dish.DishProducts.map((dishProduct, index) => (
                             <ListItem key={index} sx={{ padding: "0", fontSize: "0.9rem" }}>
-                                - {product.name}: {product.quantity} unidades
+                                - {dishProduct.name || "Producto desconocido"}: {dishProduct.quantity} unidades
                             </ListItem>
                         ))
                     ) : (
@@ -63,7 +48,7 @@ const DishCard = ({ dish, onDelete, onEdit }) => {
                 </List>
             </CardContent>
             <CardActions>
-                {(userRole === "administrador") && (
+                {userRole === "administrador" && (
                     <>
                         <Button size="small" color="error" onClick={() => onDelete(dish.id)}>
                             Eliminar

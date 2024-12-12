@@ -11,35 +11,25 @@ export function formatUserData(user) {
         createdAt: formatTempo(user.createdAt, "DD-MM-YYYY")
     };
 }
+
 export function formatDishData(dish) {
     return {
         id: dish.id,
         Nombre: startCase(dish.Nombre),
-        requiredProducts: (() => {
-            if (Array.isArray(dish.requiredProducts)) {
-                return dish.requiredProducts.map(product => ({
-                    name: product.name || 'Producto desconocido',
-                    quantity: product.quantity || 0
+        DishProducts: (() => {
+            if (Array.isArray(dish.DishProducts)) {
+                return dish.DishProducts.map(dishProduct => ({
+                    name: dishProduct.product?.name || 'Producto desconocido',
+                    quantity: dishProduct.quantity || 0
                 }));
             }
-            if (typeof dish.requiredProducts === "string") {
-                try {
-                    const parsedProducts = JSON.parse(dish.requiredProducts);
-                    return parsedProducts.map(product => ({
-                        name: product.name || 'Producto desconocido',
-                        quantity: product.quantity || 0
-                    }));
-                } catch {
-                    return [{ name: dish.requiredProducts, quantity: 0 }];
-                }
-            }
-            return []; // Si no es válido, devolver un arreglo vacío
+            return []; // Si no hay productos asociados, devolver un arreglo vacío
         })(),
         disponibilidad: startCase(dish.disponibilidad),
         descripcion: dish.descripcion || 'Sin descripción',
         tiempoDeEspera: dish.tiempoDeEspera || 0,
         precio: dish.precio || 0,  
-        imagen: dish.imagen || '',  // Usa la URL de la imagen o un string vacío si no está disponible
+        image: dish.image || 'Sin imagen',
         createdAt: formatTempo(dish.createdAt, "DD-MM-YYYY"),
         updatedAt: formatTempo(dish.updatedAt, "DD-MM-YYYY")
     };

@@ -32,13 +32,9 @@ const DishSchema = new EntitySchema({
             type: "int",
             nullable: false,
         },
-        requiredProducts: {
-            type: "json", 
-            nullable: true,
-        },
-        imagen: {
+        image: {
             type: "varchar",
-            length: 255,
+            length: 500,
             nullable: true,
         },
         createdAt: {
@@ -51,6 +47,15 @@ const DishSchema = new EntitySchema({
             default: () => "CURRENT_TIMESTAMP",
             onUpdate: "CURRENT_TIMESTAMP",
             nullable: false,
+        },
+    },
+    relations: {
+        DishProducts: {
+            target: "DishProduct",
+            type: "one-to-many",
+            inverseSide: "dish",
+            cascade: true,
+            onDelete: "CASCADE", // Propaga la eliminación
         },
     },
     indices: [
