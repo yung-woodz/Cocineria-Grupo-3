@@ -68,35 +68,31 @@ export async function getDishes(req, res) {
 
 export async function updateDish(req, res) {
     try {
-        const { Nombre, id,} = req.query;
-        const { body } = req;
+        const { Nombre, id } = req.query; 
+        const { body } = req; 
 
-        if (typeof body.disponibilidad === "boolean") {
-            body.disponibilidad = body.disponibilidad ? "disponible" : "no disponible";
-        }
-
-        const { error: queryError } = dishQueryValidation.validate({
-            Nombre,
-            id,
-        });
-
+        const { error: queryError } = dishQueryValidation.validate({ Nombre, id });
         if (queryError) {
-            return handleErrorClient(res,400,"Error de validación en la consulta",queryError.message,);
+            return handleErrorClient(res, 400, "Error de validación en la consulta", queryError.message);
         }
+
         const { error: bodyError } = dishBodyValidation.validate(body);
-
-        if (bodyError)
-            return handleErrorClient(res,400,"Error de validación en los datos enviados",bodyError.message,);
-
-        const [dish, dishError] = await updateDishesService({ Nombre, id }, body);
-
-        if (dishError) return handleErrorClient(res, 400, "Error modificando al Platillo", userError);
-
-        handleSuccess(res, 200, "Platillo modificado correctamente", dish);
-    } catch (error) {
-        handleErrorServer(res, 500, error.message);
+        if (bodyError) {
+            return handleErrorClient(res, 400, "Error de validación en los datos enviados", bodyError.message);
         }
+
+        const [updatedDish, dishError] = await updateDishesService({ Nombre, id }, body);
+        if (dishError) {
+            return handleErrorClient(res, 400, "Error modificando el platillo", dishError);
+        }
+
+        handleSuccess(res, 200, "Platillo modificado correctamente", updatedDish);
+    } catch (error) {
+        console.error("Error en updateDish:", error);
+        handleErrorServer(res, 500, error.message);
+    }
 }
+
 
 export async function deleteDish(req, res) {
     try {
@@ -116,7 +112,7 @@ export async function deleteDish(req, res) {
             id,
         });
         
-        if (errorDishDelete) return handleErrorClient(res, 404, "Error eliminado al Platillo", errorUserDelete);
+        if (errorDishDelete) return handleErrorClient(res, 404, "Error eliminado al Platillo");
 
         handleSuccess(res, 200, "Platillo eliminado correctamente", dishDelete);
     } catch (error) {

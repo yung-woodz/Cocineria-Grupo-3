@@ -11,11 +11,11 @@ export async function getDishes() {
     }
 }
 
-// revisar bien esto :
+
 export async function createDish(dishData) {
     try {
-        const { data } = await axios.post('http://146.83.198.35:1407/api/dish/dish', dishData);
-        return data;
+        const response = await axios.post('/dish', dishData);
+        return  response.data.data;
     } catch (error) {
         console.log(error);
         return error.response.data;

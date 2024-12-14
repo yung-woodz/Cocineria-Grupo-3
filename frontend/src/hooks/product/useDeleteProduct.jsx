@@ -11,20 +11,24 @@ const useDeleteProduct = (fetchProducts, setDataProduct) => {
                         const response = await deleteProduct(id);
                         if (response.status === 'Client error') {
                             showErrorAlert('Error', response.details);
-                            return;
+                            return false;  
                         }
                     }
-                    showSuccessAlert('¡Eliminado!','Los productos han sido eliminados correctamente.');
+                    showSuccessAlert('¡Eliminado!', 'Los productos han sido eliminados correctamente.');
                     await fetchProducts();
                     setDataProduct([]);
+                    return true;  
                 } else {
                     showErrorAlert('Cancelado', 'La operación ha sido cancelada.');
+                    return false; 
                 }
             } catch (error) {
                 console.error('Error al eliminar el producto:', error);
                 showErrorAlert('Cancelado', 'Ocurrió un error al eliminar los productos.');
+                return false;  
             }
         }
+        return false;  
     };
 
     return {

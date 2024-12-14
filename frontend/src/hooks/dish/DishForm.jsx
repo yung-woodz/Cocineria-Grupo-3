@@ -1,162 +1,114 @@
-import React, { useState } from "react";
-import {
-    Box,
-    Grid,
-    TextField,
-    Button,
-    Typography,
-    MenuItem,
-    Checkbox,
-    FormControlLabel,
-} from "@mui/material";
-
-const DishForm = ({ onSubmit }) => {
+import { useState } from "react";
+import { createDish } from "../../services/dishes.service";
+import Swal from "sweetalert2";
+const DishForm = () => {
     const [form, setForm] = useState({
         Nombre: "",
-        requiredProducts: "",
-        disponibilidad: "disponible",
         descripcion: "",
         tiempoDeEspera: "",
         precio: "",
-        imagen: "",
-        isAvailable: false,
+        disponibilidad: "disponible",
+        image: "",
+        DishProducts: [],
     });
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [errors, setErrors] = useState({});
+
     const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
+        const { name, value } = e.target;
+        setForm({ ...form, [name]: value });
+    };
+
+
+    const handleFileChange = (e) => {
+        setForm({ ...form, image: e.target.files[0] });
+    };
+
+    const handleAddProduct = () => {
         setForm({
             ...form,
-            [name]: type === "checkbox" ? checked : value,
+            DishProducts: [...form.DishProducts, { productId: "", quantity: "" }],
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleRemoveProduct = (index) => {
+        const updatedProducts = form.DishProducts.filter((_, i) => i !== index);
+        setForm({ ...form, DishProducts: updatedProducts });
+    };
+
+    const handleProductChange = (index, field, value) => {
+        const updatedProducts = [...form.DishProducts];
+        updatedProducts[index] = { ...updatedProducts[index], [field]: value };
+        setForm({ ...form, DishProducts: updatedProducts });
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        onSubmit({
-            ...form,
-            requiredProducts: form.requiredProducts.split(",").map((p) => p.trim()), // Convierte a un arreglo
-        });
-        setForm({
-            Nombre: "",
-            requiredProducts: "",
-            disponibilidad: "disponible",
-            descripcion: "",
-            tiempoDeEspera: "",
-            precio: "",
-            imagen: "",
-            isAvailable: false,
-        });
+        setIsSubmitting(true);
+        setErrors({});
+        try {
+            const formData = new FormData();
+            formData.append("Nombre", form.Nombre);
+            formData.append("descripcion", form.descripcion);
+            formData.append("tiempoDeEspera", form.tiempoDeEspera);
+            formData.append("precio", form.precio);
+            formData.append("disponibilidad", form.disponibilidad);
+            formData.append("image", form.image);
+    
+            form.DishProducts.forEach((product, index) => {
+                formData.append(`DishProducts[${index}][productId]`, product.productId);
+                formData.append(`DishProducts[${index}][quantity]`, product.quantity);
+            });
+    
+            const response = await createDish(formData); // Asegúrate de que esta llamada se complete correctamente
+    
+            // Mostrar éxito solo si la respuesta fue correcta
+            Swal.fire({
+                icon: "success",
+                title: "Platillo creado",
+                text: "El platillo fue creado exitosamente.",
+                confirmButtonText: "OK",
+            });
+    
+            // Limpieza del formulario
+            setForm({
+                Nombre: "",
+                descripcion: "",
+                tiempoDeEspera: "",
+                precio: "",
+                disponibilidad: "disponible",
+                image: "",
+                DishProducts: [],
+            });
+        } catch (error) {
+            console.log("Error capturado:", error.response?.data || error.message);
+            const responseErrors = error.response?.data || { message: "Error inesperado" };
+            setErrors(responseErrors.details || {});
+    
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: responseErrors.message || "Por favor, intenta nuevamente.",
+                confirmButtonText: "OK",
+            });
+        } finally {
+            setIsSubmitting(false);
+        }
     };
+    
 
-    return (
-        <Box
-            component="form"
-            onSubmit={handleSubmit}
-            sx={{
-                padding: 3,
-                backgroundColor: "#fff",
-                borderRadius: 2,
-                boxShadow: 3,
-                maxWidth: 600,
-                margin: "auto",
-            }}
-        >
-            <Typography variant="h5" align="center" gutterBottom>
-                Crear Nuevo Platillo
-            </Typography>
-            <Grid container spacing={2}>
-                <Grid item xs={12}>
-                    <TextField
-                        name="Nombre"
-                        label="Nombre del Platillo"
-                        variant="outlined"
-                        fullWidth
-                        value={form.Nombre}
-                        onChange={handleChange}
-                        required
-                    />
-                </Grid>
-                <Grid item xs={12}>
-                    <TextField
-                        name="descripcion"
-                        label="Descripción"
-                        variant="outlined"
-                        fullWidth
-                        multiline
-                        rows={3}
-                        value={form.descripcion}
-                        onChange={handleChange}
-                        required
-                    />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                    <TextField
-                        name="precio"
-                        label="Precio"
-                        type="number"
-                        variant="outlined"
-                        fullWidth
-                        value={form.precio}
-                        onChange={handleChange}
-                        required
-                    />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                    <TextField
-                        name="tiempoDeEspera"
-                        label="Tiempo de Espera (minutos)"
-                        type="number"
-                        variant="outlined"
-                        fullWidth
-                        value={form.tiempoDeEspera}
-                        onChange={handleChange}
-                        required
-                    />
-                </Grid>
-                <Grid item xs={12}>
-                    <TextField
-                        name="imagen"
-                        label="URL de la Imagen"
-                        variant="outlined"
-                        fullWidth
-                        value={form.imagen}
-                        onChange={handleChange}
-                    />
-                </Grid>
-                <Grid item xs={12}>
-                    <TextField
-                        name="requiredProducts"
-                        label="Productos Necesarios"
-                        variant="outlined"
-                        fullWidth
-                        value={form.requiredProducts}
-                        onChange={handleChange}
-                        helperText="Separar los productos con comas"
-                    />
-                </Grid>
-                <Grid item xs={12}>
-                    <TextField
-                        name="disponibilidad"
-                        label="Disponibilidad"
-                        select
-                        variant="outlined"
-                        fullWidth
-                        value={form.disponibilidad}
-                        onChange={handleChange}
-                        required
-                    >
-                        <MenuItem value="disponible">Disponible</MenuItem>
-                        <MenuItem value="no disponible">No Disponible</MenuItem>
-                    </TextField>
-                </Grid>
-                <Grid item xs={12} display="flex" justifyContent="center">
-                    <Button type="submit" variant="contained" color="primary" sx={{ minWidth: 150 }}>
-                        Guardar Platillo
-                    </Button>
-                </Grid>
-            </Grid>
-        </Box>
-    );
+    return {
+        form,
+        isSubmitting,
+        errors,
+        handleChange,
+        handleFileChange,
+        handleAddProduct,
+        handleRemoveProduct,
+        handleProductChange,
+        handleSubmit,
+    };
 };
 
 export default DishForm;

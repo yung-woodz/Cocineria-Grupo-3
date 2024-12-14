@@ -1,8 +1,0 @@
-{
-  "dependencies": {
-    "@fontsource/montserrat": "^5.1.0",
-    "react-dropzone": "^14.3.5",
-    "socket.io": "^4.8.1",
-    "socket.io-client": "^4.8.1"
-  }
-}

@@ -1,35 +1,36 @@
 import { useState, useEffect } from "react";
 import { getDishes } from "@services/dishes.service.js";
 
-
 const useGetDishes = () => {
-    const [dishes, setDishes, ] = useState([]);
-    
+    const [dishes, setDishes] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
     const fetchDishes = async () => {
+        setLoading(true);
+        setError(null);
+
         try {
-        const response = await getDishes();
-        const formattedData = response.map((dish) => ({
-            id: dish.id,
-            Nombre: dish.Nombre,
-            disponibilidad: dish.disponibilidad,
-            descripcion: dish.descripcion,
-            tiempoDeEspera: dish.tiempoDeEspera,
-            requiredProducts: dish.requiredProducts,
-            isAvailable: dish.isAvailable,
-            precio: dish.precio,
-            imagen: dish.imagen
-        }));
-        setDishes(formattedData);
+            const response = await getDishes();
+
+            if (!response || response.error) {
+                throw new Error(response?.error || "Error desconocido al obtener los platillos.");
+            }
+
+            setDishes(response); // Usa directamente los datos del backend.
         } catch (error) {
-        console.error("Error: ", error);
+            console.error("Error al obtener los platillos:", error);
+            setError(error.message || "Error desconocido");
+        } finally {
+            setLoading(false);
         }
     };
-    
+
     useEffect(() => {
         fetchDishes();
     }, []);
-    
-    return { dishes, fetchDishes, setDishes };
+
+    return { dishes, fetchDishes, loading, error };
 };
 
 export default useGetDishes;

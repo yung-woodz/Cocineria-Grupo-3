@@ -17,9 +17,9 @@ router
     .use(authenticateJwt)
 
 router
-    .post('/dish', rolAuth(['administrador', 'jefeCocina']), createDish)
-    .get("/", rolAuth(['administrador', 'jefeCocina']), getDishes)
-    .get("/detail/", rolAuth(['administrador', 'jefeCocina']), getDish)
+    .post('/', rolAuth(['administrador', 'jefeCocina']), createDish)
+    .get("/", getDishes)
+    .get("/detail/", getDish)
     .patch("/detail/", rolAuth(['administrador', 'jefeCocina']), updateDish)
     .delete("/detail/", rolAuth(['administrador', 'jefeCocina']), deleteDish);
 

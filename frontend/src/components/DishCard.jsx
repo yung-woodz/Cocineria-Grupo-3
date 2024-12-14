@@ -2,12 +2,16 @@ import React from "react";
 import { Card, CardActions, CardContent, CardMedia, Button, Typography, List, ListItem } from "@mui/material";
 
 const DishCard = ({ dish, onDelete, onEdit }) => {
+    // Obtener el rol del usuario desde sessionStorage
+    const userData = JSON.parse(sessionStorage.getItem('usuario'));
+    const userRole = userData ? userData.rol : null;
+
     return (
         <Card sx={{ maxWidth: 345, margin: "auto" }}>
             <CardMedia
                 component="img"
                 height="140"
-                image={dish.imagen} 
+                image={dish.image}
                 alt={dish.Nombre}
             />
             <CardContent>
@@ -30,10 +34,10 @@ const DishCard = ({ dish, onDelete, onEdit }) => {
                     Ingredientes:
                 </Typography>
                 <List>
-                    {dish.requiredProducts && dish.requiredProducts.length > 0 ? (
-                        dish.requiredProducts.map((product, index) => (
+                    {dish.DishProducts && dish.DishProducts.length > 0 ? (
+                        dish.DishProducts.map((dishProduct, index) => (
                             <ListItem key={index} sx={{ padding: "0", fontSize: "0.9rem" }}>
-                                - {product}
+                                - {dishProduct.name || "Producto desconocido"}: {dishProduct.quantity} unidades
                             </ListItem>
                         ))
                     ) : (
@@ -44,12 +48,16 @@ const DishCard = ({ dish, onDelete, onEdit }) => {
                 </List>
             </CardContent>
             <CardActions>
-                <Button size="small" color="error" onClick={() => onDelete([dish.id])}>
-                    Eliminar
-                </Button>
-                <Button size="small" color="primary" onClick={() => onEdit(dish)}>
-                    Editar
-                </Button>
+                {userRole === "administrador" && (
+                    <>
+                        <Button size="small" color="error" onClick={() => onDelete(dish.id)}>
+                            Eliminar
+                        </Button>
+                        <Button size="small" color="primary" onClick={() => onEdit(dish)}>
+                            Editar
+                        </Button>
+                    </>
+                )}
             </CardActions>
         </Card>
     );

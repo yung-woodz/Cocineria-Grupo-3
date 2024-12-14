@@ -5,7 +5,7 @@ import { useDropzone } from "react-dropzone";
 import CancelIcon from "@mui/icons-material/Cancel";
 import useCreateProduct from "@hooks/product/useCreateProduct";
 
-const CreateProduct = () => {
+const CreateProduct = ({ onSuccess }) => {
     const navigate = useNavigate();
     const { form, isSubmitting, errors, handleChange, handleFileChange, handleSubmit: submitForm } = useCreateProduct();
     const [previewImage, setPreviewImage] = useState(null); 
@@ -13,10 +13,9 @@ const CreateProduct = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         const success = await submitForm(event);
-        if (success) {
-            navigate("/inventory");
-        }
-    };
+        onSuccess(success);  
+        
+    };    
 
     const onDrop = (acceptedFiles) => {
         const validFiles = acceptedFiles.filter(file =>
@@ -62,7 +61,6 @@ const CreateProduct = () => {
                 alignItems: "center",
                 justifyContent: "center",
                 minHeight: "100vh",
-                backgroundColor: "#f5f5f5",
                 padding: 4,
             }}
         >
@@ -186,11 +184,15 @@ const CreateProduct = () => {
                                         position: "absolute",
                                         top: 8,
                                         right: 8,
+                                        width: 40,  
+                                        height: 40, 
+                                        padding: 0, 
                                         backgroundColor: "#fff",
+                                        borderRadius: "50%", 
                                         "&:hover": { backgroundColor: "#f5f5f5" },
                                     }}
                                 >
-                                    <CancelIcon />
+                                    <CancelIcon sx={{ fontSize: 24 }} /> 
                                 </IconButton>
                             </>
                         ) : (

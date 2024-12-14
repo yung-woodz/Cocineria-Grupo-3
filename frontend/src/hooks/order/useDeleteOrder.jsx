@@ -1,31 +1,25 @@
 import { deleteOrder } from "../../services/order.service";
 import { deleteDataAlert, showErrorAlert, showSuccessAlert } from "../../helpers/sweetAlert";
 
-const useDeleteOrder = (fetchOrders, setDataOrder) => {
+const useDeleteOrder = (fetchOrders, setOrders) => {
     const handleDelete = async (orderId) => {
-        if (!orderId) 
-            return;
-
         try {
-            const result = await deleteDataAlert();
-            if (!result.isConfirmed) {
-                showErrorAlert('Cancelado', 'La operación ha sido cancelada.');
-                return;
-            }
-
-            const response = await deleteOrder(orderId);
-            if (response.status >= 200 && response.status < 300) {
-                showSuccessAlert('¡Eliminado!', 'La orden ha sido eliminada correctamente.');
+            const result = await deleteDataAlert(); // Mostrar confirmación
+            if (result.isConfirmed) {
+                const response = await deleteOrder(orderId); // Llamar al servicio para eliminar la orden
+                if (response.status === "Error del cliente") {
+                    return showErrorAlert("Error", response.details);
+                }
+                showSuccessAlert("¡Eliminado!", "La orden ha sido eliminada correctamente.");
+                
+                // Actualizar las órdenes sin recargar
                 await fetchOrders();
-                if (setDataOrder) setDataOrder([]);
             } else {
-                showErrorAlert('Error', 'No se pudo eliminar la orden.');
+                showErrorAlert("Cancelado", "La operación ha sido cancelada.");
             }
         } catch (error) {
-            console.error('Error al eliminar la orden:', error);
-            console.error('Detalles del error:', error.response);
-            const errorMessage = error.response?.data?.message || 'Ocurrió un error al eliminar la orden.';
-            showErrorAlert('Error', errorMessage);
+            console.error("Error al eliminar la orden:", error);
+            showErrorAlert("Error", "Ocurrió un error al eliminar la orden.");
         }
     };
 

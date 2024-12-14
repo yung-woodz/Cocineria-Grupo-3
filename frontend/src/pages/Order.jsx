@@ -1,17 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { createOrder } from "../services/order.service";
-import { io } from "socket.io-client";
-import {
-    Box,
-    Grid,
-    TextField,
-    Button,
-    Typography,
-    MenuItem,
-} from "@mui/material";
+import useUsers from "@hooks/users/useGetUsers";
+import { Box, Grid, TextField, Button, MenuItem, Typography, CircularProgress } from "@mui/material";
 
-const Order = () => {
+const Order = ({ onClose }) => {
     const [orderData, setOrderData] = useState({
         customer: "",
         tableNumber: "",
@@ -19,6 +12,12 @@ const Order = () => {
         status: "En progreso",
         username: ""
     });
+    const [loading, setLoading] = useState(false);
+    const { users, fetchUsers } = useUsers();
+
+    useEffect(() => {
+        fetchUsers();
+    }, [fetchUsers]);
 
     const handleChange = (e) => { 
         const { name, value } = e.target;
@@ -47,9 +46,14 @@ const Order = () => {
                 tableNumber: "",
                 description: "",
                 status: "En progreso",
+                username: ""
             });
-        }catch (error) {
+            onClose();
+            window.location.reload();
+        } catch (error) {
             alert("Error al crear la orden" + error.message);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -57,25 +61,28 @@ const Order = () => {
         <Box
             component="form"
             onSubmit={handleSubmit}
+            noValidate
             sx={{
-                padding: 10,
-                backgroundColor: "#fff",
-                borderRadius: 4,
-                boxShadow: 3,
-                maxWidth: 600,
-                margin: "100px auto",
+                mt: 3,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                height: "100vh",
+                padding: 4,
+                overflow: "hidden"
             }}
         >
             <Typography variant="h4" align="center" gutterBottom>
                 Crear Orden
             </Typography>
-            <Grid container spacing={3}>
+            <Grid container spacing={2} maxWidth="sm">
                 <Grid item xs={12}>
                     <TextField
                         name="customer"
-                        label="Cliente"
-                        variant="outlined"
+                        required
                         fullWidth
+                        label="Cliente"
                         value={orderData.customer}
                         onChange={handleChange}
                     />
@@ -83,9 +90,9 @@ const Order = () => {
                 <Grid item xs={12}>
                     <TextField
                         name="tableNumber"
-                        label="Número de mesa"
-                        variant="outlined"
+                        required
                         fullWidth
+                        label="Número de mesa"
                         value={orderData.tableNumber}
                         onChange={handleChange}
                     />
@@ -93,9 +100,10 @@ const Order = () => {
                 <Grid item xs={12}>
                     <TextField
                         name="description"
-                        label="Descripción"
-                        variant="outlined"
+                        required
                         fullWidth
+                        label="Descripción"
+                        multiline
                         value={orderData.description}
                         onChange={handleChange}
                     />
@@ -103,43 +111,50 @@ const Order = () => {
                 <Grid item xs={12}>
                     <TextField
                         name="status"
-                        label="Estado"
-                        select
-                        variant="outlined"
+                        required
                         fullWidth
+                        select
+                        label="Estado"
                         value={orderData.status}
                         onChange={handleChange}
-                        required
                     >
                         <MenuItem value="En progreso">En progreso</MenuItem>
-                        <MenuItem value="Entregado">Entregado</MenuItem>
                         <MenuItem value="Cancelado">Cancelado</MenuItem>
+                        <MenuItem value="Entregado">Entregado</MenuItem>
                     </TextField>
-                    
                 </Grid>
                 <Grid item xs={12}>
                     <TextField
                         name="username"
-                        label="Usuario"
-                        variant="outlined"
+                        required
                         fullWidth
+                        select
+                        label="Cocinero"
                         value={orderData.username}
                         onChange={handleChange}
-                    />
+                    >
+                        {users.filter(user => user.rol.toLowerCase() === "cocinero").map((cook) => (
+                            <MenuItem key={cook.rut} value={cook.nombreCompleto}>
+                                {cook.nombreCompleto}
+                            </MenuItem>
+                        ))}
+                    </TextField>
                 </Grid>
                 <Grid item xs={12}>
                     <Button
                         type="submit"
-                        variant="contained"
-                        color="primary"
                         fullWidth
+                        variant="contained"
+                        disabled={loading}
+                        sx={{ mt: 3, mb: 2, backgroundColor: "#212121" }}
                     >
-                        Crear Orden
+                        {loading ? <CircularProgress size={24} /> : "Crear orden"}
                     </Button>
                 </Grid>
             </Grid>
         </Box>
     );
-}
+};
 
 export default Order;
+

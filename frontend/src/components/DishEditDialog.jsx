@@ -1,32 +1,55 @@
 import React, { useState, useEffect } from "react";
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem } from "@mui/material";
+import {
+    Button,
+    TextField,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Grid,
+    IconButton,
+    MenuItem,
+} from "@mui/material";
+import Typography from "@mui/material/Typography";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import { updateDish } from "../services/dishes.service";
+import useGetProducts from "../hooks/product/useGetProducts";
 import { showSuccessAlert } from "../helpers/sweetAlert";
 
 export default function DishEditDialog({ open, onClose, dishData, fetchDishes }) {
-    //creo que hay otra manera de hacerlo que esto
+    const { products } = useGetProducts();
     const [formData, setFormData] = useState({
         Nombre: "",
         descripcion: "",
         precio: "",
         tiempoDeEspera: "",
         disponibilidad: "disponible",
-        requiredProducts: "",
+        image: "",
+        DishProducts: [],
     });
 
     useEffect(() => {
         if (dishData) {
-            setFormData({
+            const updatedFormData = {
                 Nombre: dishData.Nombre || "",
                 descripcion: dishData.descripcion || "",
                 precio: dishData.precio || "",
                 tiempoDeEspera: dishData.tiempoDeEspera || "",
                 disponibilidad: dishData.disponibilidad || "disponible",
-                requiredProducts: dishData.requiredProducts?.join(", ") || "",
-            });
+                image: dishData.image || "",
+                DishProducts: Array.isArray(dishData.DishProducts)
+                    ? dishData.DishProducts.map((dp) => ({
+                        productId: dp.product?.id || "",
+                        quantity: dp.quantity || "",
+                    }))
+                    : [],
+            };
+            console.log("Datos inicializados:", updatedFormData);
+            setFormData(updatedFormData);
         }
     }, [dishData]);
-
+    
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevData) => ({
@@ -35,21 +58,45 @@ export default function DishEditDialog({ open, onClose, dishData, fetchDishes })
         }));
     };
 
+    const handleProductChange = (index, field, value) => {
+        const updatedProducts = [...formData.DishProducts];
+        updatedProducts[index] = {
+            ...updatedProducts[index],
+            [field]: value,
+        };
+        setFormData((prevData) => ({
+            ...prevData,
+            DishProducts: updatedProducts,
+        }));
+    };
+
+    const handleAddProduct = () => {
+        setFormData((prevData) => ({
+            ...prevData,
+            DishProducts: [...prevData.DishProducts, { productId: "", quantity: "" }],
+        }));
+    };
+
+    const handleRemoveProduct = (index) => {
+        const updatedProducts = formData.DishProducts.filter((_, i) => i !== index);
+        setFormData((prevData) => ({
+            ...prevData,
+            DishProducts: updatedProducts,
+        }));
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const updatedDish = {
-                ...formData,
-                requiredProducts: formData.requiredProducts.split(",").map((p) => p.trim()),
-            };
-            await updateDish(updatedDish, { id: dishData.id }); 
-            await fetchDishes(); 
-            onClose(); 
+            await updateDish(formData, { id: dishData.id });
+            await fetchDishes();
+            showSuccessAlert("¡Éxito!", "Platillo actualizado correctamente.");
+            onClose();
         } catch (error) {
             console.error("Error al actualizar el platillo:", error);
         }
     };
-    // ingresar alguna advertencia o  o el edit de imagen
+
     return (
         <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
             <DialogTitle>Editar Platillo</DialogTitle>
@@ -100,32 +147,56 @@ export default function DishEditDialog({ open, onClose, dishData, fetchDishes })
                     onChange={handleChange}
                     required
                 />
-                <TextField
-                    margin="dense"
-                    id="disponibilidad"
-                    name="disponibilidad"
-                    label="Disponibilidad"
-                    type="select"
-                    select
-                    fullWidth
-                    value={formData.disponibilidad}
-                    onChange={handleChange}
-                    required
+                <Typography variant="h6" sx={{ mt: 2 }}>
+                    Productos Requeridos:
+                </Typography>
+                {formData.DishProducts.map((product, index) => (
+                    <Grid container spacing={1} key={index} alignItems="center">
+                        <Grid item xs={6}>
+                            <TextField
+                                select
+                                label="Producto"
+                                value={product.productId}
+                                onChange={(e) =>
+                                    handleProductChange(index, "productId", e.target.value)
+                                }
+                                fullWidth
+                                required
+                            >
+                                {products.map((prod) => (
+                                    <MenuItem key={prod.id} value={prod.id}>
+                                        {prod.name}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <TextField
+                                label="Cantidad"
+                                type="number"
+                                value={product.quantity}
+                                onChange={(e) =>
+                                    handleProductChange(index, "quantity", e.target.value)
+                                }
+                                fullWidth
+                                required
+                            />
+                        </Grid>
+                        <Grid item xs={2}>
+                            <IconButton onClick={() => handleRemoveProduct(index)}>
+                                <RemoveCircleOutlineIcon color="error" />
+                            </IconButton>
+                        </Grid>
+                    </Grid>
+                ))}
+                <Button
+                    variant="outlined"
+                    startIcon={<AddCircleOutlineIcon />}
+                    onClick={handleAddProduct}
+                    sx={{ mt: 1 }}
                 >
-                    <MenuItem value={true}>Disponible</MenuItem>
-                    <MenuItem value={false}>No Disponible</MenuItem>
-                </TextField>
-                <TextField
-                    margin="dense"
-                    id="requiredProducts"
-                    name="requiredProducts"
-                    label="Productos Asociados"
-                    type="text"
-                    fullWidth
-                    value={formData.requiredProducts}
-                    onChange={handleChange}
-                    helperText="Separar los ingredientes con comas"
-                />
+                    Agregar Producto
+                </Button>
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose}>Cancelar</Button>

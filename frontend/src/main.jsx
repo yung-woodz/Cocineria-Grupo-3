@@ -16,6 +16,7 @@ import Allorders from '@pages/Allorders';
 import ProtectedRoute from '@components/ProtectedRoute';
 import '@styles/styles.css';
 import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
+import "./index.css";
 
 import "@fontsource/montserrat/300.css";
 import "@fontsource/montserrat/400.css";
@@ -57,13 +58,13 @@ const router = createBrowserRouter([
       {
         path: '/dishes', // Ruta para DishesPage
         element: (
-          <ProtectedRoute allowedRoles={['administrador']}> 
+          <ProtectedRoute allowedRoles={['administrador','usuario']}> 
             <Dishes/>
           </ProtectedRoute>
         ),
       },
       {
-        path: '/create-dish', // Nueva ruta para el formulario de creación
+        path: '/create-dish', 
         element: (
           <ProtectedRoute allowedRoles={['administrador']}>
             <CreateDishForm /> 

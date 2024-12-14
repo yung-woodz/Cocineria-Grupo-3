@@ -1,130 +1,139 @@
-import { useState, useEffect } from "react";
+import React, { useState } from 'react';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Order from './Order';
+
 import useGetOrders from "../hooks/order/useGetOrders";
 import useDeleteOrder from "../hooks/order/useDeleteOrder";
-import OrderCard from "../components/OrderCard";
-import OrderEditDialog from "../hooks/order/useEditOrder";
-import { Box, Grid, TextField, Select, MenuItem, IconButton, InputAdornment, Typography } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
-const AllOrders = () => {
-    const { orders, fetchOrders} = useGetOrders();
-    const [filter, setFilter] = useState("");
-    const [filterBy, setFilterBy] = useState("customer");
-    const [sortOrder, setSortOrder] = useState("asc");
-    const [selectedOrder, setSelectedOrder] = useState(null);
-    const [showEditDialog, setShowEditDialog] = useState(false);
+const Allorders = () => {
+    const { orders, fetchOrders, setOrders } = useGetOrders();
+    const { handleDelete } = useDeleteOrder(fetchOrders, setOrders);
+    const [showPopup, setShowPopup] = useState(false);
 
-    const { handleDelete } = useDeleteOrder(fetchOrders, null);
-
-
-
-    const toggleSortOrder = () => {
-        setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
-    };
-
-    const filteredOrders = orders
-    .filter((order) => {
-        if (!filter) return true;
-        const valueToFilter = (() => {
-            if (filterBy === "tableNumber" || filterBy === "status") {
-                return order[filterBy].toString();
-            } else if (filterBy === "user") {
-                return order.user?.username?.toLowerCase() || '';
-            } else {
-                return order[filterBy]?.toLowerCase() || '';
-            }
-        })();
-        return valueToFilter.includes(filter.toLowerCase());
-    })
-    .sort((a, b) => {
-        const aValue = filterBy === "user" ? a.user?.username || '' : a[filterBy];
-        const bValue = filterBy === "user" ? b.user?.username || '' : b[filterBy];
-        if (sortOrder === "asc") {
-            return aValue > bValue ? 1 : -1;
-        } else {
-            return aValue < bValue ? 1 : -1;
+    const deleteOrderAndReload = async (orderId) => {
+        try {
+            await handleDelete(orderId);
+            window.location.reload();
+        } catch (error) {
+            console.error("Error al eliminar el pedido:", error);
         }
-    });
-
-
-
-    const handleEdit = (order) => {
-        setSelectedOrder(order);
-        setShowEditDialog(true);
     };
 
-    useEffect(() => {
-        fetchOrders();
-    }, [fetchOrders]);
+    const handleButtonClick = () => {
+        setShowPopup(true);
+    };
+
+    const handleClosePopup = () => {
+        setShowPopup(false);
+    };
+
+    const handleOrderSuccess = () => {
+        setShowPopup(false);
+        window.location.reload();
+    };
 
     return (
-        <Box padding={2}>
-            <Typography variant="h4" align="center" gutterBottom>
-                Órdenes
-            </Typography>
-            <Box display="flex" justifyContent="space-between" alignItems="center" marginBottom={2}>
-                <Box display="flex" alignItems="center">
-                    <Select
-                        value={filterBy}
-                        onChange={(e) => setFilterBy(e.target.value)}
-                        style={{
-                            backgroundColor: "#FFC107",
-                            height: "35px",
-                            fontSize: "14px",
-                            borderRadius: "4px",
-                            marginRight: "10px",
-                        }}
+        <div className="flex flex-col items-center space-y-6 p-6">
+            {orders && orders.length > 0 ? (
+                orders.map((order) => (
+                    <div
+                        key={order.id}
+                        className="w-[1100px] bg-white shadow-lg rounded-md overflow-hidden border border-gray-300"
                     >
-                        <MenuItem value="customer">Cliente</MenuItem>
-                        <MenuItem value="tableNumber">Número de Mesa</MenuItem>
-                        <MenuItem value="description">Descripción</MenuItem>
-                        <MenuItem value="status">Estado</MenuItem>
-                        <MenuItem value="user">Usuario</MenuItem>
-                    </Select>
-                    <TextField
-                        variant="outlined"
-                        size="small"
-                        placeholder={`Buscar ${filterBy}`}
-                        value={filter}
-                        onChange={(e) => setFilter(e.target.value)}
-                        style={{
-                            backgroundColor: "#fff",
-                            fontSize: "14px",
-                        }}
-                        InputProps={{
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    <SearchIcon />
-                                </InputAdornment>
-                            ),
-                        }}
-                    />
-                    <IconButton onClick={toggleSortOrder} aria-label="Cambiar orden">
-                        {sortOrder === "asc" ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
-                    </IconButton>
-                </Box>
-            </Box>
-            <Grid container spacing={3}>
-                {filteredOrders.map((order) => (
-                    <Grid item xs={12} sm={6} md={4} key={order.id}>
-                        <OrderCard
-                            order={order}
-                            onEdit={() => handleEdit(order)}
-                            onDelete={() => handleDelete(order.id)}
-                        />
-                    </Grid>
-                ))}
-            </Grid>
-            <OrderEditDialog
-                open={showEditDialog}
-                onClose={() => setShowEditDialog(false)}
-                orderData={selectedOrder}
-                fetchOrders={fetchOrders}
-            />
-        </Box>
+                        {/* Header */}
+                        <div className="bg-[#212121] text-white p-4 flex justify-between items-center">
+                            <span className="font-bold text-lg">PEDIDO #{order.id}</span>
+                            <IconButton
+                                sx={{ color: "red" }}
+                                onClick={() => deleteOrderAndReload(order.id)}
+                                title="Eliminar pedido"
+                            >
+                                <DeleteIcon />
+                            </IconButton>
+                        </div>  
+                        {/* Body */}
+                        <div className="p-6 grid grid-cols-3 gap-4">
+                            {/* Left Section */}
+                            <div className="text-center col-span-1">
+                                <p className="text-8xl font-bold">{order.id}</p>
+                                <p
+                                    className={`text-4xl font-bold mt-4 ${order.status === "PENDIENTE"
+                                        ? "text-red-600"
+                                        : "text-green-600"
+                                        }`}
+                                >
+                                    {order.status}
+                                </p>
+                                <p className="text-2xl text-gray-600 mt-2">
+                                    MESA - {order.tableNumber}
+                                </p>
+                            </div>
+                            {/* Right Section */}
+                            <div className="col-span-2">
+                                <h3 className="text-2xl font-bold">DESCRIPCIÓN:</h3>
+                                <p className="text-lg text-gray-700 mt-2 leading-relaxed break-words">
+                                    {order.description}
+                                </p>
+                                <div className="mt-4 grid grid-cols-2 gap-4">
+                                    <p className="text-lg font-bold">
+                                        MESERO: <span className="font-normal">{order.user?.nombreCompleto || "N/A"}</span>
+                                    </p>
+                                    <p className="text-lg font-bold">
+                                        CLIENTE: <span className="font-normal">{order.customer || "N/A"}</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                ))
+            ) : (
+                <p className="text-xl text-gray-600">No hay pedidos disponibles.</p>
+            )}
+
+            <div className="relative h-screen">
+                <button
+                    className="fixed bottom-5 right-5 w-16 h-16 bg-[#FFC107] text-black rounded-full text-2xl shadow-lg hover:bg-blue-600 focus:outline-none"
+                    onClick={handleButtonClick}
+                >
+                    +
+                </button>
+
+                <Dialog
+                    open={showPopup}
+                    onClose={handleClosePopup}
+                    maxWidth="md"
+                    fullWidth
+                >
+                    <DialogTitle className="bg-[#212121] text-white">
+                        Crear Orden
+                        <IconButton
+                            aria-label="cerrar"
+                            onClick={handleClosePopup}
+                            sx={{
+                                position: 'absolute',
+                                right: 8,
+                                top: 8,
+                                color: 'white'
+                            }}
+                        >
+                            <CloseIcon />
+                        </IconButton>
+                    </DialogTitle>
+
+                    <DialogContent dividers>
+                        <Order onClose={handleOrderSuccess} />
+                    </DialogContent>
+                </Dialog>
+            </div>
+        </div>
+
     );
 };
 
-export default AllOrders;
+export default Allorders;
