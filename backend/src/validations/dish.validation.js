@@ -112,3 +112,4 @@ export const dishBodyValidation = Joi.object({
         "object.unknown": "Campo desconocido en la solicitud.",
         "object.missing":"Debes proporcionar al menos un campo: Nombre o Ingredientes.",
     });
+

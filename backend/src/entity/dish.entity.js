@@ -73,3 +73,4 @@ const DishSchema = new EntitySchema({
 });
 
 export default DishSchema;
+

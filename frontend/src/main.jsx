@@ -10,9 +10,13 @@ import Error404 from '@pages/Error404';
 import Root from '@pages/Root';
 import Inventory from '@pages/Inventory';
 import CreateProduct from '@pages/createProduct';
+import Order from '@pages/Order';
+import Notifications from '@pages/Notifications';
+import Allorders from '@pages/Allorders';
 import ProtectedRoute from '@components/ProtectedRoute';
 import '@styles/styles.css';
 import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
+import "./index.css";
 
 import "@fontsource/montserrat/300.css";
 import "@fontsource/montserrat/400.css";
@@ -67,6 +71,30 @@ const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
+      {
+        path: '/order',
+        element: (
+        <ProtectedRoute allowedRoles={['administrador', 'mesero']}>
+          <Order />
+        </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/order/orderByChef',
+        element: (
+        <ProtectedRoute allowedRoles={['administrador', 'mesero', 'cocinero', 'jefeCocina']}>
+          <Notifications />
+        </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/order/all',
+        element: (
+          <ProtectedRoute allowedRoles={['administrador', 'mesero', 'cocinero', 'jefeCocina']}>
+            <Allorders />
+          </ProtectedRoute>
+        ),
+      }
     ]
   },
   {

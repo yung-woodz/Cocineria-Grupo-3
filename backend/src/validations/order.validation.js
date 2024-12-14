@@ -1,6 +1,19 @@
 "use strict";
 import Joi from "joi";
 
+export const chefOrdersValidation = Joi.object({
+    id: Joi.number()
+        .integer()
+        .positive()
+        .required()
+        .messages({
+            "number.base": "El ID debe ser un número.",
+            "number.integer": "El ID debe ser un número entero.",
+            "number.positive": "El ID debe ser un número positivo.",
+            "any.required": "El ID es obligatorio."
+        })
+});
+
 export const orderQueryValidation = Joi.object({
     id: Joi.number()
         .integer()
