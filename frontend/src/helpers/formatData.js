@@ -55,3 +55,14 @@ export function formatPostUpdate(user) {
         createdAt: formatTempo(user.createdAt, "DD-MM-YYYY")
     };
 }
+
+export function formatProductData(product) {
+    return {
+        ...product,
+        name: startCase(product.name),
+        type: startCase(product.type),
+        quantity: product.quantity,
+        entryDate: product.entryDate,
+        expirationDate: product.expirationDate
+    };
+}
