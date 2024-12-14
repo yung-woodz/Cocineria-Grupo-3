@@ -21,8 +21,7 @@ async function setupServer() {
     const io = new Server(server, {
 
       cors: {
-        origin : true,
-        methods: ["GET", "POST"]
+        origin : '*',
       }
 
     });
@@ -30,14 +29,13 @@ async function setupServer() {
     const connectedUsers = new Map();
 
     io.on('connection', (socket) => {
-      console.log('Usuario conectado:', socket.id);
-
-      socket.on('order', (data) => {
-          socket.client.emit('order', data);
+      console.log("Usuario conectado:", socket.id);
+    
+        socket.on('disconnect', (reason) => {
+          console.log("Usuario desconectado:", reason);
+        });
       });
-
-    });
-
+  
     app.set('socketio', io);
     app.set('connectedUsers', connectedUsers);
 

@@ -1,6 +1,5 @@
 "use strict";
-import { io } from "../socketConfig.js"; // Importa la configuración de WebSocket
-import User from "../entity/user.entity.js";
+import { io } from "socket.io"; // Importa la configuración de WebSocket
 import Order from "../entity/order.entity.js";
 
 export async function sendNotificationService(orderId) {
