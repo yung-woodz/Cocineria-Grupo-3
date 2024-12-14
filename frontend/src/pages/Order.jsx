@@ -114,8 +114,6 @@ const Order = ({ onClose }) => {
                         onChange={handleChange}
                     >
                         <MenuItem value="En progreso">En progreso</MenuItem>
-                        <MenuItem value="Cancelado">Cancelado</MenuItem>
-                        <MenuItem value="Entregado">Entregado</MenuItem>
                     </TextField>
                 </Grid>
                 <Grid item xs={12}>
