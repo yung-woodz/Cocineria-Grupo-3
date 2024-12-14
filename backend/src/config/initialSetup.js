@@ -62,7 +62,7 @@ async function createUsers() {
           rut: "21.172.447-1",
           email: "usuario5.2024@gmail.cl",
           password: await encryptPassword("user1234"),
-          rol: "cocineroJefe",
+          rol: "cocinero",
         }),
       ),
       userRepository.save(

@@ -106,6 +106,7 @@ export const dishBodyValidation = Joi.object({
         "array.includes": "DishProducts debe contener objetos válidos.",
     }),
 })
+
     .or("Nombre","Ingredientes")
     .unknown(false)
     .messages({
