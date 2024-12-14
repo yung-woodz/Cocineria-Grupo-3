@@ -40,7 +40,7 @@ const Inventory = () => {
     const [filter, setFilter] = useState('');
     const [filterBy, setFilterBy] = useState('name'); 
     const [sortOrder, setSortOrder] = useState('asc');
-    const rowsPerPage = 5;
+    const rowsPerPage = 8;
     const navigate = useNavigate();
 
     const [openPopup, setOpenPopup] = useState(false);
@@ -131,8 +131,8 @@ const Inventory = () => {
     const displayedProducts = filteredProducts.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
     return (
-        <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh" padding={2}>
-            <TableContainer component={Paper} style={{ width: '100%', maxWidth: '900px' }}>
+        <Box display="flex" justifyContent="center" alignItems="center" minHeight="25vh" padding={2}>
+            <TableContainer component={Paper} style={{ width: '100%', maxWidth: '2000px' }}>
                 <Box display="flex" justifyContent="space-between" padding="15px" bgcolor="#212121" color="#fff">
                     <Box display="flex" alignItems="center">
                         <Select

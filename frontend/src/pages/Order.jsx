@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { createOrder } from "../services/order.service";
-import "@styles/Order.css";
+import useUsers from "@hooks/users/useGetUsers";
+import { Box, Grid, TextField, Button, MenuItem, Typography, CircularProgress } from "@mui/material";
 
-const Order = () => {
+const Order = ({ onClose }) => {
     const [orderData, setOrderData] = useState({
         customer: "",
         tableNumber: "",
@@ -12,6 +13,11 @@ const Order = () => {
         username: ""
     });
     const [loading, setLoading] = useState(false);
+    const { users, fetchUsers } = useUsers();
+
+    useEffect(() => {
+        fetchUsers();
+    }, [fetchUsers]);
 
     const handleChange = (e) => { 
         const { name, value } = e.target;
@@ -35,71 +41,115 @@ const Order = () => {
                 tableNumber: "",
                 description: "",
                 status: "En progreso",
+                username: ""
             });
-        }catch (error) {
+            onClose();
+            window.location.reload();
+        } catch (error) {
             alert("Error al crear la orden" + error.message);
-        }finally {
+        } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="request-container">
-            <h1>Crear Orden</h1>
-            <form onSubmit={handleSubmit}>
-                <div style={{ marginBottom: "15px" }}>
-                    <label>Cliente:</label>
-                    <input
-                        type="text"
+        <Box
+            component="form"
+            onSubmit={handleSubmit}
+            noValidate
+            sx={{
+                mt: 3,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                height: "100vh",
+                padding: 4,
+                overflow: "hidden"
+            }}
+        >
+            <Typography variant="h4" align="center" gutterBottom>
+                Crear Orden
+            </Typography>
+            <Grid container spacing={2} maxWidth="sm">
+                <Grid item xs={12}>
+                    <TextField
                         name="customer"
+                        required
+                        fullWidth
+                        label="Cliente"
                         value={orderData.customer}
                         onChange={handleChange}
                     />
-                </div>
-                <div style={{ marginBottom: "15px" }}>
-                    <label>Número de mesa:</label>
-                    <input
-                        type="text"
+                </Grid>
+                <Grid item xs={12}>
+                    <TextField
                         name="tableNumber"
+                        required
+                        fullWidth
+                        label="Número de mesa"
                         value={orderData.tableNumber}
                         onChange={handleChange}
                     />
-                </div>
-                <div style={{ marginBottom: "15px" }}>
-                    <label>Descripción:</label>
-                    <textarea
+                </Grid>
+                <Grid item xs={12}>
+                    <TextField
                         name="description"
+                        required
+                        fullWidth
+                        label="Descripción"
+                        multiline
                         value={orderData.description}
                         onChange={handleChange}
                     />
-                </div>
-                <div style={{ marginBottom: "15px" }}>
-                    <label>Estado:</label>
-                    <select
+                </Grid>
+                <Grid item xs={12}>
+                    <TextField
                         name="status"
+                        required
+                        fullWidth
+                        select
+                        label="Estado"
                         value={orderData.status}
                         onChange={handleChange}
                     >
-                        <option value="En progreso">En progreso</option>
-                        <option value="Cancelado">Cancelado</option>
-                        <option value="Entregado">Entregado</option>
-                    </select>
-                </div>
-                <div style={{ marginBottom: "15px" }}>
-                    <label>Cocinero:</label>
-                    <input
-                        type="text"
+                        <MenuItem value="En progreso">En progreso</MenuItem>
+                        <MenuItem value="Cancelado">Cancelado</MenuItem>
+                        <MenuItem value="Entregado">Entregado</MenuItem>
+                    </TextField>
+                </Grid>
+                <Grid item xs={12}>
+                    <TextField
                         name="username"
+                        required
+                        fullWidth
+                        select
+                        label="Cocinero"
                         value={orderData.username}
                         onChange={handleChange}
-                    />
-                </div>
-                <button type="submit" disabled={loading}>
-                    {loading ? "Creando..." : "Crear orden"}
-                </button>
-            </form>
-        </div>
+                    >
+                        {users.filter(user => user.rol.toLowerCase() === "cocinero").map((cook) => (
+                            <MenuItem key={cook.rut} value={cook.nombreCompleto}>
+                                {cook.nombreCompleto}
+                            </MenuItem>
+                        ))}
+                    </TextField>
+                </Grid>
+                <Grid item xs={12}>
+                    <Button
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        disabled={loading}
+                        sx={{ mt: 3, mb: 2, backgroundColor: "#212121" }}
+                    >
+                        {loading ? <CircularProgress size={24} /> : "Crear orden"}
+                    </Button>
+                </Grid>
+            </Grid>
+        </Box>
     );
-}    
+};
 
 export default Order;
+
