@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Swal from "sweetalert2";
 import { createOrder } from "../services/order.service";
+import { io } from "socket.io-client";
 import {
     Box,
     Grid,
@@ -28,6 +29,13 @@ const Order = () => {
         e.preventDefault();
 
         try {
+
+            // Crear la orden en el backend
+            const response = await createOrder(orderData);
+
+            // Emitir el evento WebSocket para notificar al cocinero
+            socket.emit("newOrder", response.data);
+
             await createOrder(orderData);
             Swal.fire({
                 icon: "success",
