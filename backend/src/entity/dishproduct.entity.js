@@ -1,34 +1,36 @@
 "use strict";
 import { EntitySchema } from "typeorm";
 
+//entidad entre dish y product para la cantidad 
 const DishProductSchema = new EntitySchema({
     name: "DishProduct",
-    tableName: "dishes_products",
+    tableName: "dish_product",
     columns: {
         id: {
             type: "int",
             primary: true,
             generated: true,
+            unique: true,
         },
         quantity: {
             type: "int",
-            nullable: false,
-        }
+            nullable: false, // Cantidad requerida del ingrediente
+        },
     },
     relations: {
         dish: {
-            type: "many-to-one",
             target: "Dish",
-            joinColumn: { name: "dishId" },
-            onDelete: "CASCADE"
+            type: "many-to-one",
+            joinColumn: true, // Crea la columna de unión en esta tabla
+            nullable: false,
         },
         product: {
-            type: "many-to-one",
             target: "Product",
-            joinColumn: { name: "productId" },
-            onDelete: "CASCADE"
-        }
-    }
+            type: "many-to-one",
+            joinColumn: true, // Crea la columna de unión en esta tabla
+            nullable: false,
+        },
+    },
 });
 
 export default DishProductSchema;
