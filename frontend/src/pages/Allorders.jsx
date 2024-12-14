@@ -11,7 +11,7 @@ import Order from './Order';
 
 import useGetOrders from "../hooks/order/useGetOrders";
 import useDeleteOrder from "../hooks/order/useDeleteOrder";
-import UpdateOrderDialog from '../hooks/order/UpdateOrderDialog'; // Actualizado
+import UpdateOrderDialog from '../hooks/order/UpdateOrderDialog'; 
 
 const AllOrders = () => {
     const { orders, fetchOrders, setOrders } = useGetOrders();
@@ -25,7 +25,6 @@ const AllOrders = () => {
     const deleteOrderAndReload = async (orderId) => {
         try {
             await handleDelete(orderId);
-            // En lugar de recargar la página, volvemos a obtener las órdenes
             fetchOrders();
         } catch (error) {
             console.error("Error al eliminar el pedido:", error);
@@ -45,7 +44,6 @@ const AllOrders = () => {
         fetchOrders();
     };
 
-    // Funciones para manejar la edición
     const handleEditButtonClick = (order) => {
         setSelectedOrder(order);
         setIsEditDialogOpen(true);
@@ -164,7 +162,6 @@ const AllOrders = () => {
                 </Dialog>
             </div>
 
-            {/* Diálogo para Editar Orden */}
             {selectedOrder && (
                 <UpdateOrderDialog
                     open={isEditDialogOpen}
