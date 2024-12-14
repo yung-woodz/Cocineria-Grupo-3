@@ -11,7 +11,7 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import{showSuccessAlert} from "../helpers/sweetAlert";
 
 const DishesPage = () => {
-    const { dishes, fetchDishes } = useGetDishes();
+    const { dishes, fetchDishes, loading, error, message } = useGetDishes();
     const [filter, setFilter] = useState("");
     const [filterBy, setFilterBy] = useState("Nombre");
     const [sortOrder, setSortOrder] = useState("asc");
@@ -19,8 +19,13 @@ const DishesPage = () => {
     const [selectedDish, setSelectedDish] = useState(null); 
     const [showEditDialog, setShowEditDialog] = useState(false); 
 
-   //se va a delete
+   //redireccion de delete 
     const { handleDelete } = useDeleteDish(fetchDishes, () => {});
+    // a edir
+    const handleEdit = (dish) => {
+        setSelectedDish(dish); 
+        setShowEditDialog(true); 
+    };
 
     const toggleSortOrder = () => {
         setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
@@ -44,11 +49,16 @@ const DishesPage = () => {
         });
         
 
-    //aca se realiza el edi deberia cambiarlo  al hook
-    const handleEdit = (dish) => {
-        setSelectedDish(dish); 
-        setShowEditDialog(true); 
-    };
+    if (loading) {
+        return <Typography variant="h6" align="center">Cargando platillos...</Typography>;
+    }
+
+    // Mostrar errores
+    if (error) {
+        return <Typography variant="h6" align="center" color="error">Error: {error.message}</Typography>;
+    }
+
+
 
     return (
         <Box padding={2}>

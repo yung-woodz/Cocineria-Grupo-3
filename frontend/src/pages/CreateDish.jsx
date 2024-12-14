@@ -115,9 +115,13 @@ const CreateDishForm = () => {
                                     select
                                     label="Producto"
                                     value={product.productId}
-                                    onChange={(e) => handleProductChange(index, "productId", e.target.value)}
+                                    onChange={(e) =>
+                                        handleProductChange(index, "productId", e.target.value)
+                                    }
                                     fullWidth
                                     required
+                                    error={!!errors[`DishProducts.${index}.productId`]}
+                                    helperText={errors[`DishProducts.${index}.productId`]}
                                 >
                                     {products.map((prod) => (
                                         <MenuItem key={prod.id} value={prod.id}>
@@ -131,9 +135,13 @@ const CreateDishForm = () => {
                                     label="Cantidad"
                                     type="number"
                                     value={product.quantity}
-                                    onChange={(e) => handleProductChange(index, "quantity", e.target.value)}
+                                    onChange={(e) =>
+                                        handleProductChange(index, "quantity", e.target.value)
+                                    }
                                     fullWidth
                                     required
+                                    error={!!errors[`DishProducts.${index}.quantity`]}
+                                    helperText={errors[`DishProducts.${index}.quantity`]}
                                 />
                             </Grid>
                             <Grid item xs={2}>
@@ -153,11 +161,11 @@ const CreateDishForm = () => {
                     </Button>
                 </Grid>
                 <Grid item xs={12}>
-                    <Button 
-                        type="submit" 
-                        variant="contained" 
-                        color="primary" 
-                        disabled={isSubmitting} 
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        disabled={isSubmitting}
                         fullWidth
                     >
                         {isSubmitting ? <CircularProgress size={24} /> : "Crear Platillo"}
@@ -167,5 +175,6 @@ const CreateDishForm = () => {
         </Box>
     );
 };
+
 
 export default CreateDishForm;
