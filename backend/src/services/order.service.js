@@ -11,8 +11,8 @@ export async function getOrderService(query) {
         const orderRepository = AppDataSource.getRepository(Order);
     
         const orderFound = await orderRepository.findOne({
-        where: { id: id },
-        relations: ["user"],
+            where: { id: id },
+            relations: ["user"],
         });
     
         if (!orderFound) return [null, "Orden no encontrada"];

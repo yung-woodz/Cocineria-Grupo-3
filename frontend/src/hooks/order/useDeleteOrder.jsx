@@ -23,9 +23,7 @@ const useDeleteOrder = (fetchOrders, setOrders) => {
         }
     };
 
-    return {
-        handleDelete
-    };
+    return { handleDelete };
 };
 
 export default useDeleteOrder;

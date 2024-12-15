@@ -1,4 +1,6 @@
-import React from 'react';
+import React from "react";
+import { NotificationsProvider } from "../context/NotificationsContext";
+import NotificationsToast from "../components/NotificationsToast.jsx";
 import useGetOrders from "@hooks/order/useGetOrders";
 import useGetProducts from "@hooks/product/useGetProducts";
 import useUsers from "@hooks/users/useGetUsers.jsx";
@@ -15,6 +17,16 @@ const Home = () => {
   const productsByQuantity = [...products].sort((a, b) => a.quantity - b.quantity).slice(0, 3);
 
   return (
+    <>
+      <NotificationsProvider>
+        <h1 className="text-4xl font-bold underline">
+          Hello world!
+        </h1>
+        {/* Agrega el componente de notificaciones */}
+        <NotificationsToast />
+      </NotificationsProvider>
+    </>
+
     <div className="p-6 space-y-12">
       <div className="w-full h-48 bg-cover bg-center mb-8 flex items-center justify-center" style={{ backgroundImage: `url('https://t4.ftcdn.net/jpg/09/76/35/89/240_F_976358954_3RPY6ri8sYE81nbum1mGJAEWaS6Jm4Gc.jpg')` }}>
         <h1 className="text-4xl text-white font-bold">Bienvenido, {currentUser}!</h1>

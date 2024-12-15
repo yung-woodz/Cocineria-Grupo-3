@@ -29,7 +29,7 @@ const useGetOrdersByChef = (chefId) => {
         }
     }, [chefId]); // Se ejecuta cuando la id cambia
 
-    return { orders, fetchOrdersByChef, loading, error };
+    return { orders, setOrders, fetchOrdersByChef, loading, error };
 };
 
 export default useGetOrdersByChef;

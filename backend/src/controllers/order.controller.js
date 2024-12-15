@@ -82,6 +82,14 @@ export async function createOrder(req, res) {
         const [order, errorOrder] = await createOrderService(body);
 
         if (errorOrder) return handleErrorClient(res, 404, errorOrder);
+
+        const io = req.app.get('socketio');
+
+        io.emit('nueva-orden', {
+            mensaje: "Has recibido una nueva orden!!",
+            order
+        });
+
         handleSuccess(res, 201, "Orden creada", order);
         body.startTime= new Date();
 

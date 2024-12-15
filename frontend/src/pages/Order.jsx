@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { createOrder } from "../services/order.service";
 import useUsers from "@hooks/users/useGetUsers";
+import { initSocket } from "../services/notification.service.js";
 import { Box, Grid, TextField, Button, MenuItem, Typography, CircularProgress } from "@mui/material";
 
 const Order = ({ onClose }) => {
@@ -26,11 +27,18 @@ const Order = ({ onClose }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
 
         try {
-            await createOrder(orderData);
 
+            // Crear la orden en el backend
+            /* const response = await createOrder(orderData); */
+            
+            /* const socket = initSocket();
+
+            // Emitir el evento WebSocket para notificar al cocinero
+            socket.emit('nueva-orden', response.data); */
+
+            await createOrder(orderData);
             Swal.fire({
                 icon: "success",
                 title: "Orden creada",
@@ -114,8 +122,6 @@ const Order = ({ onClose }) => {
                         onChange={handleChange}
                     >
                         <MenuItem value="En progreso">En progreso</MenuItem>
-                        <MenuItem value="Cancelado">Cancelado</MenuItem>
-                        <MenuItem value="Entregado">Entregado</MenuItem>
                     </TextField>
                 </Grid>
                 <Grid item xs={12}>
