@@ -15,10 +15,11 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import { updateDish } from "../services/dishes.service";
 import useGetProducts from "../hooks/product/useGetProducts";
-import { showSuccessAlert } from "../helpers/sweetAlert";
+import { showSuccessAlert,showErrorAlert } from "../helpers/sweetAlert";
 
 export default function DishEditDialog({ open, onClose, dishData, fetchDishes }) {
     const { products } = useGetProducts();
+    const [errors, setErrors] = useState({});
     const [formData, setFormData] = useState({
         Nombre: "",
         descripcion: "",
@@ -45,7 +46,6 @@ export default function DishEditDialog({ open, onClose, dishData, fetchDishes })
                     }))
                     : [],
             };
-            console.log("Datos inicializados:", updatedFormData);
             setFormData(updatedFormData);
         }
     }, [dishData]);
@@ -87,30 +87,64 @@ export default function DishEditDialog({ open, onClose, dishData, fetchDishes })
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+    
         try {
+            // Intenta actualizar el platillo
             await updateDish(formData, { id: dishData.id });
             await fetchDishes();
+    
+            // Solo muestra el éxito si todo salió bien
             showSuccessAlert("¡Éxito!", "Platillo actualizado correctamente.");
             onClose();
         } catch (error) {
-            console.error("Error al actualizar el platillo:", error);
+            console.error("Error al actualizar el platillo en el frontend:", error);
+    
+            // Extrae los detalles del error desde el backend
+            const errorDetails = error.response?.data?.details;
+    
+            if (!errorDetails) {
+                // Muestra un mensaje genérico si no hay detalles específicos
+                showErrorAlert("Error", "Ocurrió un error inesperado. Por favor, intenta nuevamente.");
+                return;
+            }
+    
+            if (typeof errorDetails === "string") {
+                // Si el error es un string, muestra el mensaje directamente
+                showErrorAlert("Error al Actualizar Platillo", errorDetails);
+            } else {
+                // Si el formato del error no es el esperado
+                showErrorAlert("Error", "Formato de error inesperado.");
+            }
+            onClose();
         }
     };
-
+    
+    
     return (
-        <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-            <DialogTitle>Editar Platillo</DialogTitle>
-            <DialogContent>
+        <Dialog
+            open={open}
+            onClose={onClose}
+            fullWidth
+            maxWidth="sm"
+            aria-labelledby="dialog-title"
+            aria-describedby="dialog-description"
+            disableEnforceFocus={false} // Actívalo o desactívalo según sea necesario
+        >
+            <DialogTitle id="dialog-title">Editar Platillo</DialogTitle>
+            <DialogContent id="dialog-description">
                 <TextField
                     margin="dense"
                     id="Nombre"
                     name="Nombre"
                     label="Nombre del Platillo"
                     type="text"
-                    fullWidth
                     value={formData.Nombre}
                     onChange={handleChange}
+                    fullWidth
+                    error={!!errors.Nombre}
+                    helperText={errors.Nombre}
                     required
+                    autoFocus // Esto asegura que el foco inicial esté en este campo
                 />
                 <TextField
                     margin="dense"
@@ -123,6 +157,8 @@ export default function DishEditDialog({ open, onClose, dishData, fetchDishes })
                     rows={3}
                     value={formData.descripcion}
                     onChange={handleChange}
+                    error={!!errors.descripcion}
+                    helperText={errors.descripcion}
                     required
                 />
                 <TextField
@@ -134,6 +170,8 @@ export default function DishEditDialog({ open, onClose, dishData, fetchDishes })
                     fullWidth
                     value={formData.precio}
                     onChange={handleChange}
+                    error={!!errors.precio}
+                    helperText={errors.precio}
                     required
                 />
                 <TextField
@@ -145,11 +183,18 @@ export default function DishEditDialog({ open, onClose, dishData, fetchDishes })
                     fullWidth
                     value={formData.tiempoDeEspera}
                     onChange={handleChange}
+                    error={!!errors.tiempoDeEspera}
+                    helperText={errors.tiempoDeEspera}
                     required
                 />
                 <Typography variant="h6" sx={{ mt: 2 }}>
                     Productos Requeridos:
                 </Typography>
+                {errors.DishProducts && (
+                    <Typography variant="body2" color="error">
+                        {errors.DishProducts}
+                    </Typography>
+                )}
                 {formData.DishProducts.map((product, index) => (
                     <Grid container spacing={1} key={index} alignItems="center">
                         <Grid item xs={6}>
@@ -205,5 +250,5 @@ export default function DishEditDialog({ open, onClose, dishData, fetchDishes })
                 </Button>
             </DialogActions>
         </Dialog>
-    );
+);
 }

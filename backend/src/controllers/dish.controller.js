@@ -58,13 +58,16 @@ export async function getDishes(req, res) {
         
         if (errorDishes) return handleErrorClient(res, 404, errorDishes);
         
-        dishes.length === 0
-            ? handleSuccess(res, 204)
-            : handleSuccess(res, 200, "Platillos encontrados", dishes);
+        if (dishes.length === 0) {
+            return handleSuccess(res, 200, "No hay platillos creados", []); // Devuelve un array vacío
+        }
+
+        handleSuccess(res, 200, "Platillos encontrados", dishes);
     } catch (error) {
-        handleErrorServer(res,500, error.message,);
+        handleErrorServer(res, 500, error.message);
     }
 }
+
 
 export async function updateDish(req, res) {
     try {

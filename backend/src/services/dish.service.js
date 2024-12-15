@@ -1,6 +1,6 @@
 "use strict";
 import Dish from "../entity/dish.entity.js";
-import DishProduct from "../entity/dishproduct.entity.js";
+import DishProduct from "../entity/dishProduct.entity.js"; 
 import { AppDataSource } from "../config/configDb.js";
 
 export async function createDishService(body) {
