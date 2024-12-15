@@ -39,7 +39,7 @@ export const getOrders = async () => {
 export const deleteOrder = async (id) => {
     try {
         const response = await axios.delete(`/order/${id}`);
-        return response.data;
+        return response;
     } catch (error) {
         throw error.response.data;
     }
@@ -47,7 +47,7 @@ export const deleteOrder = async (id) => {
 
 export const updateOrder = async (id, orderData) => {
     try {
-        const response = await axios.put(`/order/${id}`, orderData);
+        const response = await axios.patch(`/order/${id}`, orderData);
         return response.data;
     } catch (error) {
         throw error.response.data;
