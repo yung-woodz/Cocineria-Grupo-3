@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { createDish } from "../../services/dishes.service";
 import Swal from "sweetalert2";
-const DishForm = () => {
+
+const useCreateDish = () => {
     const [form, setForm] = useState({
         Nombre: "",
         descripcion: "",
@@ -111,4 +112,4 @@ const DishForm = () => {
     };
 };
 
-export default DishForm;
+export default useCreateDish;
