@@ -3,6 +3,8 @@ import useGetDishes from "../hooks/dish/useGetDishes";
 import useDeleteDish from "../hooks/dish/useDeleteDish";
 import DishCard from "../components/DishCard"; 
 import DishEditDialog from "../components/DishEditDialog";
+import UpdatePopup from "../components/UpdatePopup";
+
 import { Box, Grid, TextField, Select, MenuItem, IconButton, InputAdornment, Typography, Button } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
@@ -50,7 +52,7 @@ const DishesPage = () => {
 
     if (loading) {
         return (
-            <Typography variant="h6" align="center">
+            <Typography variant="h6" align="center" sx={{userSelect: 'none',}}>
                 Cargando platillos...
             </Typography>
         );
@@ -58,7 +60,7 @@ const DishesPage = () => {
 
     return (
         <Box padding={2}>
-            <Typography variant="h4" align="center" gutterBottom>
+            <Typography variant="h4" align="center" sx={{userSelect: 'none',}} gutterBottom>
                 Platillos
             </Typography>
             <Box display="flex" justifyContent="space-between" alignItems="center" marginBottom={2}>
@@ -131,6 +133,7 @@ const DishesPage = () => {
                 +
             </button>
             <DishEditDialog
+            <UpdatePopup
                 open={showEditDialog}
                 onClose={() => setShowEditDialog(false)}
                 dishData={selectedDish}

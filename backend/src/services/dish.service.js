@@ -6,7 +6,13 @@ import { AppDataSource } from "../config/configDb.js";
 export async function createDishService(body) {
     try {
         const dishRepository = AppDataSource.getRepository(Dish);
-        const dishProductRepository = AppDataSource.getRepository(DishProduct); // Nombre de la entidad registrada
+        const dishProductRepository = AppDataSource.getRepository(DishProduct); 
+
+        //si existe ya un platillo con el mismo nombre
+        const existingDish = await dishRepository.findOne({
+            where: { Nombre: body.Nombre } 
+        });
+        if (existingDish) return [null, "El nombre del platillo ya existe."]; 
 
         // se debe crear el platillo sin la relacion por si hay algun conflicto
         const newDish = dishRepository.create({
@@ -26,7 +32,7 @@ export async function createDishService(body) {
             const dishProduct = dishProductRepository.create({
                 quantity: item.quantity,
                 dish: newDish,
-                product: item.productId, // Se asume que `productId` es un ID válido
+                product: item.productId, 
             });
 
         await dishProductRepository.save(dishProduct);
@@ -44,7 +50,7 @@ export async function getDishService(query) {
     try {
         const dishRepository = AppDataSource.getRepository(Dish);
         const { Nombre, id } = query;
-
+        // relacion con el Dishproduct para ver el producto asociado al platillo
         const dishFound = await dishRepository.findOne({
             where: [{ Nombre: Nombre }, { id: id }],
             relations: ["DishProducts","DishProducts.product"],
@@ -102,24 +108,24 @@ export async function updateDishesService(query, body) {
 
         await dishRepository.update({ id: dishFound.id }, dataDishUpdate);
 
-        // Manejar los DishProducts
+        // Manejar especifico para  DishProducts
         if (Array.isArray(body.DishProducts)) {
-            // Eliminar los DishProducts existentes
+            // Elimina los prodcutos asociados 
             await dishProductRepository.delete({ dish: { id: dishFound.id } });
 
-            // Crear nuevos DishProducts
+            // asocia los productos en el platillo
             for (const item of body.DishProducts) {
                 const newDishProduct = dishProductRepository.create({
                     quantity: item.quantity,
-                    dish: dishFound, // Relación con el platillo
-                    product: { id: item.productId }, // Relación con el producto
+                    dish: dishFound, 
+                    product: { id: item.productId }, 
                 });
 
                 await dishProductRepository.save(newDishProduct);
             }
         }
 
-        // Obtener el platillo actualizado con relaciones
+        // Obtener el platillo actualizado con la relacion
         const updatedDish = await dishRepository.findOne({
             where: { id: dishFound.id },
             relations: ["DishProducts", "DishProducts.product"],
@@ -148,7 +154,7 @@ export async function deleteDishService(query) {
 
         if (!dishFound) return [null, "Platillo no encontrado"];
 
-        // Elimina la relacin con su registro
+        // Elimina la relacion con su registro
         await dishProductRepository.delete({ dish: { id: dishFound.id } });
 
         // Ahora eliminar el platillo

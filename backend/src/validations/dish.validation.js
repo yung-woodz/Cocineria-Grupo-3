@@ -42,13 +42,14 @@ export const dishBodyValidation = Joi.object({
     descripcion: Joi.string()
         .min(5)
         .max(500)
-        .pattern(/^(?!.*\s{2,})[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s.,-]+$/)
+        .pattern(/^(?!.*\s{2,})[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s.,]+$/)
         .messages({
-            "string.pattern.base":"La descripcion solo puede contener letras y espacios.",
+            "string.base": "La descripción debe ser de tipo texto.",
             "string.empty": "La descripción no puede estar vacía.",
             "string.base": "La descripción debe ser de tipo texto.",
             "string.min": "La descripción debe tener como mínimo 10 caracteres.",
             "string.max": "La descripción debe tener como máximo 500 caracteres.",
+            "string.pattern.base": "La descripción solo puede contener letras, números, espacios y los caracteres especiales: . , -",
         }),
     tiempoDeEspera: Joi.number()
         .integer()
@@ -64,9 +65,14 @@ export const dishBodyValidation = Joi.object({
         }),
     precio: Joi.number()
         .positive()
+        .min(0)
+        .max(1000000)
         .messages({
             "number.base": "El precio debe ser un número.",
             "number.positive": "El precio debe ser un número positivo.",
+            "number.min": "El precio debe ser de minimo 1 peso.",
+            "number.max": "El precio no puede ser mayor a 1,000,000.", 
+            "any.required": "El precio es un campo obligatorio.",
         }),
         image: Joi.string()
         .uri()

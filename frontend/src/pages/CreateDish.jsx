@@ -1,18 +1,8 @@
-
-import {
-    Box,
-    Grid,
-    TextField,
-    Button,
-    MenuItem,
-    Typography,
-    CircularProgress,
-    IconButton,
-} from "@mui/material";
+import {Box,Grid,TextField,Button,MenuItem,Typography,CircularProgress,IconButton,} from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
-import DishForm from "../hooks/dish/DishForm";
+import useCreateDish from "../hooks/dish/useCreateDish";
 import useGetProducts from "../hooks/product/useGetProducts";
 
 const CreateDishForm = () => {
@@ -25,7 +15,7 @@ const CreateDishForm = () => {
         handleRemoveProduct,
         handleProductChange,
         handleSubmit,
-    } = DishForm();
+    } = useCreateDish();
     const { products } = useGetProducts(); 
     return (
         <Box
@@ -35,10 +25,10 @@ const CreateDishForm = () => {
                 padding: 3,
                 maxWidth: 600,
                 margin: "auto",
-                marginTop: "100px", // Ajuste para separar del Navbar
+                marginTop: "100px", 
             }}
         >
-            <Typography variant="h5" align="center" gutterBottom>
+            <Typography variant="h5" align="center" sx={{  userSelect: 'none' }} >
                 Crear Nuevo Platillo
             </Typography>
             <Grid container spacing={2}>
@@ -107,7 +97,7 @@ const CreateDishForm = () => {
                     />
                 </Grid>
                 <Grid item xs={12}>
-                    <Typography variant="h6">Productos Requeridos:</Typography>
+                    <Typography variant="h6" sx={{userSelect: 'none',}}>Productos Requeridos: </Typography>
                     {form.DishProducts.map((product, index) => (
                         <Grid container spacing={1} key={index} sx={{ mb: 1 }}>
                             <Grid item xs={6}>
@@ -146,7 +136,7 @@ const CreateDishForm = () => {
                             </Grid>
                             <Grid item xs={2}>
                                 <IconButton onClick={() => handleRemoveProduct(index)}>
-                                    <RemoveCircleOutlineIcon color="error" />
+                                    <RemoveCircleOutlineIcon sx={{ color: "#D32F2F" }} />
                                 </IconButton>
                             </Grid>
                         </Grid>
@@ -155,7 +145,9 @@ const CreateDishForm = () => {
                         variant="outlined"
                         startIcon={<AddCircleOutlineIcon />}
                         onClick={handleAddProduct}
-                        sx={{ mt: 2 }}
+                        sx={{mt: 2,borderColor: "#FFC107",color: "#212121",
+                            "&:hover": {backgroundColor: "#FFB300",},
+                        }}
                     >
                         Agregar Producto
                     </Button>
@@ -167,6 +159,9 @@ const CreateDishForm = () => {
                         color="primary"
                         disabled={isSubmitting}
                         fullWidth
+                        sx={{backgroundColor: "#212121",color: "white",
+                            "&:hover": { backgroundColor: "#424242" },
+                        }}
                     >
                         {isSubmitting ? <CircularProgress size={24} /> : "Crear Platillo"}
                     </Button>
