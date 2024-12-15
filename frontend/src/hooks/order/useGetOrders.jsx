@@ -13,7 +13,7 @@ const useGetOrders = () => {
         }
     }, []);
 
-    return { orders, fetchOrders };
+    return { orders, setOrders, fetchOrders };
 };
 
 export default useGetOrders;

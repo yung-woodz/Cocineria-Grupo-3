@@ -14,6 +14,7 @@ import Order from '@pages/Order';
 import Notifications from '@pages/Notifications';
 import Allorders from '@pages/Allorders';
 import ProtectedRoute from '@components/ProtectedRoute';
+import { NotificationsProvider } from '@context/NotificationsContext';
 import '@styles/styles.css';
 import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 import "./index.css";
@@ -109,7 +110,9 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <ThemeProvider theme={theme}>
-    <CssBaseline />
-    <RouterProvider router={router}/>
+    <NotificationsProvider>
+      <CssBaseline />
+      <RouterProvider router={router}/>
+    </NotificationsProvider>
   </ThemeProvider>
 );

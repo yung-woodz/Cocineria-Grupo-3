@@ -18,15 +18,7 @@ async function setupServer() {
   try {
     const app = express();
     const server = createServer(app);
-    const io = new Server(server, {
-
-      cors: {
-        origin : '*',
-      }
-
-    });
-
-    const connectedUsers = new Map();
+    const io = new Server(server);
 
     io.on('connection', (socket) => {
       console.log("Usuario conectado:", socket.id);
@@ -37,7 +29,6 @@ async function setupServer() {
       });
   
     app.set('socketio', io);
-    app.set('connectedUsers', connectedUsers);
 
     app.disable("x-powered-by");
 
@@ -91,7 +82,7 @@ async function setupServer() {
       console.log(`=> Servidor corriendo en http://${HOST}:${PORT}/api`);
     });
 
-    return { app, io, connectedUsers}
+    return { app, io}
 
   } catch (error) {
     console.log("Error en index.js -> setupServer(), el error es: ", error);

@@ -21,7 +21,7 @@ export const createOrder = async (orderData) => {
 export const getOrdersByChef = async (id) => {
     try{
         const response = await axios.get(`/order/orderByChef?id=${id}`);
-        return response.data.data;
+        return response.data.data || [];
     } catch (error){
         throw error.response.data;
     }

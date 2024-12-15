@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { createOrder } from "../services/order.service";
 import useUsers from "@hooks/users/useGetUsers";
+import { initSocket } from "../services/notification.service.js";
 import { Box, Grid, TextField, Button, MenuItem, Typography, CircularProgress } from "@mui/material";
 
 const Order = ({ onClose }) => {
@@ -30,10 +31,12 @@ const Order = ({ onClose }) => {
         try {
 
             // Crear la orden en el backend
-            const response = await createOrder(orderData);
+            /* const response = await createOrder(orderData); */
+            
+            /* const socket = initSocket();
 
             // Emitir el evento WebSocket para notificar al cocinero
-            socket.emit("newOrder", response.data);
+            socket.emit('nueva-orden', response.data); */
 
             await createOrder(orderData);
             Swal.fire({

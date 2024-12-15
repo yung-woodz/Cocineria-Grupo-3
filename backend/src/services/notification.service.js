@@ -21,11 +21,11 @@ export async function sendNotificationService(orderId) {
             throw new Error("El usuario asignado no es un cocinero");
         }
 
-        // Emite un evento WebSocket al cocinero asignado
+        /* // Emite un evento WebSocket al cocinero asignado
         io.to(`user-${user.id}`).emit("newOrder", {
             message: "Tienes una nueva orden asignada",
             order,
-        });
+        }); */
 
         console.log(`Notificación enviada al usuario: user-${user.id}`);
         return { message: "Notificación enviada correctamente", order };
