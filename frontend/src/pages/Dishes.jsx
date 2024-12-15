@@ -31,31 +31,33 @@ const DishesPage = () => {
         setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
     };
 
-    const filteredDishes = dishes
+    // Verifica que dishes sea un arreglo antes de filtrar y ordenar
+    const filteredDishes = Array.isArray(dishes)
+        ? dishes
         .filter((dish) => {
-            if (!filter) return true;
+        if (!filter) return true;
             const valueToFilter =
-                filterBy === "tiempoDeEspera" || filterBy === "precio"
-                    ? dish[filterBy].toString()
-                    : dish[filterBy]?.toLowerCase();
+            filterBy === "tiempoDeEspera" || filterBy === "precio"
+            ? dish[filterBy].toString()
+            : dish[filterBy]?.toLowerCase();
             return valueToFilter.includes(filter.toLowerCase());
         })
         .sort((a, b) => {
             if (sortOrder === "asc") {
                 return a[filterBy] > b[filterBy] ? 1 : -1;
-            } else {
+                } else {
                 return a[filterBy] < b[filterBy] ? 1 : -1;
-            }
-        });
-        
+                }
+            })
+        : [];
 
+    // Mostrar estado de carga
     if (loading) {
-        return <Typography variant="h6" align="center">Cargando platillos...</Typography>;
-    }
-
-    // Mostrar errores
-    if (error) {
-        return <Typography variant="h6" align="center" color="error">Error: {error.message}</Typography>;
+        return (
+            <Typography variant="h6" align="center">
+                Cargando platillos...
+            </Typography>
+        );
     }
 
 
@@ -108,20 +110,30 @@ const DishesPage = () => {
                 </Box>
             </Box>
             <Grid container spacing={3}>
-                {filteredDishes.map((dish) => (
-                    <Grid item xs={12} sm={6} md={4} key={dish.id}>
-                        <DishCard
-                            dish={dish}
-                            onEdit={() => handleEdit(dish)} 
-                            onDelete={() => handleDelete([dish.id])} 
-                        />
-                    </Grid>
-                ))}
+                {filteredDishes.length > 0 ? (
+                    filteredDishes.map((dish) => (
+                        <Grid item xs={12} sm={6} md={4} key={dish.id}>
+                            <DishCard
+                                dish={dish}
+                                onEdit={() => handleEdit(dish)}
+                                onDelete={() => handleDelete([dish.id])}
+                            />
+                        </Grid>
+                    ))
+                ) : (
+                    <Typography
+                        variant="h6"
+                        align="center"
+                        sx={{ width: "100%", marginTop: 2 }}
+                    >
+                        No hay platillos disponibles.
+                    </Typography>
+                )}
             </Grid>
             <DishEditDialog
                 open={showEditDialog}
-                onClose={() => setShowEditDialog(false)} 
-                dishData={selectedDish} 
+                onClose={() => setShowEditDialog(false)}
+                dishData={selectedDish}
                 fetchDishes={fetchDishes}
             />
         </Box>
