@@ -10,13 +10,14 @@ export const dishQueryValidation = Joi.object({
         "number.positive": "El id debe ser un número positivo.",
         }),
     Nombre: Joi.string()
-        .min(10)
+        .min(5)
         .max(35)
+        .pattern(/^(?!.*\s{2,})[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)
         .messages({
             "string.empty": "El Nombre del Platillo no puede estar vacío.",
             "string.base": "El Nombre del Platillo  debe ser de tipo string.",
             "string.min":"El Nombre del Platillo  debe tener como mínimo 10 caracteres.",
-            "string.max":"El Nombre del Platillo  debe tener como máximo 35 caracteres.",
+            "string.pattern.base": "El Nombre del Platillo solo puede contener letras, tildes y espacios simples.",
         })
 })
     .or("id", "Nombre")
@@ -28,9 +29,9 @@ export const dishQueryValidation = Joi.object({
     
 export const dishBodyValidation = Joi.object({
     Nombre: Joi.string()
-        .min(10)
+        .min(5)
         .max(50)
-        .pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)
+        .pattern(/^(?!.*\s{2,})[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/)
         .messages({
             "string.empty": "El nombre del platillo no puede estar vacío.",
             "string.base": "El nombre del platillo debe ser de tipo string.",
@@ -39,15 +40,16 @@ export const dishBodyValidation = Joi.object({
             "string.pattern.base":"El nombre del platillo solo puede contener letras y espacios.",
         }),
     descripcion: Joi.string()
-        .min(10)
+        .min(5)
         .max(500)
-        .pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s.,-]+$/)
+        .pattern(/^(?!.*\s{2,})[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s.,]+$/)
         .messages({
-            "string.pattern.base":"La descripcion solo puede contener letras y espacios.",
+            "string.base": "La descripción debe ser de tipo texto.",
             "string.empty": "La descripción no puede estar vacía.",
             "string.base": "La descripción debe ser de tipo texto.",
             "string.min": "La descripción debe tener como mínimo 10 caracteres.",
             "string.max": "La descripción debe tener como máximo 500 caracteres.",
+            "string.pattern.base": "La descripción solo puede contener letras, números, espacios y los caracteres especiales: . , -",
         }),
     tiempoDeEspera: Joi.number()
         .integer()
@@ -63,9 +65,14 @@ export const dishBodyValidation = Joi.object({
         }),
     precio: Joi.number()
         .positive()
+        .min(0)
+        .max(1000000)
         .messages({
             "number.base": "El precio debe ser un número.",
             "number.positive": "El precio debe ser un número positivo.",
+            "number.min": "El precio debe ser de minimo 1 peso.",
+            "number.max": "El precio no puede ser mayor a 1,000,000.", 
+            "any.required": "El precio es un campo obligatorio.",
         }),
         image: Joi.string()
         .uri()

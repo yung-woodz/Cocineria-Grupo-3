@@ -2,16 +2,17 @@ import React, { useState } from "react";
 import useGetDishes from "../hooks/dish/useGetDishes";
 import useDeleteDish from "../hooks/dish/useDeleteDish";
 import DishCard from "../components/DishCard"; 
-import DishEditDialog  from "../components/DishEditDialog";
+import UpdatePopup from "../components/UpdatePopup";
+import { useNavigate } from "react-router-dom";
 
 import { Box, Grid, TextField, Select, MenuItem, IconButton, InputAdornment, Typography, Button } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import{showSuccessAlert} from "../helpers/sweetAlert";
 
 const DishesPage = () => {
-    const { dishes, fetchDishes } = useGetDishes();
+    const navigate = useNavigate();
+    const { dishes, fetchDishes, loading } = useGetDishes();
     const [filter, setFilter] = useState("");
     const [filterBy, setFilterBy] = useState("Nombre");
     const [sortOrder, setSortOrder] = useState("asc");
@@ -19,40 +20,28 @@ const DishesPage = () => {
     const [selectedDish, setSelectedDish] = useState(null); 
     const [showEditDialog, setShowEditDialog] = useState(false); 
 
-   //se va a delete
     const { handleDelete } = useDeleteDish(fetchDishes, () => {});
 
-    const toggleSortOrder = () => {
-        setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
-    };
-
-    const filteredDishes = dishes
-        .filter((dish) => {
-            if (!filter) return true;
-            const valueToFilter =
-                filterBy === "tiempoDeEspera" || filterBy === "precio"
-                    ? dish[filterBy].toString()
-                    : dish[filterBy]?.toLowerCase();
-            return valueToFilter.includes(filter.toLowerCase());
-        })
-        .sort((a, b) => {
-            if (sortOrder === "asc") {
-                return a[filterBy] > b[filterBy] ? 1 : -1;
-            } else {
-                return a[filterBy] < b[filterBy] ? 1 : -1;
-            }
-        });
-        
-
-    //aca se realiza el edi deberia cambiarlo  al hook
     const handleEdit = (dish) => {
         setSelectedDish(dish); 
         setShowEditDialog(true); 
     };
 
+    const toggleSortOrder = () => {
+        setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
+    };
+
+    if (loading) {
+        return (
+            <Typography variant="h6" align="center" sx={{userSelect: 'none',}}>
+                Cargando platillos...
+            </Typography>
+        );
+    }
+
     return (
         <Box padding={2}>
-            <Typography variant="h4" align="center" gutterBottom>
+            <Typography variant="h4" align="center" sx={{userSelect: 'none',}} gutterBottom>
                 Platillos
             </Typography>
             <Box display="flex" justifyContent="space-between" alignItems="center" marginBottom={2}>
@@ -98,20 +87,38 @@ const DishesPage = () => {
                 </Box>
             </Box>
             <Grid container spacing={3}>
-                {filteredDishes.map((dish) => (
-                    <Grid item xs={12} sm={6} md={4} key={dish.id}>
-                        <DishCard
-                            dish={dish}
-                            onEdit={() => handleEdit(dish)} 
-                            onDelete={() => handleDelete([dish.id])} 
-                        />
-                    </Grid>
-                ))}
+                {dishes.length > 0 ? (
+                    dishes.map((dish) => (
+                        <Grid item xs={12} sm={6} md={4} key={dish.id}>
+                            <DishCard
+                                dish={dish}
+                                onEdit={() => handleEdit(dish)}
+                                onDelete={() => handleDelete([dish.id])}
+                            />
+                        </Grid>
+                    ))
+                ) : (
+                    <Typography
+                        variant="h6"
+                        align="center"
+                        sx={{ width: "100%", marginTop: 2 }}
+                    >
+                        No hay platillos disponibles.
+                    </Typography>
+                )}
             </Grid>
-            <DishEditDialog
+            <div className="relative h-screen">
+                <button
+                    className="fixed bottom-5 right-5 w-16 h-16 bg-[#FFC107] text-black rounded-full text-2xl shadow-lg hover:bg-blue-600 focus:outline-none"
+                    onClick={() => navigate('/create-dish')}
+                >
+                    +
+                </button>
+            </div>
+            <UpdatePopup
                 open={showEditDialog}
-                onClose={() => setShowEditDialog(false)} 
-                dishData={selectedDish} 
+                onClose={() => setShowEditDialog(false)}
+                dishData={selectedDish}
                 fetchDishes={fetchDishes}
             />
         </Box>

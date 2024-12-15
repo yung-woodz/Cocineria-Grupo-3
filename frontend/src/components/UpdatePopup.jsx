@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
     Button,
     TextField,
@@ -9,143 +9,80 @@ import {
     Grid,
     IconButton,
     MenuItem,
+    Typography,
 } from "@mui/material";
-import Typography from "@mui/material/Typography";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
-import { updateDish } from "../services/dishes.service";
+import useUpdateDish from "../hooks/dish/useUpdateDish";
 import useGetProducts from "../hooks/product/useGetProducts";
-import { showSuccessAlert } from "../helpers/sweetAlert";
 
-export default function DishEditDialog({ open, onClose, dishData, fetchDishes }) {
+
+const UpdatePopup = ({ open, onClose, dishData, fetchDishes }) => {
     const { products } = useGetProducts();
-    const [formData, setFormData] = useState({
-        Nombre: "",
-        descripcion: "",
-        precio: "",
-        tiempoDeEspera: "",
-        disponibilidad: "disponible",
-        image: "",
-        DishProducts: [],
-    });
-
-    useEffect(() => {
-        if (dishData) {
-            const updatedFormData = {
-                Nombre: dishData.Nombre || "",
-                descripcion: dishData.descripcion || "",
-                precio: dishData.precio || "",
-                tiempoDeEspera: dishData.tiempoDeEspera || "",
-                disponibilidad: dishData.disponibilidad || "disponible",
-                image: dishData.image || "",
-                DishProducts: Array.isArray(dishData.DishProducts)
-                    ? dishData.DishProducts.map((dp) => ({
-                        productId: dp.product?.id || "",
-                        quantity: dp.quantity || "",
-                    }))
-                    : [],
-            };
-            console.log("Datos inicializados:", updatedFormData);
-            setFormData(updatedFormData);
-        }
-    }, [dishData]);
-    
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
-    };
-
-    const handleProductChange = (index, field, value) => {
-        const updatedProducts = [...formData.DishProducts];
-        updatedProducts[index] = {
-            ...updatedProducts[index],
-            [field]: value,
-        };
-        setFormData((prevData) => ({
-            ...prevData,
-            DishProducts: updatedProducts,
-        }));
-    };
-
-    const handleAddProduct = () => {
-        setFormData((prevData) => ({
-            ...prevData,
-            DishProducts: [...prevData.DishProducts, { productId: "", quantity: "" }],
-        }));
-    };
-
-    const handleRemoveProduct = (index) => {
-        const updatedProducts = formData.DishProducts.filter((_, i) => i !== index);
-        setFormData((prevData) => ({
-            ...prevData,
-            DishProducts: updatedProducts,
-        }));
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            await updateDish(formData, { id: dishData.id });
-            await fetchDishes();
-            showSuccessAlert("¡Éxito!", "Platillo actualizado correctamente.");
-            onClose();
-        } catch (error) {
-            console.error("Error al actualizar el platillo:", error);
-        }
-    };
+    const {
+        formData,
+        errors,
+        handleChange,
+        handleProductChange,
+        handleAddProduct,
+        handleRemoveProduct,
+        handleSubmit,
+    } = useUpdateDish(dishData, fetchDishes, onClose);
 
     return (
         <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-            <DialogTitle>Editar Platillo</DialogTitle>
-            <DialogContent>
+            <DialogTitle sx={{ backgroundColor: "#212121", color: "white", textAlign: "center" }}>
+            Editar Platillo</DialogTitle>
+            <DialogContent sx={{ backgroundColor: "#FFFFFF" }}>
                 <TextField
                     margin="dense"
-                    id="Nombre"
                     name="Nombre"
                     label="Nombre del Platillo"
-                    type="text"
-                    fullWidth
                     value={formData.Nombre}
                     onChange={handleChange}
+                    fullWidth
+                    error={!!errors.Nombre}
+                    helperText={errors.Nombre}
                     required
                 />
                 <TextField
                     margin="dense"
-                    id="descripcion"
                     name="descripcion"
                     label="Descripción"
-                    type="text"
+                    value={formData.descripcion}
+                    onChange={handleChange}
                     fullWidth
                     multiline
                     rows={3}
-                    value={formData.descripcion}
-                    onChange={handleChange}
+                    error={!!errors.descripcion}
+                    helperText={errors.descripcion}
                     required
                 />
                 <TextField
                     margin="dense"
-                    id="precio"
                     name="precio"
                     label="Precio"
                     type="number"
-                    fullWidth
                     value={formData.precio}
                     onChange={handleChange}
+                    fullWidth
+                    error={!!errors.precio}
+                    helperText={errors.precio}
                     required
+                    
                 />
                 <TextField
                     margin="dense"
-                    id="tiempoDeEspera"
                     name="tiempoDeEspera"
                     label="Tiempo de Espera (minutos)"
                     type="number"
-                    fullWidth
                     value={formData.tiempoDeEspera}
                     onChange={handleChange}
+                    fullWidth
+                    error={!!errors.tiempoDeEspera}
+                    helperText={errors.tiempoDeEspera}
                     required
+                    
                 />
                 <Typography variant="h6" sx={{ mt: 2 }}>
                     Productos Requeridos:
@@ -155,13 +92,13 @@ export default function DishEditDialog({ open, onClose, dishData, fetchDishes })
                         <Grid item xs={6}>
                             <TextField
                                 select
-                                label="Producto"
                                 value={product.productId}
                                 onChange={(e) =>
                                     handleProductChange(index, "productId", e.target.value)
                                 }
                                 fullWidth
                                 required
+                                
                             >
                                 {products.map((prod) => (
                                     <MenuItem key={prod.id} value={prod.id}>
@@ -172,7 +109,6 @@ export default function DishEditDialog({ open, onClose, dishData, fetchDishes })
                         </Grid>
                         <Grid item xs={4}>
                             <TextField
-                                label="Cantidad"
                                 type="number"
                                 value={product.quantity}
                                 onChange={(e) =>
@@ -184,7 +120,7 @@ export default function DishEditDialog({ open, onClose, dishData, fetchDishes })
                         </Grid>
                         <Grid item xs={2}>
                             <IconButton onClick={() => handleRemoveProduct(index)}>
-                                <RemoveCircleOutlineIcon color="error" />
+                                <RemoveCircleOutlineIcon sx={{ color: "#D32F2F" }} />
                             </IconButton>
                         </Grid>
                     </Grid>
@@ -193,17 +129,28 @@ export default function DishEditDialog({ open, onClose, dishData, fetchDishes })
                     variant="outlined"
                     startIcon={<AddCircleOutlineIcon />}
                     onClick={handleAddProduct}
-                    sx={{ mt: 1 }}
+                    sx={{mt: 2,borderColor: "#FFC107",color: "#212121",
+                        "&:hover": {backgroundColor: "#FFB300",},
+                    }}
                 >
                     Agregar Producto
                 </Button>
             </DialogContent>
-            <DialogActions>
-                <Button onClick={onClose}>Cancelar</Button>
-                <Button onClick={handleSubmit} color="primary" variant="contained">
+            <DialogActions sx={{ backgroundColor: "#FAFAFA" }}>
+                <Button onClick={onClose}
+                    sx={{backgroundColor: "#E0E0E0",color: "#212121",
+                        "&:hover": { backgroundColor: "#BDBDBD" },
+                    }}
+                    >Cancelar</Button>
+                <Button onClick={handleSubmit} 
+                    sx={{backgroundColor: "#212121",color: "white",
+                        "&:hover": { backgroundColor: "#424242" },
+                    }}>
                     Guardar Cambios
                 </Button>
             </DialogActions>
         </Dialog>
     );
-}
+};
+
+export default UpdatePopup;

@@ -2,6 +2,7 @@ import { deleteDish } from '@services/dishes.service';
 import { deleteDataAlert, showErrorAlert, showSuccessAlert } from '../../helpers/sweetAlert';
 
 const useDeleteDish = (fetchDishes, setDataDish) => {
+    
     const handleDelete = async (dataDishIds) => {
         if (dataDishIds.length > 0) {
             try {
