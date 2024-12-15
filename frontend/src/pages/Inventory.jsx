@@ -1,22 +1,22 @@
 import React, { useState } from 'react';
 import useGetProducts from '@hooks/product/useGetProducts';
 import useDeleteProduct from '@hooks/product/useDeleteProduct';
-import { 
-    Table, 
-    TableBody, 
-    TableCell, 
-    TableContainer, 
-    TableHead, 
-    TableRow, 
-    Paper, 
-    Box, 
-    TablePagination, 
-    Checkbox, 
-    IconButton, 
-    TextField, 
-    Button, 
-    MenuItem, 
-    Select, 
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Paper,
+    Box,
+    TablePagination,
+    Checkbox,
+    IconButton,
+    TextField,
+    Button,
+    MenuItem,
+    Select,
     InputAdornment
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -26,11 +26,14 @@ import SearchIcon from '@mui/icons-material/Search';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useNavigate } from 'react-router-dom';
 import CreateProduct from './createProduct';
+import useUpdateProduct from '@hooks/product/useUpdateProduct';
 
 import CloseIcon from '@mui/icons-material/Close';
+import SaveIcon from '@mui/icons-material/Save';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
+import { showErrorAlert } from "@helpers/sweetAlert";
 
 
 const Inventory = () => {
@@ -38,23 +41,45 @@ const Inventory = () => {
     const [page, setPage] = useState(0);
     const [selected, setSelected] = useState([]);
     const [filter, setFilter] = useState('');
-    const [filterBy, setFilterBy] = useState('name'); 
+    const [filterBy, setFilterBy] = useState('name');
     const [sortOrder, setSortOrder] = useState('asc');
     const rowsPerPage = 8;
     const navigate = useNavigate();
+    const [quantities, setQuantities] = useState({});
+    const { handleUpdate } = useUpdateProduct(fetchProducts);
 
     const [openPopup, setOpenPopup] = useState(false);
 
     const handleSuccess = (success) => {
-        setOpenPopup(false); 
-    
+        setOpenPopup(false);
+
         if (success) {
             setTimeout(() => {
                 window.location.reload();
-            }, 2000); 
+            }, 2000);
         }
     };
-    
+
+    const handleQuantityChange = (id, value) => {
+        const newQuantity = Math.max(0, parseInt(value) || 0);
+        setQuantities((prev) => ({ ...prev, [id]: newQuantity }));
+    };
+
+    const incrementQuantity = (id) => {
+        setQuantities((prev) => ({
+            ...prev,
+            [id]: (prev[id] || 0) + 1,
+        }));
+    };
+
+    const decrementQuantity = (id) => {
+        setQuantities((prev) => ({
+            ...prev,
+            [id]: Math.max(0, (prev[id] || 0) - 1),
+        }));
+    };
+
+
     const { handleDelete } = useDeleteProduct(fetchProducts, setSelected);
 
     const handleChangePage = (event, newPage) => {
@@ -102,9 +127,9 @@ const Inventory = () => {
 
     const handleDeleteSelected = async () => {
         const success = await handleDelete(selected);
-    
+
         if (success) {
-            window.location.reload(); 
+            window.location.reload();
         }
     };
 
@@ -115,9 +140,17 @@ const Inventory = () => {
     const filteredProducts = products
         .filter((product) => {
             if (!filter) return true;
+
             const valueToFilter = filterBy === 'entryDate' || filterBy === 'expirationDate'
                 ? formatDate(product[filterBy])
                 : product[filterBy]?.toString().toLowerCase();
+
+            // Manejo especial para cantidad (número)
+            if (filterBy === 'quantity') {
+                const quantityValue = product.quantity?.toString() || '0';
+                return quantityValue.includes(filter);
+            }
+
             return valueToFilter.includes(filter.toLowerCase());
         })
         .sort((a, b) => {
@@ -127,6 +160,7 @@ const Inventory = () => {
                 return a[filterBy] < b[filterBy] ? 1 : -1;
             }
         });
+
 
     const displayedProducts = filteredProducts.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
@@ -151,6 +185,7 @@ const Inventory = () => {
                         >
                             <MenuItem value="name">Nombre</MenuItem>
                             <MenuItem value="type">Tipo</MenuItem>
+                            <MenuItem value="quantity">Cantidad</MenuItem>
                             <MenuItem value="entryDate">Fecha de Ingreso</MenuItem>
                             <MenuItem value="expirationDate">Fecha de Expiración</MenuItem>
                         </Select>
@@ -179,7 +214,7 @@ const Inventory = () => {
                         <IconButton onClick={toggleSortOrder} aria-label="Cambiar orden">
                             {sortOrder === 'asc' ? <ArrowDropUpIcon style={{ color: '#fff' }} /> : <ArrowDropDownIcon style={{ color: '#fff' }} />}
                         </IconButton>
-                    </Box>    
+                    </Box>
                     <Box display="flex" alignItems="center" gap={1}>
                         <IconButton
                             onClick={handleDeleteSelected}
@@ -191,12 +226,12 @@ const Inventory = () => {
                         >
                             <DeleteIcon />
                         </IconButton>
-    
+
                         <IconButton
                             onClick={() => setOpenPopup(true)}
                             aria-label="Añadir producto"
                             style={{
-                                color: '#4CAF50', // Color verde (puedes ajustar según sea necesario)
+                                color: '#4CAF50',
                             }}
                         >
                             <AddCircleIcon />
@@ -231,15 +266,45 @@ const Inventory = () => {
                                     />
                                 </TableCell>
                                 <TableCell align="center">
-                                    <img 
-                                        src={`http://localhost:3000/${product.image}`} 
+                                    <img
+                                        src={`http://146.83.198.35:1408/${product.image}`}
                                         alt={product.name}
                                         align="center"
                                         style={{ width: '50px', height: '50px', objectFit: 'cover', margin: '0 auto' }}
                                     />
                                 </TableCell>
                                 <TableCell align="center">{product.name}</TableCell>
-                                <TableCell align="center">{product.quantity}</TableCell>
+                                <TableCell align="center">
+                                    <Box display="flex" alignItems="center" justifyContent="center" gap={1}>
+                                        <TextField
+                                            type="number"
+                                            value={quantities[product.id] ?? product.quantity}
+                                            onChange={(e) => handleQuantityChange(product.id, e.target.value)}
+                                            variant="outlined"
+                                            size="small"
+                                            style={{ width: "80px" }}
+                                            inputProps={{ min: 0 }}
+                                        />
+                                        <IconButton
+                                            onClick={() => {
+                                                const quantity = quantities[product.id];
+
+                                                if (quantity <= 0) {
+                                                    showErrorAlert("Error", "La cantidad debe ser mayor que 0.");
+                                                    return;
+                                                }
+
+                                                console.log("ID del producto:", product.id);
+                                                handleUpdate({ quantity }, product.id);
+                                            }}
+                                            aria-label="Actualizar cantidad"
+                                            style={{ color: '#4CAF50' }}
+                                        >
+                                            <SaveIcon />
+                                        </IconButton>
+
+                                    </Box>
+                                </TableCell>
                                 <TableCell align="center">{product.type}</TableCell>
                                 <TableCell align="center">{formatDate(product.entryDate)}</TableCell>
                                 <TableCell align="center">{formatDate(product.expirationDate)}</TableCell>
@@ -262,29 +327,29 @@ const Inventory = () => {
             </TableContainer>
 
             <Dialog open={openPopup} onClose={() => setOpenPopup(false)} maxWidth="md" fullWidth>
-            <DialogTitle className='bg-[#212121] text-white '>
-                Crear Producto
-                <IconButton
-                aria-label="cerrar"
-                onClick={() => setOpenPopup(false)}
-                sx={{
-                    position: 'absolute',
-                    right: 8,
-                    top: 8,
-                    color: 'white'
-                }}
-                >
-                <CloseIcon />
-                </IconButton>
-            </DialogTitle>
+                <DialogTitle className='bg-[#212121] text-white '>
+                    Crear Producto
+                    <IconButton
+                        aria-label="cerrar"
+                        onClick={() => setOpenPopup(false)}
+                        sx={{
+                            position: 'absolute',
+                            right: 8,
+                            top: 8,
+                            color: 'white'
+                        }}
+                    >
+                        <CloseIcon />
+                    </IconButton>
+                </DialogTitle>
 
-            <DialogContent dividers>
-                <CreateProduct onSuccess={handleSuccess} />
-            </DialogContent>
+                <DialogContent dividers>
+                    <CreateProduct onSuccess={handleSuccess} />
+                </DialogContent>
             </Dialog>
 
         </Box>
-        
+
     );
 };
 

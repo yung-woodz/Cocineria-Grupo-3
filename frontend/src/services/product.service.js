@@ -23,14 +23,6 @@ export async function createProduct(data) {
         throw error;
     }
 }
-export async function updateProduct(data, id) {
-    try {
-        const response = await axios.patch(`/product/detail/?id=${id}`, data);
-        return response.data.data;
-    } catch (error) {
-        return error.response.data;
-    }
-}
 
 export const deleteProduct = async (productId) => {
     try {
@@ -41,3 +33,16 @@ export const deleteProduct = async (productId) => {
         throw error;
     }
 };
+
+export async function updateProduct(dataProduct, id) {
+    try {
+        const response = await axios.patch(`/product/${id}`, dataProduct, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
