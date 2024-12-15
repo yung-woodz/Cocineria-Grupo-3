@@ -2,18 +2,17 @@ import React, { useState } from "react";
 import useGetDishes from "../hooks/dish/useGetDishes";
 import useDeleteDish from "../hooks/dish/useDeleteDish";
 import DishCard from "../components/DishCard"; 
-import DishEditDialog from "../components/DishEditDialog";
 import UpdatePopup from "../components/UpdatePopup";
+import { useNavigate } from "react-router-dom";
 
 import { Box, Grid, TextField, Select, MenuItem, IconButton, InputAdornment, Typography, Button } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import { useNavigate } from "react-router-dom";
 
 const DishesPage = () => {
     const navigate = useNavigate();
-    const { dishes, fetchDishes, loading, error, message } = useGetDishes();
+    const { dishes, fetchDishes, loading } = useGetDishes();
     const [filter, setFilter] = useState("");
     const [filterBy, setFilterBy] = useState("Nombre");
     const [sortOrder, setSortOrder] = useState("asc");
@@ -31,24 +30,6 @@ const DishesPage = () => {
     const toggleSortOrder = () => {
         setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
     };
-
-    const filteredDishes = Array.isArray(dishes)
-        ? dishes.filter((dish) => {
-            if (!filter) return true;
-            const valueToFilter =
-            filterBy === "tiempoDeEspera" || filterBy === "precio"
-            ? dish[filterBy].toString()
-            : dish[filterBy]?.toLowerCase();
-            return valueToFilter.includes(filter.toLowerCase());
-        })
-        .sort((a, b) => {
-            if (sortOrder === "asc") {
-                return a[filterBy] > b[filterBy] ? 1 : -1;
-            } else {
-                return a[filterBy] < b[filterBy] ? 1 : -1;
-            }
-        })
-        : [];
 
     if (loading) {
         return (
@@ -106,8 +87,8 @@ const DishesPage = () => {
                 </Box>
             </Box>
             <Grid container spacing={3}>
-                {filteredDishes.length > 0 ? (
-                    filteredDishes.map((dish) => (
+                {dishes.length > 0 ? (
+                    dishes.map((dish) => (
                         <Grid item xs={12} sm={6} md={4} key={dish.id}>
                             <DishCard
                                 dish={dish}
@@ -126,13 +107,14 @@ const DishesPage = () => {
                     </Typography>
                 )}
             </Grid>
-            <button
-                className="fixed bottom-5 right-5 w-16 h-16 bg-[#FFC107] text-black rounded-full text-2xl shadow-lg hover:bg-blue-600 focus:outline-none"
-                onClick={() => navigate("/create-dish")}
-            >
-                +
-            </button>
-            <DishEditDialog
+            <div className="relative h-screen">
+                <button
+                    className="fixed bottom-5 right-5 w-16 h-16 bg-[#FFC107] text-black rounded-full text-2xl shadow-lg hover:bg-blue-600 focus:outline-none"
+                    onClick={() => navigate('/create-dish')}
+                >
+                    +
+                </button>
+            </div>
             <UpdatePopup
                 open={showEditDialog}
                 onClose={() => setShowEditDialog(false)}
