@@ -3,8 +3,9 @@ import { updateDish } from '@services/dishes.service';
 import { showSuccessAlert, showErrorAlert } from '../../helpers/sweetAlert';
 
 export default function useUpdateDish(dishData, fetchDishes, onClose) {
-    const [errors, setErrors] = useState({});
+    const [errors] = useState({});
     const [formData, setFormData] = useState({
+        //donde se almacenan
         Nombre: "",
         descripcion: "",
         precio: "",
@@ -16,6 +17,7 @@ export default function useUpdateDish(dishData, fetchDishes, onClose) {
 
     useEffect(() => {
         if (dishData) {
+            //para actualizar los datos del platillo
             const updatedFormData = {
                 Nombre: dishData.Nombre || "",
                 descripcion: dishData.descripcion || "",
@@ -25,40 +27,38 @@ export default function useUpdateDish(dishData, fetchDishes, onClose) {
                 image: dishData.image || "",
                 DishProducts: Array.isArray(dishData.DishProducts)
                     ? dishData.DishProducts.map((dp) => ({
-                          productId: dp.product?.id || "",
-                          quantity: dp.quantity || "",
-                      }))
+                        productId: dp.product?.id || "",
+                        quantity: dp.quantity || "",
+                    }))
                     : [],
             };
             setFormData(updatedFormData);
         }
     }, [dishData]);
-
+    //para actualizar los datos del platillo
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevData) => ({ ...prevData, [name]: value }));
     };
-
+    //actualiza los productos dentro del platillo
     const handleProductChange = (index, field, value) => {
         const updatedProducts = [...formData.DishProducts];
         updatedProducts[index] = { ...updatedProducts[index], [field]: value };
         setFormData((prevData) => ({ ...prevData, DishProducts: updatedProducts }));
     };
-
     const handleAddProduct = () => {
         setFormData((prevData) => ({
             ...prevData,
             DishProducts: [...prevData.DishProducts, { productId: "", quantity: "" }],
         }));
     };
-
     const handleRemoveProduct = (index) => {
         setFormData((prevData) => ({
             ...prevData,
             DishProducts: prevData.DishProducts.filter((_, i) => i !== index),
         }));
     };
-
+    //actualiza el platillo
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -68,6 +68,7 @@ export default function useUpdateDish(dishData, fetchDishes, onClose) {
             onClose();
         } catch (error) {
             console.error("Error al actualizar el platillo:", error);
+            //errores detallados del backend
             const errorDetails = error.response?.data?.details;
             if (errorDetails) {
                 showErrorAlert("Error al Actualizar", errorDetails);

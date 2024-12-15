@@ -11,7 +11,8 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import{showSuccessAlert} from "../helpers/sweetAlert";
 
 const DishesPage = () => {
-    const { dishes, fetchDishes, loading, error, message } = useGetDishes();
+    // lista de platillos 
+    const { dishes, fetchDishes, loading} = useGetDishes();
     const [filter, setFilter] = useState("");
     const [filterBy, setFilterBy] = useState("Nombre");
     const [sortOrder, setSortOrder] = useState("asc");
@@ -59,8 +60,6 @@ const DishesPage = () => {
             </Typography>
         );
     }
-
-
 
     return (
         <Box padding={2}>
