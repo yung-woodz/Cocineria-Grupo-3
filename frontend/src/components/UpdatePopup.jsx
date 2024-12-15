@@ -31,8 +31,9 @@ const UpdatePopup = ({ open, onClose, dishData, fetchDishes }) => {
 
     return (
         <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-            <DialogTitle>Editar Platillo</DialogTitle>
-            <DialogContent>
+            <DialogTitle sx={{ backgroundColor: "#212121", color: "white", textAlign: "center" }}>
+            Editar Platillo</DialogTitle>
+            <DialogContent sx={{ backgroundColor: "#FFFFFF" }}>
                 <TextField
                     margin="dense"
                     name="Nombre"
@@ -68,6 +69,7 @@ const UpdatePopup = ({ open, onClose, dishData, fetchDishes }) => {
                     error={!!errors.precio}
                     helperText={errors.precio}
                     required
+                    
                 />
                 <TextField
                     margin="dense"
@@ -80,6 +82,7 @@ const UpdatePopup = ({ open, onClose, dishData, fetchDishes }) => {
                     error={!!errors.tiempoDeEspera}
                     helperText={errors.tiempoDeEspera}
                     required
+                    
                 />
                 <Typography variant="h6" sx={{ mt: 2 }}>
                     Productos Requeridos:
@@ -95,6 +98,8 @@ const UpdatePopup = ({ open, onClose, dishData, fetchDishes }) => {
                                 }
                                 fullWidth
                                 required
+
+                                
                             >
                                 {products.map((prod) => (
                                     <MenuItem key={prod.id} value={prod.id}>
@@ -116,7 +121,7 @@ const UpdatePopup = ({ open, onClose, dishData, fetchDishes }) => {
                         </Grid>
                         <Grid item xs={2}>
                             <IconButton onClick={() => handleRemoveProduct(index)}>
-                                <RemoveCircleOutlineIcon color="error" />
+                                <RemoveCircleOutlineIcon sx={{ color: "#D32F2F" }} />
                             </IconButton>
                         </Grid>
                     </Grid>
@@ -125,14 +130,22 @@ const UpdatePopup = ({ open, onClose, dishData, fetchDishes }) => {
                     variant="outlined"
                     startIcon={<AddCircleOutlineIcon />}
                     onClick={handleAddProduct}
-                    sx={{ mt: 1 }}
+                    sx={{mt: 2,borderColor: "#FFC107",color: "#212121",
+                        "&:hover": {backgroundColor: "#FFB300",},
+                    }}
                 >
                     Agregar Producto
                 </Button>
             </DialogContent>
-            <DialogActions>
-                <Button onClick={onClose}>Cancelar</Button>
-                <Button onClick={handleSubmit} color="primary" variant="contained">
+            <DialogActions sx={{ backgroundColor: "#FAFAFA" }}>
+                <Button onClick={onClose}sx={{backgroundColor: "#E0E0E0",color: "#212121",
+                        "&:hover": { backgroundColor: "#BDBDBD" },
+                    }}
+                    >Cancelar</Button>
+                <Button onClick={handleSubmit} conClick={handleSubmit}
+                    sx={{backgroundColor: "#212121",color: "white",
+                        "&:hover": { backgroundColor: "#424242" },
+                    }}>
                     Guardar Cambios
                 </Button>
             </DialogActions>
