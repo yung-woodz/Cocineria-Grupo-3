@@ -13,11 +13,11 @@ const useGetDishes = () => {
         try {
             const response = await getDishes();
 
-            if (!response || response.error) {
-                throw new Error(response?.error || "Error desconocido al obtener los platillos.");
+            if (response.error) {
+                throw new Error(response.error); 
             }
 
-            setDishes(response); // Usa directamente los datos del backend.
+            setDishes(response); 
         } catch (error) {
             console.error("Error al obtener los platillos:", error);
             setError(error.message || "Error desconocido");

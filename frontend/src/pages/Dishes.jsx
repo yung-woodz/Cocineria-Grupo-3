@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import useGetDishes from "../hooks/dish/useGetDishes";
 import useDeleteDish from "../hooks/dish/useDeleteDish";
 import DishCard from "../components/DishCard"; 
-import DishEditDialog  from "../components/DishEditDialog";
+import UpdatePopup from "../components/UpdatePopup";
 
 import { Box, Grid, TextField, Select, MenuItem, IconButton, InputAdornment, Typography, Button } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
@@ -11,7 +11,8 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import{showSuccessAlert} from "../helpers/sweetAlert";
 
 const DishesPage = () => {
-    const { dishes, fetchDishes } = useGetDishes();
+    // lista de platillos 
+    const { dishes, fetchDishes, loading} = useGetDishes();
     const [filter, setFilter] = useState("");
     const [filterBy, setFilterBy] = useState("Nombre");
     const [sortOrder, setSortOrder] = useState("asc");
@@ -19,40 +20,50 @@ const DishesPage = () => {
     const [selectedDish, setSelectedDish] = useState(null); 
     const [showEditDialog, setShowEditDialog] = useState(false); 
 
-   //se va a delete
+   //redireccion de delete 
     const { handleDelete } = useDeleteDish(fetchDishes, () => {});
-
-    const toggleSortOrder = () => {
-        setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
-    };
-
-    const filteredDishes = dishes
-        .filter((dish) => {
-            if (!filter) return true;
-            const valueToFilter =
-                filterBy === "tiempoDeEspera" || filterBy === "precio"
-                    ? dish[filterBy].toString()
-                    : dish[filterBy]?.toLowerCase();
-            return valueToFilter.includes(filter.toLowerCase());
-        })
-        .sort((a, b) => {
-            if (sortOrder === "asc") {
-                return a[filterBy] > b[filterBy] ? 1 : -1;
-            } else {
-                return a[filterBy] < b[filterBy] ? 1 : -1;
-            }
-        });
-        
-
-    //aca se realiza el edi deberia cambiarlo  al hook
+    // a edir
     const handleEdit = (dish) => {
         setSelectedDish(dish); 
         setShowEditDialog(true); 
     };
 
+    const toggleSortOrder = () => {
+        setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
+    };
+
+    // Verifica que dishes sea un arreglo antes de filtrar y ordenar
+    const filteredDishes = Array.isArray(dishes)
+        ? dishes
+        .filter((dish) => {
+        if (!filter) return true;
+            const valueToFilter =
+            filterBy === "tiempoDeEspera" || filterBy === "precio"
+            ? dish[filterBy].toString()
+            : dish[filterBy]?.toLowerCase();
+            return valueToFilter.includes(filter.toLowerCase());
+        })
+        .sort((a, b) => {
+            if (sortOrder === "asc") {
+                return a[filterBy] > b[filterBy] ? 1 : -1;
+                } else {
+                return a[filterBy] < b[filterBy] ? 1 : -1;
+                }
+            })
+        : [];
+
+    // Mostrar estado de carga
+    if (loading) {
+        return (
+            <Typography variant="h6" align="center" sx={{userSelect: 'none',}}>
+                Cargando platillos...
+            </Typography>
+        );
+    }
+
     return (
         <Box padding={2}>
-            <Typography variant="h4" align="center" gutterBottom>
+            <Typography variant="h4" align="center" sx={{userSelect: 'none',}} gutterBottom>
                 Platillos
             </Typography>
             <Box display="flex" justifyContent="space-between" alignItems="center" marginBottom={2}>
@@ -98,20 +109,30 @@ const DishesPage = () => {
                 </Box>
             </Box>
             <Grid container spacing={3}>
-                {filteredDishes.map((dish) => (
-                    <Grid item xs={12} sm={6} md={4} key={dish.id}>
-                        <DishCard
-                            dish={dish}
-                            onEdit={() => handleEdit(dish)} 
-                            onDelete={() => handleDelete([dish.id])} 
-                        />
-                    </Grid>
-                ))}
+                {filteredDishes.length > 0 ? (
+                    filteredDishes.map((dish) => (
+                        <Grid item xs={12} sm={6} md={4} key={dish.id}>
+                            <DishCard
+                                dish={dish}
+                                onEdit={() => handleEdit(dish)}
+                                onDelete={() => handleDelete([dish.id])}
+                            />
+                        </Grid>
+                    ))
+                ) : (
+                    <Typography
+                        variant="h6"
+                        align="center"
+                        sx={{ width: "100%", marginTop: 2 }}
+                    >
+                        No hay platillos disponibles.
+                    </Typography>
+                )}
             </Grid>
-            <DishEditDialog
+            <UpdatePopup
                 open={showEditDialog}
-                onClose={() => setShowEditDialog(false)} 
-                dishData={selectedDish} 
+                onClose={() => setShowEditDialog(false)}
+                dishData={selectedDish}
                 fetchDishes={fetchDishes}
             />
         </Box>

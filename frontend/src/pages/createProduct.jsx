@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Box, Grid, TextField, Button, MenuItem, Typography, CircularProgress, IconButton } from "@mui/material";
 import { useDropzone } from "react-dropzone";
 import CancelIcon from "@mui/icons-material/Cancel";
 import useCreateProduct from "@hooks/product/useCreateProduct";
 
 const CreateProduct = ({ onSuccess }) => {
-    const navigate = useNavigate();
+
     const { form, isSubmitting, errors, handleChange, handleFileChange, handleSubmit: submitForm } = useCreateProduct();
     const [previewImage, setPreviewImage] = useState(null); 
 
