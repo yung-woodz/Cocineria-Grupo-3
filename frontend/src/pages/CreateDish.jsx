@@ -136,7 +136,7 @@ const CreateDishForm = () => {
                             </Grid>
                             <Grid item xs={2}>
                                 <IconButton onClick={() => handleRemoveProduct(index)}>
-                                    <RemoveCircleOutlineIcon color="error" />
+                                    <RemoveCircleOutlineIcon sx={{ color: "#D32F2F" }} />
                                 </IconButton>
                             </Grid>
                         </Grid>
@@ -145,7 +145,9 @@ const CreateDishForm = () => {
                         variant="outlined"
                         startIcon={<AddCircleOutlineIcon />}
                         onClick={handleAddProduct}
-                        sx={{ mt: 2 }}
+                        sx={{mt: 2,borderColor: "#FFC107",color: "#212121",
+                            "&:hover": {backgroundColor: "#FFB300",},
+                        }}
                     >
                         Agregar Producto
                     </Button>
@@ -157,6 +159,9 @@ const CreateDishForm = () => {
                         color="primary"
                         disabled={isSubmitting}
                         fullWidth
+                        sx={{backgroundColor: "#212121",color: "white",
+                            "&:hover": { backgroundColor: "#424242" },
+                        }}
                     >
                         {isSubmitting ? <CircularProgress size={24} /> : "Crear Platillo"}
                     </Button>

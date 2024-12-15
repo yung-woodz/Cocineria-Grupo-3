@@ -98,7 +98,6 @@ const UpdatePopup = ({ open, onClose, dishData, fetchDishes }) => {
                                 }
                                 fullWidth
                                 required
-
                                 
                             >
                                 {products.map((prod) => (
@@ -138,11 +137,12 @@ const UpdatePopup = ({ open, onClose, dishData, fetchDishes }) => {
                 </Button>
             </DialogContent>
             <DialogActions sx={{ backgroundColor: "#FAFAFA" }}>
-                <Button onClick={onClose}sx={{backgroundColor: "#E0E0E0",color: "#212121",
+                <Button onClick={onClose}
+                    sx={{backgroundColor: "#E0E0E0",color: "#212121",
                         "&:hover": { backgroundColor: "#BDBDBD" },
                     }}
                     >Cancelar</Button>
-                <Button onClick={handleSubmit} conClick={handleSubmit}
+                <Button onClick={handleSubmit} 
                     sx={{backgroundColor: "#212121",color: "white",
                         "&:hover": { backgroundColor: "#424242" },
                     }}>
