@@ -43,7 +43,7 @@
 	border-radius: 24px;
 	align-items: center;
 	h1 {
-		color: #003366; /*Color del titulo del formulario*/
+		color: #212121; /*Color del titulo del formulario*/
 		font-size: 30px;
 		font-weight: bold;
 		margin: 0;
@@ -54,13 +54,13 @@
 		display: flex;
 	}
 	label {
-		color: #003366; /*Color label de inputs del formulario*/
+		color: #212121; /*Color label de inputs del formulario*/
 		font-weight: bold;
 		margin-bottom: 0.7vh;
 	}
 	input {
 		display: flex;
-		border: 3px solid #003366; /*Color del borde de inputs del formulario*/
+		border: 3px solid #212121; /*Color del borde de inputs del formulario*/
 		border-radius: 12px;
 		padding: 8px 5px;
 		background-repeat: no-repeat;
@@ -144,17 +144,17 @@
 		border-radius: 12px;
 		border: none;
 		width: 100%;
-		background-color: #003366; /*Color del boton del formulario*/
+		background-color: #212121; /*Color del boton del formulario*/
 		color: #eef7ff;
 		font-weight: bold;
 		font-size: 16px;
-		border: 3px solid #003366; /*Color del borde del boton*/
+		border: 3px solid #212121; /*Color del borde del boton*/
 		margin-top: 10px;
 	}
 	button:hover{
-		border: 3px solid #003366;
-		background-color: #eef7ff;
-		color: #003366;
+		border: 3px solid #212121;
+		background-color: #ffffff;
+		color: #212121;
 		transition: .3s ease-out;
 	}
 	div {

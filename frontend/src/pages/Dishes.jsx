@@ -2,15 +2,15 @@ import React, { useState } from "react";
 import useGetDishes from "../hooks/dish/useGetDishes";
 import useDeleteDish from "../hooks/dish/useDeleteDish";
 import DishCard from "../components/DishCard"; 
-import DishEditDialog  from "../components/DishEditDialog";
-
+import DishEditDialog from "../components/DishEditDialog";
 import { Box, Grid, TextField, Select, MenuItem, IconButton, InputAdornment, Typography, Button } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import{showSuccessAlert} from "../helpers/sweetAlert";
+import { useNavigate } from "react-router-dom";
 
 const DishesPage = () => {
+    const navigate = useNavigate();
     const { dishes, fetchDishes, loading, error, message } = useGetDishes();
     const [filter, setFilter] = useState("");
     const [filterBy, setFilterBy] = useState("Nombre");
@@ -19,9 +19,8 @@ const DishesPage = () => {
     const [selectedDish, setSelectedDish] = useState(null); 
     const [showEditDialog, setShowEditDialog] = useState(false); 
 
-   //redireccion de delete 
     const { handleDelete } = useDeleteDish(fetchDishes, () => {});
-    // a edir
+
     const handleEdit = (dish) => {
         setSelectedDish(dish); 
         setShowEditDialog(true); 
@@ -31,11 +30,9 @@ const DishesPage = () => {
         setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
     };
 
-    // Verifica que dishes sea un arreglo antes de filtrar y ordenar
     const filteredDishes = Array.isArray(dishes)
-        ? dishes
-        .filter((dish) => {
-        if (!filter) return true;
+        ? dishes.filter((dish) => {
+            if (!filter) return true;
             const valueToFilter =
             filterBy === "tiempoDeEspera" || filterBy === "precio"
             ? dish[filterBy].toString()
@@ -45,13 +42,12 @@ const DishesPage = () => {
         .sort((a, b) => {
             if (sortOrder === "asc") {
                 return a[filterBy] > b[filterBy] ? 1 : -1;
-                } else {
+            } else {
                 return a[filterBy] < b[filterBy] ? 1 : -1;
-                }
-            })
+            }
+        })
         : [];
 
-    // Mostrar estado de carga
     if (loading) {
         return (
             <Typography variant="h6" align="center">
@@ -59,8 +55,6 @@ const DishesPage = () => {
             </Typography>
         );
     }
-
-
 
     return (
         <Box padding={2}>
@@ -130,6 +124,12 @@ const DishesPage = () => {
                     </Typography>
                 )}
             </Grid>
+            <button
+                className="fixed bottom-5 right-5 w-16 h-16 bg-[#FFC107] text-black rounded-full text-2xl shadow-lg hover:bg-blue-600 focus:outline-none"
+                onClick={() => navigate("/create-dish")}
+            >
+                +
+            </button>
             <DishEditDialog
                 open={showEditDialog}
                 onClose={() => setShowEditDialog(false)}
