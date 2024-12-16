@@ -84,8 +84,9 @@ export async function createOrder(req, res) {
         if (errorOrder) return handleErrorClient(res, 404, errorOrder);
 
         const io = req.app.get('socketio');
+	const apiNamespace = io.of("/api");
 
-        io.emit('nueva-orden', {
+        apiNamespace.emit("nueva-orden", {
             mensaje: "Has recibido una nueva orden!!",
             order
         });

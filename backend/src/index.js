@@ -20,7 +20,7 @@ async function setupServer() {
     const server = createServer(app);
     const io = new Server(server, {
       cors: {
-          origin: "http://146.83.198.35:1408/auth",
+          origin: "*",
       }
     });
 
