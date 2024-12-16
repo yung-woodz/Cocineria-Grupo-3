@@ -1,19 +1,23 @@
-import { useState, useCallback } from 'react';
-import { getOrders } from '../../services/order.service';
+import { useEffect, useState } from "react";
+import { getOrders } from "../../services/order.service.js";
 
 const useGetOrders = () => {
     const [orders, setOrders] = useState([]);
 
-    const fetchOrders = useCallback(async () => {
+    const fetchOrders = async () => {
         try {
-            const data = await getOrders();
-            setOrders(data);
+            const orders = await getOrders();
+            setOrders(orders);
         } catch (error) {
-            console.error('Error al obtener las órdenes:', error);
+            console.error("Error al enviar ordernes", error);
         }
+    };
+
+    useEffect(() => {
+        fetchOrders();
     }, []);
 
-    return { orders, setOrders, fetchOrders };
+    return { orders, fetchOrders, setOrders };
 };
 
 export default useGetOrders;
