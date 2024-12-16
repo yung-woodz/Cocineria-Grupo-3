@@ -27,7 +27,7 @@ export  async function createDish(req, res) {
 
         if (errorDish) return handleErrorClient(res, 404, errorDish);
 
-        handleSuccess(res, 200, "Platillos creado", newDish);
+        handleSuccess(res, 201, "Platillo creado exitosamente", newDish);
         
     }catch (error){
         handleErrorServer(res, 500, error.message);

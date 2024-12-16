@@ -7,7 +7,7 @@ const DishCard = ({ dish, onDelete, onEdit }) => {
     const userRole = userData ? userData.rol : null;
 
     return (
-        <Card sx={{ maxWidth: 345, margin: "auto" }}>
+        <Card sx={{ maxWidth: 345, margin: "auto",userSelect: 'none' }}>
             <CardMedia
                 component="img"
                 height="140"
