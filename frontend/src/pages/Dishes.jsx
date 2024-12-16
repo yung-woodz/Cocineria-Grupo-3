@@ -17,6 +17,9 @@ const DishesPage = () => {
     const [filterBy, setFilterBy] = useState("Nombre");
     const [sortOrder, setSortOrder] = useState("asc");
 
+    const userData = JSON.parse(sessionStorage.getItem('usuario'));
+    const userRole = userData ? userData.rol : null;
+
     const [selectedDish, setSelectedDish] = useState(null); 
     const [showEditDialog, setShowEditDialog] = useState(false); 
 
@@ -107,14 +110,16 @@ const DishesPage = () => {
                     </Typography>
                 )}
             </Grid>
-            <div className="relative h-screen">
-                <button
-                    className="fixed bottom-5 right-5 w-16 h-16 bg-[#FFC107] text-black rounded-full text-2xl shadow-lg hover:bg-blue-600 focus:outline-none"
-                    onClick={() => navigate('/create-dish')}
-                >
-                    +
-                </button>
-            </div>
+            {userRole === "administrador" && (
+                <div className="relative h-screen">
+                    <button
+                        className="fixed bottom-5 right-5 w-16 h-16 bg-[#FFC107] text-black rounded-full text-2xl shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-0"
+                        onClick={() => navigate("/create-dish")}
+                    >
+                        +
+                    </button>
+                </div>
+            )}
             <UpdatePopup
                 open={showEditDialog}
                 onClose={() => setShowEditDialog(false)}
