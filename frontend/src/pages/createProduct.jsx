@@ -7,14 +7,14 @@ import useCreateProduct from "@hooks/product/useCreateProduct";
 const CreateProduct = ({ onSuccess }) => {
 
     const { form, isSubmitting, errors, handleChange, handleFileChange, handleSubmit: submitForm } = useCreateProduct();
-    const [previewImage, setPreviewImage] = useState(null); 
+    const [previewImage, setPreviewImage] = useState(null);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         const success = await submitForm(event);
-        onSuccess(success);  
-        
-    };    
+        onSuccess(success);
+
+    };
 
     const onDrop = (acceptedFiles) => {
         const validFiles = acceptedFiles.filter(file =>
@@ -22,14 +22,14 @@ const CreateProduct = ({ onSuccess }) => {
         );
         if (validFiles.length > 0) {
             const file = validFiles[0];
-            setPreviewImage(URL.createObjectURL(file)); 
+            setPreviewImage(URL.createObjectURL(file));
             handleFileChange({ target: { files: validFiles } });
         }
     };
 
     const cancelImage = () => {
-        setPreviewImage(null); 
-        handleFileChange({ target: { files: [] } }); 
+        setPreviewImage(null);
+        handleFileChange({ target: { files: [] } });
     };
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -38,15 +38,32 @@ const CreateProduct = ({ onSuccess }) => {
             "image/jpeg": [".jpg", ".jpeg"],
             "image/png": [".png"],
         },
-        multiple: false, 
+        multiple: false,
     });
 
     const handleNumericChange = (e) => {
         const { name, value } = e.target;
         if (/^\d*$/.test(value)) {
-            handleChange(e); 
+            handleChange(e);
+        } else {
+            alert("La cantidad solo puede contener números.");
         }
     };
+
+
+    const handleDateChange = (e) => {
+        const { name, value } = e.target;
+        const today = new Date().toISOString().split("T")[0];
+
+        if (name === "entryDate" && value < today) {
+            alert("La fecha de ingreso no puede ser anterior a hoy.");
+        } else if (name === "expirationDate" && value <= form.entryDate) {
+            alert("La fecha de caducidad debe ser posterior a la fecha de ingreso.");
+        } else {
+            handleChange(e);
+        }
+    };
+
 
     return (
         <Box
@@ -109,7 +126,7 @@ const CreateProduct = ({ onSuccess }) => {
                         label="Cantidad"
                         type="text"
                         value={form.quantity}
-                        onChange={handleNumericChange} 
+                        onChange={handleNumericChange}
                         error={!!errors.quantity}
                         helperText={errors.quantity}
                         inputProps={{
@@ -126,11 +143,12 @@ const CreateProduct = ({ onSuccess }) => {
                         label="Fecha Entrada"
                         type="date"
                         value={form.entryDate}
-                        onChange={handleChange}
+                        onChange={handleDateChange}
                         InputLabelProps={{ shrink: true }}
                         error={!!errors.entryDate}
                         helperText={errors.entryDate}
                     />
+
                 </Grid>
                 <Grid item xs={12}>
                     <TextField
@@ -140,7 +158,7 @@ const CreateProduct = ({ onSuccess }) => {
                         label="Fecha Expiración"
                         type="date"
                         value={form.expirationDate}
-                        onChange={handleChange}
+                        onChange={handleDateChange}
                         InputLabelProps={{ shrink: true }}
                         error={!!errors.expirationDate}
                         helperText={errors.expirationDate}
@@ -183,15 +201,15 @@ const CreateProduct = ({ onSuccess }) => {
                                         position: "absolute",
                                         top: 8,
                                         right: 8,
-                                        width: 40,  
-                                        height: 40, 
-                                        padding: 0, 
+                                        width: 40,
+                                        height: 40,
+                                        padding: 0,
                                         backgroundColor: "#fff",
-                                        borderRadius: "50%", 
+                                        borderRadius: "50%",
                                         "&:hover": { backgroundColor: "#f5f5f5" },
                                     }}
                                 >
-                                    <CancelIcon sx={{ fontSize: 24 }} /> 
+                                    <CancelIcon sx={{ fontSize: 24 }} />
                                 </IconButton>
                             </>
                         ) : (
@@ -213,7 +231,7 @@ const CreateProduct = ({ onSuccess }) => {
                         fullWidth
                         variant="contained"
                         disabled={isSubmitting}
-                        sx={{ mt: 3, mb: 2, backgroundColor: "#212121"}}
+                        sx={{ mt: 3, mb: 2, backgroundColor: "#212121" }}
                     >
                         {isSubmitting ? <CircularProgress size={24} /> : "Crear Producto"}
                     </Button>
