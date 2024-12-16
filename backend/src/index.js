@@ -20,7 +20,7 @@ async function setupServer() {
     const server = createServer(app);
     const io = new Server(server);
 
-    io.on('connection', (socket) => {
+    io.on('connect', (socket) => {
       console.log("Usuario conectado:", socket.id);
     
         socket.on('disconnect', (reason) => {
