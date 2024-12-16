@@ -267,7 +267,7 @@ const Inventory = () => {
                                 </TableCell>
                                 <TableCell align="center">
                                     <img
-                                        src={`http://146.83.198.35:1408/${product.image}`}
+                                        src={`http://146.83.198.35:1407/${product.image}`}
                                         alt={product.name}
                                         align="center"
                                         style={{ width: '50px', height: '50px', objectFit: 'cover', margin: '0 auto' }}
