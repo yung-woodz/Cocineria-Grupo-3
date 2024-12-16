@@ -36,13 +36,17 @@ const Navbar = () => {
 
     const [open, setOpen] = useState(true);
     const Menus = [
-        { title: "Informacion", icon: <DashboardIcon />, link: "/home" },
-        { title: "Platillos", icon: <BrunchDiningIcon />, gap: true, link: "/dishes" },
-        { title: "Ordenes", icon: <SummarizeIcon />, link: "/order/all" },
-        { title: "Inventario", icon: <InventoryIcon />, link: "/inventory" },
-        { title: "Notificaciones", icon: <AccessAlarmIcon />, gap: true, link: "/order/orderByChef" },
-        { title: "Usuarios", icon: <AccountsIcon />, link: "/users" },
+        { title: "Informacion", icon: <DashboardIcon />, link: "/home", roles: ["mesero", "cocinero", "jefeCocina", "administrador"] },
+        { title: "Platillos", icon: <BrunchDiningIcon />, gap: true, link: "/dishes", roles: ["usuario", "mesero", "cocinero", "jefeCocina", "administrador"] },
+        { title: "Ordenes", icon: <SummarizeIcon />, link: "/order/all", roles: ["mesero", "cocinero", "jefeCocina", "administrador"] },
+        { title: "Inventario", icon: <InventoryIcon />, link: "/inventory", roles: ["mesero", "cocinero", "jefeCocina", "administrador"] },
+        { title: "Notificaciones", icon: <AccessAlarmIcon />, gap: true, link: "/order/orderByChef", roles: ["mesero", "cocinero", "jefeCocina", "administrador"] },
+        { title: "Usuarios", icon: <AccountsIcon />, link: "/users", roles: ["administrador"] },
     ];
+
+    if (userRole === "usuario" && location.pathname === "/home") {
+        navigate('/dishes');
+    }
 
     return (
         <div className="flex">
@@ -67,7 +71,7 @@ const Navbar = () => {
                 </div>
 
                 <ul className="pt-6">
-                    {Menus.map((Menu, index) => (
+                    {Menus.filter(Menu => Menu.roles.includes(userRole)).map((Menu, index) => (
                         <li
                             key={index}
                             className={`flex rounded-md p-2 cursor-pointer hover:bg-light-white text-gray-300 text-sm items-center gap-x-4  ${Menu.gap ? "mt-9" : "mt-2"}`}
