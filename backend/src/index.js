@@ -18,9 +18,15 @@ async function setupServer() {
   try {
     const app = express();
     const server = createServer(app);
-    const io = new Server(server);
+    const io = new Server(server, {
+      cors: {
+          origin: "*",
+      }
+    });
 
-    io.on('connect', (socket) => {
+    const apiNamespace = io.of("/api");
+
+    apiNamespace.on('connect', (socket) => {
       console.log("Usuario conectado:", socket.id);
     
         socket.on('disconnect', (reason) => {
