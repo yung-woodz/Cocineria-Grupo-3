@@ -8,7 +8,7 @@ const SOCKET_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:3000'
 export const initSocket = () => {
     const token = Cookies.get('jwt-auth');
     if (!socket || socket.disconnected) {
-        socket = io(SOCKET_URL,{
+        socket = io(`${SOCKET_URL}`, {
             transports: ['websocket'],
             auth: {
                 token: token,
