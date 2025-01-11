@@ -77,7 +77,9 @@ export async function createOrderService(body) {
             description: body.description,
             total: body.total,
             status: body.status,
-            user: user
+            user: user,
+            orderId: body.orderId,
+            dishId: body.dishId
         });
     
         await orderRepository.save(newOrder);

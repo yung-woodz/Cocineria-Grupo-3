@@ -51,6 +51,11 @@ const OrderSchema = new EntitySchema({
             },
             nullable: false,
         },
+        dishOrders: { 
+            type: "one-to-many",
+            target: "DishOrder",
+            cascade: true,
+        },
     },
     indices: [
         {
