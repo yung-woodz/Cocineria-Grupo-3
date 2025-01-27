@@ -111,7 +111,7 @@ const AllOrders = () => {
                                 </p>
                                 <div className="mt-4 grid grid-cols-2 gap-4">
                                     <p className="text-lg font-bold">
-                                        MESERO: <span className="font-normal">{order.user?.nombreCompleto || "N/A"}</span>
+                                        Cocinero: <span className="font-normal">{order.user?.nombreCompleto || "N/A"}</span>
                                     </p>
                                     <p className="text-lg font-bold">
                                         CLIENTE: <span className="font-normal">{order.customer || "N/A"}</span>
