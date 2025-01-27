@@ -13,6 +13,7 @@ const useGetOrders = () => {
         }
     };
 
+    //Esto es para que se carguen las ordenes al cargar la página
     useEffect(() => {
         fetchOrders();
     }, []);

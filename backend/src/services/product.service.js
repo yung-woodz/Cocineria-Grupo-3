@@ -126,3 +126,41 @@ export async function updateProductService(query, body) {
       return [null, "Error interno del servidor"];
   }
 }
+
+export async function updateProductQuantityService(query, body) {
+  try {
+      const { id } = query;
+
+      const productRepository = AppDataSource.getRepository(Product);
+
+      const productFound = await productRepository.findOne({
+          where: { id: id },
+      });
+
+      if (!productFound) return [null, "Producto no encontrado"];
+
+      if (body.quantity < 0) {
+          return [null, "La cantidad no puede ser negativa"];
+      }
+
+      const dataProductUpdate = {
+          quantity: body.quantity,
+          updatedAt: new Date(),
+      };
+
+      await productRepository.update({ id: productFound.id }, dataProductUpdate);
+
+      const productData = await productRepository.findOne({
+          where: { id: productFound.id },
+      });
+
+      if (!productData) {
+          return [null, "Producto no encontrado después de actualizar"];
+      }
+
+      return [productData, null];
+  } catch (error) {
+      console.error("Error al modificar la cantidad de un producto:", error);
+      return [null, "Error interno del servidor"];
+  }
+}

@@ -55,7 +55,13 @@ const DishSchema = new EntitySchema({
             type: "one-to-many",
             inverseSide: "dish",
             cascade: true,
-            onDelete: "CASCADE", // Propaga la eliminación
+            onDelete: "CASCADE",
+        },
+        dishOrders: {
+            target: "DishOrder",
+            type: "one-to-many",
+            cascade: true,
+            onDelete: "CASCADE",
         },
     },
     indices: [

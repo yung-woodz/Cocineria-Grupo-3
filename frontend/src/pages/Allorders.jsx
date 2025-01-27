@@ -14,7 +14,7 @@ import useDeleteOrder from "../hooks/order/useDeleteOrder";
 import UpdateOrderDialog from '../hooks/order/UpdateOrderDialog'; 
 
 const AllOrders = () => {
-    const { orders, fetchOrders, setOrders } = useGetOrders();
+    const { orders, fetchOrders, setOrders } = useGetOrders(); ///
     const { handleDelete } = useDeleteOrder(fetchOrders, setOrders);
     const [showCreatePopup, setShowCreatePopup] = useState(false);
 
@@ -32,11 +32,11 @@ const AllOrders = () => {
     };
 
     const handleCreateButtonClick = () => {
-        setShowCreatePopup(true);
+        setShowCreatePopup(true); // 
     };
 
     const handleCloseCreatePopup = () => {
-        setShowCreatePopup(false);
+        setShowCreatePopup(false); // 
     };
 
     const handleOrderSuccess = () => {
@@ -56,7 +56,7 @@ const AllOrders = () => {
 
     return (
         <div className="flex flex-col items-center space-y-6 p-6">
-            {orders && orders.length > 0 ? (
+            {orders && orders.length > 0 ? ( 
                 orders.map((order) => (
                     <div
                         key={order.id}
@@ -111,7 +111,7 @@ const AllOrders = () => {
                                 </p>
                                 <div className="mt-4 grid grid-cols-2 gap-4">
                                     <p className="text-lg font-bold">
-                                        MESERO: <span className="font-normal">{order.user?.nombreCompleto || "N/A"}</span>
+                                        Cocinero: <span className="font-normal">{order.user?.nombreCompleto || "N/A"}</span>
                                     </p>
                                     <p className="text-lg font-bold">
                                         CLIENTE: <span className="font-normal">{order.customer || "N/A"}</span>

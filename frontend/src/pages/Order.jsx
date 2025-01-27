@@ -2,8 +2,11 @@ import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { createOrder } from "../services/order.service";
 import useUsers from "@hooks/users/useGetUsers";
+import useGetDishes from "@hooks/dish/useGetDishes";
 import { initSocket } from "../services/notification.service.js";
 import { Box, Grid, TextField, Button, MenuItem, Typography, CircularProgress } from "@mui/material";
+import { use } from "react";
+
 
 const Order = ({ onClose }) => {
     const [orderData, setOrderData] = useState({
@@ -11,14 +14,19 @@ const Order = ({ onClose }) => {
         tableNumber: "",
         description: "",
         status: "En progreso",
+        dishes: "",
         username: ""
     });
     const [loading, setLoading] = useState(false);
     const { users, fetchUsers } = useUsers();
+    const { dishes, fetchDishes } = useGetDishes();
+
 
     useEffect(() => {
-        fetchUsers();
-    }, [fetchUsers]);
+        fetchDishes();
+    }, []);
+
+
 
     const handleChange = (e) => { 
         const { name, value } = e.target;
@@ -37,8 +45,14 @@ const Order = ({ onClose }) => {
 
             // Emitir el evento WebSocket para notificar al cocinero
             socket.emit('nueva-orden', response.data); */
-
-            await createOrder(orderData);
+            //sirve para buscar el id del plato y asignarlo a la orden
+            const dish = dishes.find(dish => dish.Nombre === orderData.dishes);
+            const formattedData = {
+                ...orderData,
+                dishes: [{ dishId: dish.id, quantity: 1 }]
+            }
+            console.log(formattedData)
+            await createOrder(formattedData);
             Swal.fire({
                 icon: "success",
                 title: "Orden creada",
@@ -49,6 +63,7 @@ const Order = ({ onClose }) => {
                 tableNumber: "",
                 description: "",
                 status: "En progreso",
+                dishes: "",
                 username: ""
             });
             onClose();
@@ -122,6 +137,23 @@ const Order = ({ onClose }) => {
                         onChange={handleChange}
                     >
                         <MenuItem value="En progreso">En progreso</MenuItem>
+                    </TextField>
+                </Grid>
+                <Grid item xs={12}>
+                    <TextField
+                        name="dishes"
+                        required
+                        fullWidth
+                        select
+                        label="Plato"
+                        value={orderData.dishes}
+                        onChange={handleChange}
+                    >
+                        {dishes.map((dish) => (
+                            <MenuItem key={dish.id} value={dish.Nombre}>
+                                {dish.Nombre}
+                            </MenuItem>
+                        ))}
                     </TextField>
                 </Grid>
                 <Grid item xs={12}>

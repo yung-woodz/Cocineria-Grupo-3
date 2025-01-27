@@ -25,7 +25,6 @@ const useGetDishes = () => {
             setLoading(false);
         }
     };
-
     useEffect(() => {
         fetchDishes();
     }, []);

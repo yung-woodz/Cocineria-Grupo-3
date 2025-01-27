@@ -86,6 +86,36 @@ export const orderBodyValidation = Joi.object({
         "string.min": "El nombre del usuario debe tener como mínimo 5 caracteres.",
         "string.max": "El nombre del usuario debe tener como máximo 50 caracteres.",
         }),
+    dishes: Joi.array()
+        .items(
+            Joi.object({
+                dishId: Joi.number()
+                    .integer()
+                    .positive()
+                    .required()
+                    .messages({
+                        "number.base": "El ID del plato debe ser un número.",
+                        "number.integer": "El ID del plato debe ser un número entero.",
+                        "number.positive": "El ID del plato debe ser un número positivo.",
+                        "any.required": "El ID del plato es obligatorio."
+                    }),
+                quantity: Joi.number()
+                    .integer()
+                    .positive()
+                    .required()
+                    .messages({
+                        "number.base": "La cantidad del plato debe ser un número.",
+                        "number.integer": "La cantidad del plato debe ser un número entero.",
+                        "number.positive": "La cantidad del plato debe ser un número positivo.",
+                        "any.required": "La cantidad del plato es obligatoria."
+                    }),
+            })
+        )
+        .min(1)
+        .messages({
+            "array.base": "El campo dishes debe ser un arreglo.",
+            "array.min": "El arreglo dishes debe tener al menos un elemento.",
+        }),
 })
     .unknown(false)
     .messages({
