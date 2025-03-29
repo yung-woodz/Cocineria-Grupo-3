@@ -15,22 +15,22 @@ const DishCard = ({ dish, onDelete, onEdit }) => {
                 alt={dish.Nombre}
             />
             <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
+                <Typography gutterBottom variant="h5" component="div"sx={{userSelect: 'none',}}>
                     {dish.Nombre}
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" color="text.secondary" sx={{userSelect: 'none',}}>
                     {dish.descripcion}
                 </Typography>
-                <Typography variant="body2" color="text.primary" fontWeight="bold" mt={1}>
+                <Typography variant="body2" color="text.primary" fontWeight="bold" mt={1} sx={{userSelect: 'none',}}>
                     Precio: ${dish.precio}
                 </Typography>
-                <Typography variant="body2" color="text.primary" fontWeight="bold">
+                <Typography variant="body2" color="text.primary" fontWeight="bold"sx={{userSelect: 'none',}}>
                     Tiempo de Espera: {dish.tiempoDeEspera} min
                 </Typography>
-                <Typography variant="body2" color="text.primary" fontWeight="bold">
+                <Typography variant="body2" color="text.primary" fontWeight="bold"sx={{userSelect: 'none',}}>
                     Disponibilidad: {dish.disponibilidad ? "Sí" : "No"}
                 </Typography>
-                <Typography variant="body2" color="text.primary" fontWeight="bold" mt={2}>
+                <Typography variant="body2" color="text.primary" fontWeight="bold" mt={2}sx={{userSelect: 'none',}}>
                     Ingredientes:
                 </Typography>
                 <List>
@@ -41,7 +41,7 @@ const DishCard = ({ dish, onDelete, onEdit }) => {
                             </ListItem>
                         ))
                     ) : (
-                        <Typography variant="body2" color="text.secondary">
+                        <Typography variant="body2" color="text.secondary" sx={{userSelect: 'none',}}>
                             Sin ingredientes asociados
                         </Typography>
                     )}

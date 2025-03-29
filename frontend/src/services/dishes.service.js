@@ -17,8 +17,7 @@ export async function createDish(dishData) {
         const response = await axios.post('/dish', dishData);
         return  response.data.data;
     } catch (error) {
-        console.log(error);
-        return error.response.data;
+        throw error;
     }
 }
 
@@ -30,8 +29,7 @@ export async function updateDish(dishData, query) {
         });
         return data.data;
     } catch (error) {
-        console.log(error);
-        return error.response.data;
+        throw error;
     }
 }
 
@@ -40,7 +38,6 @@ export async function deleteDish(query) {
         const { data } = await axios.delete(`/dish/detail`, { params: query });
         return data.data;
     } catch (error) {
-        console.error("Error al eliminar el platillo:", error);
-        return { error: error.response?.data || "Error desconocido" };
+        throw error;
     }
 }
